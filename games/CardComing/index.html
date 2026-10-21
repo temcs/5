@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Card Coming - Elite Casino Slots</title>
+    <style>
+:root {
+    --primary: #581c1c;
+    /* Deep card table red */
+    --gold: #ffcc00;
+    --gold-gradient: linear-gradient(135deg, #ffcc00 0%, #ff8c00 100%);
+    --card-bg: #1a0505;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --diamond-red: #ff3333;
+    --spade-black: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: #0d0101;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-container {
+    width: 100%;
+    height: 100dvh;
+    max-width: 800px;
+    background: linear-gradient(180deg, #2d0a0a 0%, #120303 100%);
+    border: none;
+    border-radius: 0;
+    padding: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-home-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.header-home-btn i {
+    font-size: 1.2rem;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    line-height: 1;
+}
+
+.balance-box {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--gold);
+    text-align: right;
+}
+
+.balance-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.balance-value {
+    font-size: 1.3rem;
+    color: var(--gold);
+    font-weight: 900;
+}
+
+/* Reels Container */
+.reels-area {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.reels-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0 10px;
+    height: 300px;
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid var(--gold);
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+.reel {
+    flex: 1;
+    height: 300px;
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.reel.special {
+    border: 1px solid var(--gold);
+    background: #1a0505;
+}
+
+.strip {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.symbol {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Card Symbol Colors */
+.symbol[data-val="A"] {
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+.symbol[data-val="A+"] {
+    color: #00ffff;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+.symbol[data-val="W"] {
+    color: #ff00ff;
+    text-shadow: 0 0 25px rgba(255, 0, 255, 0.9);
+    filter: drop-shadow(0 0 10px #ff00ff);
+}
+
+.symbol[data-val="K"] {
+    color: #ff3333;
+}
+
+.symbol[data-val="Q"] {
+    color: #ffffff;
+}
+
+.symbol[data-val="J"] {
+    color: #00ff88;
+}
+
+.symbol[data-val="10"] {
+    color: #888;
+}
+
+.reel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.6) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
+}
+
+.center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gold-gradient);
+    transform: translateY(-50%);
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
+    pointer-events: none;
+}
+
+/* Controls */
+.betting-zone {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bet-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.bet-input-wrap {
+    display: flex;
+    align-items: center;
+    background: #000;
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 5px;
+}
+
+.bet-btn {
+    background: rgba(255, 204, 0, 0.1);
+    border: none;
+    color: var(--gold);
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bet-amount {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
+}
+
+.quick-bets {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.q-btn {
+    flex: 1;
+    min-width: 60px;
+    padding: 8px;
+    background: #2d0a0a;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    color: var(--gold);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.action-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.auto-spin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.auto-label {
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: #ff8c00;
+}
+
+.spin-btn {
+    flex: 1;
+    height: 70px;
+    background: var(--gold-gradient);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 0 #b36b00, 0 8px 15px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spin-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b36b00;
+}
+
+.spin-text {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #000;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #ff8c00;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Notifications */
+.notify-box {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gold-gradient);
+    padding: 12px 30px;
+    border-radius: 50px;
+    color: #000;
+    font-weight: 900;
+    font-size: 1.1rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: nowrap;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.notify-box.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-350%);
+}
+
+/* Mobile Media Queries */
+@media (max-width: 600px) {
+    .game-container {
+        padding: 10px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+}
+
+    @media (max-width: 600px), (max-height: 650px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        display: block;
+    }
+
+    .game-container {
+        height: auto;
+        min-height: 100dvh;
+        margin: 0 auto;
+        padding: 12px;
+        gap: 12px;
+        overflow: visible;
+    }
+
+    .reels-area {
+        flex: 0 0 auto;
+    }
+
+    .symbol {
+        font-size: 2.4rem;
+    }
+
+    .betting-zone,
+    .bet-settings,
+    .bet-input-wrap {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .betting-zone {
+        padding: 12px;
+    }
+
+    #bet-amount {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .q-btn {
+        min-width: 0;
+        flex: 1 1 calc(25% - 5px);
+        padding: 8px 4px;
+    }
+
+    .action-group {
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .spin-btn {
+        height: 60px;
+    }
+
+    .notify-box {
+        max-width: calc(100vw - 32px);
+        padding: 10px 20px;
+        font-size: 1rem;
+        white-space: normal;
+        text-align: center;
+    }
+}
+        .quick-bets {
+            gap: 7px;
+        }
+
+        .quick-bets .quick-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.72);
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .quick-bets .quick-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .quick-bets .quick-btn,
+        .quick-bets .q-btn {
+            min-height: 38px;
+            padding: 9px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .quick-bets .quick-btn:hover,
+        .quick-bets .q-btn:hover {
+            border-color: rgba(255, 204, 0, 0.65);
+            background: rgba(255, 204, 0, 0.2);
+        }
+
+        .quick-bets .quick-btn:active,
+        .quick-bets .q-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .quick-bets {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                width: 100%;
+                min-width: 0;
+                margin-top: 8px;
+            }
+
+            .quick-bets .quick-btn,
+            .quick-bets .q-btn {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                padding: 9px 4px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="javascript:void(0)" onclick="GameBridge.goHome()" class="header-home-btn"><i
+                        class="fas fa-home"></i></a>
+                <h1 class="logo">CARD COMING</h1>
+            </div>
+            <div class="balance-box">
+                <span class="balance-label">TOTAL BALANCE</span>
+                <div class="balance-value">৳<span id="balance-amount">0.00</span></div>
+            </div>
+        </header>
+
+        <!-- Notification Box -->
+        <div id="notify-box" class="notify-box"></div>
+
+        <!-- Reels Space -->
+        <div class="reels-area" id="reels-area">
+            <div class="reels-container">
+                <div class="center-line"></div>
+
+                <!-- Reel 1 -->
+                <div class="reel" id="reel-1">
+                    <div class="strip"></div>
+                    <div class="reel-overlay"></div>
+                </div>
+                <!-- Reel 2 -->
+                <div class="reel" id="reel-2">
+                    <div class="strip"></div>
+                    <div class="reel-overlay"></div>
+                </div>
+                <!-- Reel 3 -->
+                <div class="reel" id="reel-3">
+                    <div class="strip"></div>
+                    <div class="reel-overlay"></div>
+                </div>
+
+                <!-- Multiplier Reel -->
+                <div class="reel special" id="reel-4">
+                    <div class="strip"></div>
+                    <div class="reel-overlay"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Betting Controls -->
+        <div class="betting-zone">
+            <div class="bet-settings">
+                <span class="bet-label">BET AMOUNT</span>
+                <div class="bet-input-wrap">
+                    <button class="bet-btn" id="minus-bet">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20">
+                            <path d="M19 13H5v-2h14v2z" />
+                        </svg>
+                    </button>
+                    <input type="number" id="bet-amount" value="10" step="1" min="1">
+                    <button class="bet-btn" id="plus-bet">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="quick-bets" role="group" aria-label="Quick bet amounts">
+                    <span class="quick-label">QUICK BET</span>
+                    <button class="q-btn" data-val="10">10</button>
+                    <button class="q-btn" data-val="100">100</button>
+                    <button class="q-btn" data-val="500">500</button>
+                    <button class="q-btn" data-val="1000">1000</button>
+                    <button class="q-btn" data-val="3000">3000</button>
+                    <button class="q-btn" data-val="5000">5000</button>
+                    <button class="q-btn" data-val="10000">10000</button>
+                </div>
+            </div>
+
+            <div class="action-group">
+                <div class="auto-spin">
+                    <span class="auto-label">AUTO</span>
+                    <label class="switch">
+                        <input type="checkbox" id="auto-spin-switch">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button class="spin-btn" id="spin-btn">
+                    <span class="spin-text">SPIN</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../balancer.js"></script>
+    <script>
+/**
+ * CARD COMING - Elite Match Slots
+ */
+
+const CONFIG = {
+    SYMBOL_HEIGHT: 100,
+    REEL_SYMBOLS: [
+        ['W', 'A+', 'A', 'K', 'Q', 'J', '10'],
+        ['A+', 'W', 'A', 'K', 'Q', 'J', '10'],
+        ['A', 'K', 'W', 'A+', 'Q', 'J', '10'],
+        ['x2', 'x5', 'x2', 'x10', 'x2', 'x2', 'x2', 'x2', 'x2', 'x5', 'x10']
+    ]
+};
+
+let balance = 0;
+let isSpinning = false;
+let winChance = 50; // Admin-configurable win chance (%)
+let notifyBox, balanceEl, betInput, spinBtn;
+
+// Load admin-configured win chance
+GameBridge.getGameConfig().then(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+GameBridge.onGameConfigUpdate(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+
+function init() {
+    balance = GameBridge.getBalance();
+    notifyBox = document.getElementById('notify-box');
+    balanceEl = document.getElementById('balance-amount');
+    betInput = document.getElementById('bet-amount');
+    spinBtn = document.getElementById('spin-btn');
+
+    updateBalanceDisplay();
+    setupReels();
+    attachListeners();
+}
+
+function updateBalanceDisplay() {
+    balanceEl.innerText = balance.toFixed(2);
+}
+
+function setupReels() {
+    const symbolsSet = CONFIG.REEL_SYMBOLS;
+
+    const reels = document.querySelectorAll('.reel');
+    reels.forEach((reel, i) => {
+        const strip = reel.querySelector('.strip');
+        strip.innerHTML = '';
+
+        const symbols = symbolsSet[i];
+        // Create 100 sets for infinite scrolling effect
+        for (let j = 0; j < 100; j++) {
+            symbols.forEach(symbol => {
+                const div = document.createElement('div');
+                div.className = 'symbol';
+                div.dataset.val = symbol;
+                div.innerText = symbol === '—' ? ' ' : symbol;
+                strip.appendChild(div);
+            });
+        }
+
+        // Initial position
+        const symbolCount = symbols.length;
+        const middleOffset = (50 * symbolCount) * CONFIG.SYMBOL_HEIGHT;
+        strip.style.transform = `translateY(-${middleOffset - CONFIG.SYMBOL_HEIGHT}px)`;
+        reel.dataset.pos = 50 * symbolCount;
+    });
+}
+
+function attachListeners() {
+    spinBtn.addEventListener('click', handleSpin);
+
+    document.getElementById('minus-bet').addEventListener('click', () => {
+        if (isSpinning) return;
+        let val = parseInt(betInput.value);
+        if (val > 10) betInput.value = val - 10;
+        // No need to rebuild reels as symbols are constant now
+    });
+
+    document.getElementById('plus-bet').addEventListener('click', () => {
+        if (isSpinning) return;
+        betInput.value = parseInt(betInput.value) + 10;
+        // No need to rebuild reels as symbols are constant now
+    });
+
+    document.querySelectorAll('.q-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isSpinning) return;
+            betInput.value = btn.dataset.val;
+            // No need to rebuild reels as symbols are constant now
+        });
+    });
+}
+
+async function handleSpin() {
+    if (isSpinning) return;
+
+    const bet = parseInt(betInput.value);
+    if (balance < bet) {
+        showNotify("Insufficient Balance!", true);
+        return;
+    }
+
+    isSpinning = true;
+    spinBtn.disabled = true;
+    notifyBox.classList.remove('show');
+
+    balance -= bet;
+    updateBalanceDisplay();
+    await GameBridge.updateBalance(balance, -bet, "Card Coming Bet");
+
+    const currentSymbolsSet = CONFIG.REEL_SYMBOLS;
+
+    const shouldWin = Math.random() * 100 < winChance;
+
+    // Pick a visible winning combination whose natural payout matches the
+    // admin-weighted multiplier pool. The credited amount is always exactly
+    // what the reels display (matched trio x special multiplier).
+    let results;
+    let winAmount = 0;
+    if (shouldWin) {
+        const targetMultiplier = GameBridge.randomWinMultiplier();
+        const outcome = pickWinningOutcome(currentSymbolsSet, bet, targetMultiplier);
+        if (outcome) {
+            results = outcome.results;
+            winAmount = outcome.payout;
+            console.log(`[CardComing] Target ${targetMultiplier.toFixed(2)}x -> visible win ৳${winAmount.toFixed(2)} (${(winAmount / bet).toFixed(2)}x)`);
+        }
+    }
+    if (!results) {
+        results = generateLosingResults(currentSymbolsSet, bet);
+    }
+
+    console.log(`[CardComing] Reels: ${results.map((idx, i) => currentSymbolsSet[i][idx]).join(' | ')}`);
+
+    const reels = document.querySelectorAll('.reel');
+    reels.forEach((reel, i) => {
+        const strip = reel.querySelector('.strip');
+        const symbols = currentSymbolsSet[i];
+        const symbolCount = symbols.length;
+
+        const targetSymbolIndex = results[i];
+        const extraSpins = 40 + (i * 5);
+        const finalPosition = (extraSpins * symbolCount) + targetSymbolIndex;
+
+        const offset = (finalPosition - 1) * CONFIG.SYMBOL_HEIGHT;
+
+        strip.style.transition = `transform ${0.8 + i * 0.15}s cubic-bezier(0.15, 0, 0.15, 1)`;
+        strip.style.transform = `translateY(-${offset}px)`;
+
+        setTimeout(() => {
+            strip.style.transition = 'none';
+            const safePosition = (50 * symbolCount) + targetSymbolIndex;
+            const resetOffset = (safePosition - 1) * CONFIG.SYMBOL_HEIGHT;
+            strip.style.transform = `translateY(-${resetOffset}px)`;
+            reel.dataset.pos = safePosition;
+        }, (0.8 + i * 0.15) * 1000 + 50);
+    });
+
+    setTimeout(async () => {
+        if (winAmount > 0) {
+            const effectiveMultiplier = bet > 0 ? winAmount / bet : 0;
+            balance += winAmount;
+            updateBalanceDisplay();
+            await GameBridge.updateBalance(balance, winAmount, "Card Coming Win");
+            showNotify(`💰 YOU WON: ৳${winAmount.toFixed(2)} (${effectiveMultiplier.toFixed(2)}x)`, false);
+        }
+
+        isSpinning = false;
+        spinBtn.disabled = false;
+        // removed setupReels() to prevent flickering
+
+        if (document.getElementById('auto-spin-switch').checked && !isSpinning) {
+            setTimeout(handleSpin, 300);
+        }
+    }, 1500);
+}
+
+// Non-winning display: random combination of the three symbol reels.
+function generateLosingResults(symbolsSet, bet) {
+    for (let attempt = 0; attempt < 50; attempt++) {
+        const results = [
+            Math.floor(Math.random() * symbolsSet[0].length),
+            Math.floor(Math.random() * symbolsSet[1].length),
+            Math.floor(Math.random() * symbolsSet[2].length),
+            Math.floor(Math.random() * symbolsSet[3].length)
+        ];
+        if (computeCardWin(results, bet).raw <= 0) return results;
+    }
+    // W, A+, A never matches
+    return [0, 0, 0, Math.floor(Math.random() * symbolsSet[3].length)];
+}
+
+// Pick the visible winning combination whose natural payout is closest to the
+// weighted target multiplier. Combinations that would need the 50x cap are
+// skipped so the display never promises more than it pays.
+function pickWinningOutcome(symbolsSet, bet, targetMultiplier) {
+    const targetPayout = targetMultiplier * bet;
+    const maxAllowed = bet * GameBridge.MAX_WIN_MULTIPLIER;
+    let best = null;
+    let bestDiff = Infinity;
+
+    for (let i = 0; i < symbolsSet[0].length; i++) {
+        for (let j = 0; j < symbolsSet[1].length; j++) {
+            for (let k = 0; k < symbolsSet[2].length; k++) {
+                for (let l = 0; l < symbolsSet[3].length; l++) {
+                    const results = [i, j, k, l];
+                    const computed = computeCardWin(results, bet);
+                    if (computed.raw <= 0 || computed.raw > maxAllowed) continue;
+
+                    const diff = Math.abs(computed.raw - targetPayout);
+                    if (diff < bestDiff) {
+                        bestDiff = diff;
+                        best = { results, payout: computed.raw };
+                    }
+                }
+            }
+        }
+    }
+
+    return best;
+}
+
+function computeCardWin(results, bet) {
+    const symbolsSet = CONFIG.REEL_SYMBOLS;
+
+    const s1 = symbolsSet[0][results[0]];
+    const s2 = symbolsSet[1][results[1]];
+    const s3 = symbolsSet[2][results[2]];
+    const sSpec = symbolsSet[3][results[3]];
+
+    // Check 3 of a kind with WILD (W) Support
+    const symbols = [s1, s2, s3];
+    const nonWilds = symbols.filter(s => s !== 'W' && s !== '—');
+
+    // 1. Full Match with Wilds
+    let matchSymbol = null;
+    if (nonWilds.length === 0 && symbols.every(s => s === 'W')) {
+        matchSymbol = 'W'; // Triple Wild!
+    } else {
+        const first = nonWilds[0];
+        if (first && symbols.every(s => s === first || s === 'W')) {
+            matchSymbol = first;
+        }
+    }
+
+    let baseWin = 0;
+    if (matchSymbol) {
+        // Matched-trio payout as % of bet (Wilds take the value of the match).
+        // Tuned so the achievable payouts line up with the shared 1x-50x
+        // weighted pool (lowest trio x2 = 1x, highest trio x10 = 20x).
+        const trioValues = {
+            'W': 2.0,   // 200% (Joker Jackpot)
+            'A+': 2.0,  // 200%
+            'A': 1.0,   // 100%
+            'K': 0.8,   // 80%
+            'Q': 0.7,   // 70%
+            'J': 0.6,   // 60%
+            '10': 0.5   // 50%
+        };
+
+        baseWin = bet * (trioValues[matchSymbol] || 0.1);
+    }
+
+    // 2. Special reel multiplier (Flexible parsing)
+    let extraMul = 1;
+    if (sSpec) {
+        if (sSpec.includes('x20')) extraMul = 20;
+        else if (sSpec.includes('x10')) extraMul = 10;
+        else if (sSpec.includes('x5')) extraMul = 5;
+        else if (sSpec.includes('x2')) extraMul = 2;
+    }
+
+    const raw = baseWin * extraMul;
+
+    // 3. Hard cap: never pay more than 50x the bet
+    const maxAllowed = bet * GameBridge.MAX_WIN_MULTIPLIER;
+
+    return {
+        raw,
+        capped: Math.min(raw, maxAllowed),
+        baseValue: baseWin,
+        multiplier: extraMul
+    };
+}
+
+function showNotify(text, isError = false) {
+    notifyBox.innerText = text;
+    notifyBox.style.background = isError ? "linear-gradient(135deg, #ff2d55 0%, #8b0000 100%)" : "linear-gradient(135deg, #ffcc00 0%, #ff8c00 100%)";
+    notifyBox.style.color = isError ? "white" : "black";
+    notifyBox.classList.add('show');
+    if (isError) setTimeout(() => notifyBox.classList.remove('show'), 3000);
+}
+
+init();
+
+    </script>
+</body>
+
+
+</html>

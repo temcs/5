@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Khelun ar Jitun is an online gaming platform for users aged 18 and over. View games, rewards, account information, and responsible gaming resources.">
+    <meta name="theme-color" content="#ffcc00">
+    <title>- | Online Gaming Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/css.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <!-- Header with Login -->
+    <header>
+        <div class="logo"></div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button id="pwaInstallBtn" class="login-btn" style="background: #4CAF50; display: none;">
+                <i class="fas fa-download"></i> INSTALL APP
+            </button>
+            <button id="headerLoginBtn" class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <!-- Home Page Content -->
+    <!-- Carousel -->
+    <div class="carousel">
+        <div class="carousel-slide active" style="background-image: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 100%);">
+            <div class="carousel-caption">
+                <h2>Welcome to Khelun ar Jitun</h2>
+                <p>Online gaming for adults aged 18 and over.</p>
+            </div>
+        </div>
+        <div class="carousel-slide" style="background-image: linear-gradient(135deg, #141e30 0%, #243b55 100%);">
+            <div class="carousel-caption">
+                <h2>Play Responsibly</h2>
+                <p>Set limits, take breaks, and never chase losses.</p>
+            </div>
+        </div>
+        <div class="carousel-slide" style="background-image: linear-gradient(135deg, #232526 0%, #414345 100%);">
+            <div class="carousel-caption">
+                <h2>Rewards &amp; Bonuses</h2>
+                <p>Bonus terms and eligibility are shown before claiming.</p>
+            </div>
+        </div>
+
+        <div class="carousel-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <div id="homePage" class="page-content active">
+
+
+        <!-- Games Menu -->
+        <div class="games-menu">
+            <div class="menu-item active" data-category="all">All Games</div>
+            <div class="menu-item" data-category="Slots">Slots</div>
+            <div class="menu-item" data-category="Live">Live</div>
+            <div class="menu-item" data-category="Table">Table</div>
+            <div class="menu-item" data-category="Crash">Crash</div>
+            <div class="menu-item" data-category="Lottery">Lottery</div>
+            <div class="menu-item" data-category="Card">Card</div>
+            <div class="menu-item" data-category="Fish">Fish</div>
+        </div>
+
+        <!-- Games Section -->
+        <div class="games-section">
+            <h2 class="section-title">Popular Games</h2>
+            <div class="games-grid" id="gamesContainer">
+                <!-- Games will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Page Content -->
+    <div id="referralPage" class="page-content">
+        <h2 class="section-title">Refer & Earn</h2>
+
+        <div class="referral-code">
+            <p>Your Referral Code</p>
+            <div class="code">Login to view</div>
+            <p>Share your code with friends and earn rewards when they join!</p>
+        </div>
+
+        <div class="referral-stats">
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Friends Referred</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Active Friends</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Pending Bonus</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">How It Works</h3>
+        <div class="referral-stats">
+            <div class="stat-card">
+                <i class="fas fa-share-alt method-icon"></i>
+                <div class="stat-label">Share Your Code</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-plus method-icon"></i>
+                <div class="stat-label">Friend Registers</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-dollar-sign method-icon"></i>
+                <div class="stat-label">Friend Deposits</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-gift method-icon"></i>
+                <div class="stat-label">You Get Bonus</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">My Referrals</h3>
+        <div id="referralList" class="referral-list">
+            <div style="text-align: center; color: #888; padding: 20px;">No referrals yet. Share your code to start
+                earning!</div>
+        </div>
+    </div>
+
+    <!-- Deposit Page Content -->
+    <div id="depositPage" class="page-content">
+        <h2 class="section-title">Deposit Funds</h2>
+
+        <div class="deposit-methods">
+            <div class="method-card" data-method="bkash">
+                <i class="fa fa-wallet method-icon"></i>
+                <div class="stat-label">Bkash</div>
+            </div>
+            <div class="method-card" data-method="nagad">
+                <i class="fa fa-wallet method-icon"></i>
+                <div class="stat-label">Nagad</div>
+            </div>
+            <div class="method-card" data-method="rocket">
+                <i class="fa fa-wallet method-icon"></i>
+                <div class="stat-label">Rocket</div>
+            </div>
+            <div class="method-card" data-method="crypto">
+                <i class="fab fa-bitcoin method-icon"></i>
+                <div class="stat-label">Crypto</div>
+            </div>
+        </div>
+
+        <div class="deposit-form">
+            <div class="form-group">
+                <label class="form-label">Bank Wallet</label>
+                <select class="form-input" id="depositMethod">
+                    <option value="">Select Wallet</option>
+                    <option value="bkash">Bkash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="rocket">Rocket</option>
+                    <option value="crypto">Crypto</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Merchant number</label>
+                <input type="text" class="form-input" id="depositMerchantNumber" readonly
+                    placeholder="Select a payment method above">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount</label>
+                <input type="number" class="form-input" id="depositAmount" placeholder="Enter amount" min="500"
+                    max="50000">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Transaction ID</label>
+                <input type="text" class="form-input" id="depositTrxId" placeholder="TRX ID" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Upload Receipt (Screenshot)</label>
+                <input type="file" class="form-input" id="depositReceipt" accept="image/*" required>
+            </div>
+
+            <button class="submit-btn" id="depositBtn">DEPOSIT NOW</button>
+        </div>
+
+
+        <div style="margin-top: 20px; text-align: center;">
+            <p>Minimum deposit: ৳500</p>
+            <p>Deposits are credited after payment review</p>
+        </div><br>
+
+
+        <div class="deposit-form">
+            <div class="form-group">
+                <label class="form-label">Bank Wallet</label>
+                <select class="form-input" id="withdrawMethod">
+                    <option value="">Select Wallet</option>
+                    <option value="bkash">Bkash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="rocket">Rocket</option>
+                    <option value="crypto">Crypto</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Withdraw number</label>
+                <input type="text" class="form-input" id="withdrawNumber" placeholder="Enter account number">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount</label>
+                <input type="number" class="form-input" id="withdrawAmount" placeholder="Enter amount" min="1000"
+                    max="50000">
+            </div>
+
+            <button class="submit-btn" id="withdrawBtn">Withdraw NOW</button>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <p>Minimum Withdraw: ৳1000</p>
+            <p>Withdrawals are processed after account review</p>
+        </div>
+    </div>
+    </div>
+
+    <!-- Rewards Page Content -->
+    <div id="rewardsPage" class="page-content">
+        <h2 class="section-title">Your Rewards</h2>
+
+        <div class="rewards-grid">
+            <div class="reward-card">
+                <i class="fas fa-coins reward-icon"></i>
+                <div class="stat-value">0</div>
+                <div class="stat-label">Loyalty Points</div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                </div>
+                <div class="stat-label">Next: 2000 pts</div>
+            </div>
+            <div class="reward-card">
+                <i class="fas fa-trophy reward-icon"></i>
+                <div class="stat-value">Bronze</div>
+                <div class="stat-label">VIP Level</div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                </div>
+                <div class="stat-label">Next: Silver</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">Available Bonuses</h3>
+
+        <div class="rewards-grid"> </div>
+    </div>
+
+    <!-- Account Page Content -->
+    <div id="accountPage" class="page-content">
+        <h2 class="section-title">My Account</h2>
+
+        <div class="account-info">
+            <div class="account-detail">
+                <span>Username:</span>
+                <span id="accountUsername">-</span>
+            </div>
+            <div class="account-detail">
+                <span>Mobile:</span>
+                <span id="accountMobile">-</span>
+            </div>
+            <div class="account-detail">
+                <span>WhatsApp:</span>
+                <span id="accountEmail">-</span>
+            </div>
+            <div class="account-detail">
+                <span>Member Since:</span>
+                <span id="accountMemberSince">-</span>
+            </div>
+            <div class="account-detail">
+                <span>VIP Level:</span>
+                <span id="accountVipLevel" style="color: #ffcc00;">-</span>
+            </div>
+            <div class="account-detail">
+                <span>Balance:</span>
+                <span id="accountBalance" style="color: #4CAF50;">-</span>
+            </div>
+            <div class="account-detail">
+                <span>Bonus Balance:</span>
+                <span id="accountBonusBalance" style="color: #ffcc00;">-</span>
+            </div>
+        </div>
+
+        <h3 class="section-title">Account Actions</h3>
+
+        <div class="account-actions">
+            <button class="action-btn" onclick="showTransactionHistory()">
+                <i class="fas fa-history" style="margin-bottom: 5px;"></i>
+                Transaction History
+            </button>
+            <button class="action-btn" onclick="showEditProfile()">
+                <i class="fas fa-user-edit" style="margin-bottom: 5px;"></i>
+                Edit Profile
+            </button>
+            <button class="action-btn" onclick="showChangePassword()">
+                <i class="fas fa-lock" style="margin-bottom: 5px;"></i>
+                Change Password
+            </button>
+            <button class="action-btn logout-btn" onclick="logoutUser()">
+                <i class="fas fa-sign-out-alt" style="margin-bottom: 5px;"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Transaction History Modal -->
+    <div id="transactionHistoryModal" class="modal">
+        <div class="modal-content tx-history-modal">
+            <div class="tx-modal-header">
+                <div>
+                    <h2>Transaction History</h2>
+                    <p class="tx-modal-subtitle">Deposits, withdrawals, game activity, and bonuses in one place.</p>
+                </div>
+                <span class="close" onclick="closeModal('transactionHistoryModal')">&times;</span>
+            </div>
+
+            <div class="tx-filter-bar">
+                <div class="tx-type-filters" id="historyTypeFilters" role="group"
+                    aria-label="Filter transactions by type">
+                    <button type="button" class="tx-filter-chip active" data-tx-type="all" aria-pressed="true"
+                        onclick="setTransactionTypeFilter('all')">
+                        <i class="fas fa-layer-group"></i> All
+                    </button>
+                    <button type="button" class="tx-filter-chip" data-tx-type="game" aria-pressed="false"
+                        onclick="setTransactionTypeFilter('game')">
+                        <i class="fas fa-gamepad"></i> Games
+                    </button>
+                    <button type="button" class="tx-filter-chip" data-tx-type="deposit" aria-pressed="false"
+                        onclick="setTransactionTypeFilter('deposit')">
+                        <i class="fas fa-arrow-down"></i> Deposits
+                    </button>
+                    <button type="button" class="tx-filter-chip" data-tx-type="withdraw" aria-pressed="false"
+                        onclick="setTransactionTypeFilter('withdraw')">
+                        <i class="fas fa-arrow-up"></i> Withdraws
+                    </button>
+                    <button type="button" class="tx-filter-chip" data-tx-type="bonus" aria-pressed="false"
+                        onclick="setTransactionTypeFilter('bonus')">
+                        <i class="fas fa-gift"></i> Bonuses
+                    </button>
+                </div>
+
+                <div class="tx-date-controls">
+                    <div class="tx-date-select-wrap">
+                        <i class="fas fa-calendar-alt"></i>
+                        <select id="historyDateRangeFilter" onchange="onHistoryFilterChange()"
+                            aria-label="Filter transactions by date">
+                            <option value="all">All Time</option>
+                            <option value="today" selected>Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week">This Week</option>
+                            <option value="last_week">Last Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div id="historyCustomDates" class="tx-custom-dates">
+                        <input type="date" id="historyFilterStartDate" onchange="loadTransactionHistory(1)"
+                            aria-label="Start date">
+                        <span>to</span>
+                        <input type="date" id="historyFilterEndDate" onchange="loadTransactionHistory(1)"
+                            aria-label="End date">
+                    </div>
+                    <button type="button" class="tx-clear-btn" onclick="clearTransactionFilters()"
+                        title="Clear all filters">
+                        <i class="fas fa-times"></i><span>Clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tx-table-wrap">
+                <table class="tx-history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th class="tx-amount-col">Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionHistoryBody">
+                        <tr>
+                            <td colspan="5" class="tx-empty">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                                <span>Loading transactions...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="transactionPagination" class="pg-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" onclick="closeModal('editProfileModal')">&times;</span>
+            <h2 style="color: #ffcc00; margin-bottom: 20px;">Edit Profile</h2>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="editProfileUsername" required disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">WhatsApp</label>
+                    <input type="number" class="form-input" id="editProfileEmail" placeholder="WhatsApp Number">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-input" id="editProfileMobile" required>
+                </div>
+                <button type="submit" class="submit-btn">Update Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            <h2 style="color: #ffcc00; margin-bottom: 20px;">Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" class="form-input" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-input" id="newPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-input" id="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="submit-btn">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Game Play Modal -->
+    <div id="gamePlayModal" class="modal" style="padding: 0;">
+        <div class="modal-content"
+            style="max-width: 100%; width: 100%; height: 100%; margin: 0; border-radius: 0; padding: 0; background: #000;">
+            <span class="close" onclick="closeGameModal()"
+                style="position: absolute; top: 10px; right: 20px; z-index: 10001; font-size: 40px; color: #fff; background: rgba(0,0,0,0.5); width: 50px; height: 50px; display: none; align-items: center; justify-content: center; border-radius: 50%;">&times;</span>
+            <iframe id="gameIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-section">
+            <h3 class="footer-title">Social Connect</h3>
+            <div class="payment-images" id="socialLinksContainer" style="gap: 15px;">
+                <a href="#" id="linkTelegram" class="chat-icon" title="Telegram"
+                    style="text-decoration: none; width: 40px; height: 40px; font-size: 20px;">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="#" id="linkFacebook" class="chat-icon" title="Facebook"
+                    style="text-decoration: none; width: 40px; height: 40px; font-size: 20px; background: #3b5998; color: white;">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" id="linkWhatsapp" class="chat-icon" title="WhatsApp"
+                    style="text-decoration: none; width: 40px; height: 40px; font-size: 20px; background: #25D366; color: white;">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="#" id="linkCustomChat" class="chat-icon" title="Live Chat"
+                    style="text-decoration: none; width: 40px; height: 40px; font-size: 20px; background: #ff9900; color: white;">
+                    <i class="fas fa-headset"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3 class="footer-title">Contact Us</h3>
+            <div class="contact-info">
+                <div id="footerEmail">Use the social links above to contact support</div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3 class="footer-title">We Accept</h3>
+            <div class="payment-images">
+                <div class="payment-img">Bkash</div>
+                <div class="payment-img">Nagad</div>
+                <div class="payment-img">Rocket</div>
+                <div class="payment-img">Crypto</div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3 class="footer-title">Legal &amp; Support</h3>
+            <div class="legal-links">
+                <a href="#" onclick="openLegalPage('about'); return false;">About Us</a>
+                <a href="#" onclick="openLegalPage('contact'); return false;">Contact</a>
+                <a href="#" onclick="openLegalPage('privacy'); return false;">Privacy Policy</a>
+                <a href="#" onclick="openLegalPage('terms'); return false;">Terms &amp; Conditions</a>
+                <a href="#" onclick="openLegalPage('responsible'); return false;">Responsible Gaming</a>
+            </div>
+            <p class="age-notice">18+ only. Gaming involves financial risk. Play responsibly.</p>
+        </div>
+    </footer>
+
+    <!-- Legal / Information Modal -->
+    <div id="legalModal" class="modal">
+        <div class="modal-content legal-modal-content">
+            <span class="close" onclick="closeLegalPage()">&times;</span>
+            <h2 id="legalTitle" style="color: #ffcc00; margin-bottom: 15px;">Information</h2>
+            <div id="legalBody" class="legal-body"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-page="homePage">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" data-page="referralPage">
+            <i class="fas fa-user-friends nav-icon"></i>
+            <span>Referral</span>
+        </div>
+        <div class="nav-item" data-page="depositPage">
+            <i class="fas fa-wallet nav-icon"></i>
+            <span>Deposit</span>
+        </div>
+        <div class="nav-item" data-page="rewardsPage">
+            <i class="fas fa-gift nav-icon"></i>
+            <span>Reward</span>
+        </div>
+        <div class="nav-item" data-page="accountPage">
+            <i class="fas fa-user nav-icon"></i>
+            <span>Account</span>
+        </div>
+
+
+    </div>
+    <script src="js/connect.js"></script>
+    <script src="js/simple-auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/pagination.js?v=6"></script>
+    <script src="js/account-actions.js?v=6"></script>
+    <script src="js/js.js"></script>
+    <!-- ===== GAME PLAY MODAL ===== -->
+    <div id="gamePlayModal" style="
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #000;
+        z-index: 999999;
+        flex-direction: column;
+    ">
+        <!-- Close Button -->
+        <button onclick="closeGameModal()" style="
+            position: absolute;
+            top: 12px; right: 15px;
+            z-index: 10;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        ">✕</button>
+        <!-- Game iframe -->
+        <iframe id="gameIframe" src="" style="
+            width: 100%; height: 100%;
+            border: none;
+        " allowfullscreen></iframe>
+    </div>
+    <!-- ===== END GAME PLAY MODAL ===== -->
+
+</body>
+
+
+
+
+</html>

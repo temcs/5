@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dice BD - Roll Over / Under</title>
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #141621;
+            --accent: #ffcc00;
+            --accent-2: #00d2ff;
+            --win: #2ecc71;
+            --lose: #ff2d55;
+            --text-main: #ffffff;
+            --text-muted: #8a8e9e;
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            height: 88vh;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background-image:
+                radial-gradient(circle at 50% -20%, rgba(0, 210, 255, 0.12), transparent 55%),
+                radial-gradient(circle at 50% 120%, rgba(255, 204, 0, 0.08), transparent 55%);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .game-header {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo-text .accent {
+            color: var(--accent);
+        }
+
+        .balance-container {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-align: center;
+            border: 1px solid rgba(255, 204, 0, 0.25);
+        }
+
+        .balance-label {
+            display: block;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-weight: 800;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-value {
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 1.15rem;
+            font-family: var(--font-display);
+        }
+
+        /* Main */
+        .game-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 34px 26px;
+            gap: 18px;
+        }
+
+        /* Result number */
+        .result-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .result-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .result-number {
+            font-family: var(--font-display);
+            font-size: 4.4rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--accent);
+            text-shadow: 0 0 28px rgba(255, 204, 0, 0.35);
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        .result-number.win {
+            color: var(--win);
+            text-shadow: 0 0 32px rgba(46, 204, 113, 0.6);
+        }
+
+        .result-number.lose {
+            color: var(--lose);
+            text-shadow: 0 0 32px rgba(255, 45, 85, 0.6);
+        }
+
+        .result-number.rolling {
+            color: #fff;
+            text-shadow: 0 0 22px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Dice slider */
+        .slider-zone {
+            width: 100%;
+            padding: 0 18px;
+            margin-top: 6px;
+        }
+
+        .dice-slider {
+            position: relative;
+            width: 100%;
+            height: 16px;
+            border-radius: 10px;
+            background: var(--lose);
+            cursor: pointer;
+            touch-action: none;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .win-fill {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: var(--win);
+            border-radius: 10px;
+            transition: none;
+        }
+
+        .roll-marker {
+            position: absolute;
+            top: -14px;
+            bottom: -14px;
+            width: 3px;
+            margin-left: -1.5px;
+            background: #ffffff;
+            border-radius: 3px;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .roll-marker.show {
+            opacity: 1;
+        }
+
+        .handle {
+            position: absolute;
+            top: 50%;
+            width: 34px;
+            height: 34px;
+            margin-left: -17px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #d7dbe6);
+            border: 3px solid var(--accent);
+            transform: translateY(-50%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(255, 204, 0, 0.15);
+            z-index: 4;
+            cursor: grab;
+            transition: box-shadow 0.2s;
+        }
+
+        .handle:active {
+            cursor: grabbing;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 7px rgba(255, 204, 0, 0.28);
+        }
+
+        .handle::after {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #fff, #b9c0cf);
+        }
+
+        .slider-scale {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 12px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .stat {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 0.58rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .stat b {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        #multiplierDisplay {
+            color: var(--accent);
+        }
+
+        #payoutDisplay {
+            color: var(--accent-2);
+        }
+
+        /* Mode toggle */
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: #1a1200;
+            box-shadow: 0 6px 14px rgba(255, 204, 0, 0.25);
+        }
+
+        /* Controls */
+        .controls-container {
+            width: 100%;
+            display: flex;
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        .bet-input-group {
+            flex: 1.2;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .adjust-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 204, 0, 0.15);
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .adjust-btn:active {
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        #bet-amount {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.15rem;
+            outline: none;
+            font-family: var(--font-display);
+            -moz-appearance: textfield;
+        }
+
+        #bet-amount::-webkit-outer-spin-button,
+        #bet-amount::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .quick-bets {
+            display: flex;
+            gap: 5px;
+        }
+
+        .quick-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            color: #cdd2e0;
+            padding: 6px 4px;
+            border-radius: 7px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .quick-btn:active {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .roll-btn {
+            flex: 1;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, #ffdd55 0%, #ffa800 100%);
+            color: #1a1200;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 10px 26px rgba(255, 168, 0, 0.28);
+            transition: var(--transition);
+        }
+
+        .roll-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 5px 14px rgba(255, 168, 0, 0.3);
+        }
+
+        .roll-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .roll-btn .btn-primary-text {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .roll-btn .btn-secondary-text {
+            font-weight: 800;
+            font-size: 0.72rem;
+            opacity: 0.85;
+        }
+
+        /* Auto bet */
+        .auto-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: -4px;
+        }
+
+        .auto-bar .auto-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .auto-bar.active .auto-label {
+            color: var(--accent);
+            text-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #333;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #fff;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        .switch input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Notifications */
+        #notification-area {
+            position: fixed;
+            top: 90px;
+            right: 18px;
+            z-index: 1000;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            body {
+                overflow: auto;
+                align-items: flex-start;
+            }
+
+            .app-container {
+                height: 100dvh;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .game-header {
+                padding: 12px 15px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .game-main {
+                padding: 16px 16px 22px;
+                justify-content: flex-start;
+                gap: 14px;
+                overflow-y: auto;
+            }
+
+            .result-number {
+                font-size: 3.4rem;
+            }
+
+            .stats-row {
+                flex-wrap: wrap;
+            }
+
+            .mode-btn {
+                min-width: 0;
+                padding: 10px 8px;
+                font-size: 0.72rem;
+            }
+
+            .controls-container {
+                flex-direction: column;
+            }
+
+            .roll-btn {
+                height: 64px;
+            }
+        }
+    @media (max-width: 600px), (max-height: 620px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        align-items: flex-start;
+    }
+
+    .app-container {
+        height: auto;
+        min-height: 100dvh;
+    }
+
+    .game-main {
+        flex: none;
+        overflow: visible;
+        padding: 16px 20px 22px;
+    }
+
+    .bet-input-group,
+    .input-wrapper {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #bet-amount {
+        min-width: 0;
+        width: 100%;
+    }
+}
+        .quick-bets {
+            gap: 7px;
+        }
+
+        .quick-bets .quick-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.72);
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .quick-bets .quick-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .quick-bets .quick-btn,
+        .quick-bets .q-btn {
+            min-height: 38px;
+            padding: 9px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .quick-bets .quick-btn:hover,
+        .quick-bets .q-btn:hover {
+            border-color: rgba(255, 204, 0, 0.65);
+            background: rgba(255, 204, 0, 0.2);
+        }
+
+        .quick-bets .quick-btn:active,
+        .quick-bets .q-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .quick-bets {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                width: 100%;
+                min-width: 0;
+                margin-top: 8px;
+            }
+
+            .quick-bets .quick-btn,
+            .quick-bets .q-btn {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                padding: 9px 4px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="logo">
+                <div class="home-btn" onclick="GameBridge.goHome()">
+                    <i class="fas fa-home"></i> <span>HOME</span>
+                </div>
+                <span class="logo-text">DICE <span class="accent">BD</span></span>
+            </div>
+            <div class="balance-container">
+                <span class="balance-label">YOUR BALANCE</span>
+                <span class="balance-value" id="balance-amount">৳0.00</span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <!-- Rolled number -->
+            <div class="result-wrap">
+                <span class="result-label">ROLL RESULT</span>
+                <div class="result-number" id="result-number">--</div>
+            </div>
+
+            <!-- Slider -->
+            <div class="slider-zone">
+                <div class="dice-slider" id="dice-slider">
+                    <div class="win-fill" id="win-fill"></div>
+                    <div class="roll-marker" id="roll-marker"></div>
+                    <div class="handle" id="slider-handle"></div>
+                </div>
+                <div class="slider-scale">
+                    <span>1</span>
+                    <span>25</span>
+                    <span>50</span>
+                    <span>75</span>
+                    <span>100</span>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat"><span>MULTIPLIER</span><b id="multiplier-display">2.00x</b></div>
+                <div class="stat"><span>WIN CHANCE</span><b id="win-chance-display">50%</b></div>
+                <div class="stat"><span>PAYOUT ON WIN</span><b id="payout-display">20.00</b></div>
+            </div>
+
+            <!-- Roll over / under -->
+            <div class="mode-toggle">
+                <button class="mode-btn" data-mode="under" id="mode-under">ROLL UNDER</button>
+                <button class="mode-btn active" data-mode="over" id="mode-over">ROLL OVER</button>
+            </div>
+
+            <!-- Auto bet -->
+            <div class="auto-bar" id="auto-bar">
+                <span class="auto-label"><i class="fas fa-rotate"></i> AUTO BET</span>
+                <label class="switch">
+                    <input type="checkbox" id="auto-bet-switch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-container">
+                <div class="bet-input-group">
+                    <div class="input-wrapper">
+                        <button class="adjust-btn" id="minus-bet">-</button>
+                        <input type="number" id="bet-amount" value="10" step="1" min="1">
+                        <button class="adjust-btn" id="plus-bet">+</button>
+                    </div>
+                    <div class="quick-bets" role="group" aria-label="Quick bet amounts">
+                        <span class="quick-label">QUICK BET</span>
+                        <button class="quick-btn" data-val="10">10</button>
+                        <button class="quick-btn" data-val="50">50</button>
+                        <button class="quick-btn" data-val="100">100</button>
+                        <button class="quick-btn" data-val="500">500</button>
+                    </div>
+                </div>
+                <button class="roll-btn" id="roll-btn">
+                    <span class="btn-primary-text">ROLL</span>
+                    <span class="btn-secondary-text" id="btn-bet-info">10 ৳</span>
+                </button>
+            </div>
+        </main>
+
+        <div id="notification-area"></div>
+    </div>
+
+    <script src="../balancer.js?v=5"></script>
+    <script>
+        // ---- Admin-configurable win chance (%) ----
+        let winChance = 50;
+        GameBridge.getGameConfig().then(cfg => {
+            if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+            updateStats();
+        });
+        GameBridge.onGameConfigUpdate(cfg => {
+            if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+            updateStats();
+        });
+
+        // ---- State ----
+        let balance = GameBridge.getBalance();
+        let target = 50;          // slider value (2..98)
+        let mode = 'over';        // 'over' | 'under'
+        let isRolling = false;
+        let autoBetEnabled = false;
+
+        const MIN_TARGET = 2;
+        const MAX_TARGET = 98;
+
+        // ---- DOM ----
+        const balanceDisplay = document.getElementById('balance-amount');
+        const betInput = document.getElementById('bet-amount');
+        const btnBetInfo = document.getElementById('btn-bet-info');
+        const rollBtn = document.getElementById('roll-btn');
+        const resultNumber = document.getElementById('result-number');
+        const diceSlider = document.getElementById('dice-slider');
+        const winFill = document.getElementById('win-fill');
+        const sliderHandle = document.getElementById('slider-handle');
+        const rollMarker = document.getElementById('roll-marker');
+        const multiplierDisplay = document.getElementById('multiplier-display');
+        const winChanceDisplay = document.getElementById('win-chance-display');
+        const payoutDisplay = document.getElementById('payout-display');
+        const autoSwitch = document.getElementById('auto-bet-switch');
+        const autoBar = document.getElementById('auto-bar');
+
+        // Map a value (1..100) to a 0..1 track position
+        function valueToFraction(v) {
+            return (v - 1) / 99;
+        }
+
+        function updateBalanceDisplay() {
+            balanceDisplay.innerText = `৳${balance.toFixed(2)}`;
+        }
+
+        function updateBetInfo() {
+            const val = parseFloat(betInput.value) || 0;
+            btnBetInfo.innerText = `${GameBridge.formatBetAmount(val)} ৳`;
+        }
+
+        function updateStats() {
+            const bet = parseFloat(betInput.value) || 0;
+
+            multiplierDisplay.textContent = `1-${GameBridge.MAX_WIN_MULTIPLIER}x`;
+            winChanceDisplay.textContent = `${winChance}%`;
+            payoutDisplay.textContent = `UP TO ${(bet * GameBridge.MAX_WIN_MULTIPLIER).toFixed(2)}`;
+
+            const pct = valueToFraction(target) * 100;
+            sliderHandle.style.left = `${pct}%`;
+
+            if (mode === 'under') {
+                winFill.style.left = '0';
+                winFill.style.width = `${pct}%`;
+            } else {
+                winFill.style.left = `${pct}%`;
+                winFill.style.width = `${100 - pct}%`;
+            }
+        }
+
+        function positionMarker(value) {
+            rollMarker.style.left = `${valueToFraction(value) * 100}%`;
+        }
+
+        // ---- Outcome generation (biased by admin win chance) ----
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateRoll(shouldWin) {
+            if (mode === 'over') {
+                return shouldWin ? randomInt(target + 1, 100) : randomInt(1, target);
+            }
+            return shouldWin ? randomInt(1, target - 1) : randomInt(target, 100);
+        }
+
+        // ---- Slider interaction ----
+        function pointerEventToTarget(clientX) {
+            const rect = diceSlider.getBoundingClientRect();
+            let frac = (clientX - rect.left) / rect.width;
+            frac = Math.max(0, Math.min(1, frac));
+            let v = Math.round(frac * 99) + 1;
+            return Math.max(MIN_TARGET, Math.min(MAX_TARGET, v));
+        }
+
+        let dragging = false;
+
+        function setTarget(v) {
+            target = Math.max(MIN_TARGET, Math.min(MAX_TARGET, v));
+            updateStats();
+        }
+
+        function addEventListeners() {
+            diceSlider.addEventListener('pointerdown', (e) => {
+                if (isRolling) return;
+                dragging = true;
+                diceSlider.setPointerCapture(e.pointerId);
+                setTarget(pointerEventToTarget(e.clientX));
+            });
+
+            diceSlider.addEventListener('pointermove', (e) => {
+                if (!dragging || isRolling) return;
+                setTarget(pointerEventToTarget(e.clientX));
+            });
+
+            const endDrag = (e) => {
+                if (!dragging) return;
+                dragging = false;
+                try { diceSlider.releasePointerCapture(e.pointerId); } catch (err) { }
+            };
+            diceSlider.addEventListener('pointerup', endDrag);
+            diceSlider.addEventListener('pointercancel', endDrag);
+
+            // Keyboard access
+            diceSlider.tabIndex = 0;
+            diceSlider.addEventListener('keydown', (e) => {
+                if (isRolling) return;
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                    setTarget(target - 1);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                    setTarget(target + 1);
+                    e.preventDefault();
+                }
+            });
+
+            // Mode toggle
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (isRolling) return;
+                    mode = btn.dataset.mode;
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateStats();
+                });
+            });
+
+            // Bet adjust
+            document.getElementById('plus-bet').addEventListener('click', () => {
+                if (isRolling) return;
+                betInput.value = (parseFloat(betInput.value) || 0) + 10;
+                updateBetInfo();
+                updateStats();
+            });
+
+            document.getElementById('minus-bet').addEventListener('click', () => {
+                if (isRolling) return;
+                const val = parseFloat(betInput.value) || 0;
+                if (val > 10) {
+                    betInput.value = val - 10;
+                    updateBetInfo();
+                    updateStats();
+                }
+            });
+
+            betInput.addEventListener('input', () => {
+                updateBetInfo();
+                updateStats();
+            });
+
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (isRolling) return;
+                    betInput.value = btn.dataset.val;
+                    updateBetInfo();
+                    updateStats();
+                });
+            });
+
+            rollBtn.addEventListener('click', handleRoll);
+
+            // Auto bet toggle
+            autoSwitch.addEventListener('change', () => {
+                autoBetEnabled = autoSwitch.checked;
+                if (autoBar) autoBar.classList.toggle('active', autoBetEnabled);
+                if (autoBetEnabled && !isRolling) {
+                    handleRoll();
+                }
+            });
+        }
+
+        // ---- Roll animation ----
+        function animateRoll(finalValue) {
+            return new Promise(resolve => {
+                const duration = 1100;
+                const start = performance.now();
+                let lastTick = 0;
+
+                resultNumber.classList.remove('win', 'lose');
+                resultNumber.classList.add('rolling');
+                rollMarker.classList.add('show');
+
+                function frame(t) {
+                    const elapsed = t - start;
+                    if (elapsed >= duration) {
+                        resultNumber.classList.remove('rolling');
+                        resultNumber.textContent = finalValue;
+                        positionMarker(finalValue);
+                        resolve();
+                        return;
+                    }
+                    if (t - lastTick > 55) {
+                        lastTick = t;
+                        const rnd = randomInt(1, 100);
+                        resultNumber.textContent = rnd;
+                        positionMarker(rnd);
+                    }
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            });
+        }
+
+        // ---- Auto bet ----
+        function stopAuto(announce) {
+            const wasOn = autoBetEnabled;
+            autoBetEnabled = false;
+            if (autoSwitch) autoSwitch.checked = false;
+            if (autoBar) autoBar.classList.remove('active');
+            if (announce && wasOn) notify('Auto bet stopped', 'err');
+        }
+
+        function scheduleAutoNext() {
+            if (!autoBetEnabled) return;
+            const amount = parseFloat(betInput.value) || 0;
+            if (amount <= 0 || amount > balance) {
+                stopAuto(false);
+                notify('Auto bet stopped: insufficient funds', 'err');
+                return;
+            }
+            setTimeout(() => {
+                if (autoBetEnabled && !isRolling) handleRoll();
+            }, 650);
+        }
+
+        async function handleRoll() {
+            if (isRolling) return;
+
+            if (!GameBridge.isLoggedIn()) {
+                stopAuto(false);
+                notify('Please login to play!', 'err');
+                return;
+            }
+
+            const amount = parseFloat(betInput.value) || 0;
+            if (amount <= 0) {
+                stopAuto(false);
+                notify('Enter a valid bet amount!', 'err');
+                return;
+            }
+            if (amount > balance) {
+                stopAuto(false);
+                notify('Insufficient funds!', 'err');
+                return;
+            }
+
+            isRolling = true;
+            rollBtn.disabled = true;
+            resultNumber.classList.remove('win', 'lose');
+
+            // 1. Deduct bet + sync to DB
+            const newBalance = balance - amount;
+            const sync = await GameBridge.updateBalance(newBalance, -amount, 'Dice Roll Bet');
+            if (sync && sync.error) {
+                stopAuto(false);
+                notify('Sync Error: Bet failed. Try again.', 'err');
+                isRolling = false;
+                rollBtn.disabled = false;
+                return;
+            }
+            balance = newBalance;
+            updateBalanceDisplay();
+
+            // 2. Decide result (biased by admin win chance)
+            const shouldWin = Math.random() * 100 < winChance;
+            const finalValue = generateRoll(shouldWin);
+
+            // 3. Animate
+            await animateRoll(finalValue);
+
+            const won = mode === 'over' ? finalValue > target : finalValue < target;
+
+            if (won) {
+                // Weighted random payout: 1x-5x common, 50x very rare.
+                const mult = GameBridge.randomWinMultiplier();
+                const profit = GameBridge.calculatePayout(amount, mult);
+                const winBalance = balance + profit;
+
+                const winSync = await GameBridge.updateBalance(winBalance, profit, 'Dice Roll Win');
+                if (winSync && winSync.error) {
+                    notify('Sync Error: Winnings not saved!', 'err');
+                } else {
+                    balance = winBalance;
+                    updateBalanceDisplay();
+                }
+
+                resultNumber.classList.add('win');
+                rollMarker.style.background = '#2ecc71';
+                notify(`WON ৳${profit.toFixed(2)} (${finalValue} @ ${mult.toFixed(2)}x)`, 'win');
+            } else {
+                resultNumber.classList.add('lose');
+                rollMarker.style.background = '#ff2d55';
+                notify(`LOST ৳${amount.toFixed(2)} (rolled ${finalValue})`, 'err');
+            }
+
+            isRolling = false;
+            rollBtn.disabled = false;
+            scheduleAutoNext();
+        }
+
+        function notify(text, type) {
+            const area = document.getElementById('notification-area');
+            if (!area) return;
+            const note = document.createElement('div');
+            note.style.cssText = `
+                background: ${type === 'win' ? '#2ecc71' : '#ff2d55'};
+                color: white; padding: 12px 22px; border-radius: 12px;
+                margin-bottom: 10px; font-weight: 900; font-size: 0.9rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+                transform: translateY(-20px); opacity: 0;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            `;
+            note.innerText = text;
+            area.appendChild(note);
+
+            setTimeout(() => {
+                note.style.transform = 'translateY(0)';
+                note.style.opacity = '1';
+            }, 10);
+            setTimeout(() => {
+                note.style.transform = 'translateY(-20px)';
+                note.style.opacity = '0';
+                setTimeout(() => note.remove(), 300);
+            }, 4000);
+        }
+
+        function init() {
+            if (!GameBridge.isLoggedIn()) {
+                notify('Please login to play!', 'err');
+            }
+            updateBalanceDisplay();
+            updateBetInfo();
+            updateStats();
+            positionMarker(target);
+            rollMarker.classList.remove('show');
+            addEventListeners();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

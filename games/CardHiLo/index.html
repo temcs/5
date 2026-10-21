@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi-Lo Cards - TashBD</title>
+    <meta name="description" content="Hi-Lo Cards - Guess if the next card is higher or lower.">
+    <style>
+:root {
+    --bg-dark: #07110d;
+    --card-bg: #0f2019;
+    --accent-green: #2ecc71;
+    --accent-gold: #ffcc00;
+    --accent-blue: #00d2ff;
+    --accent-red: #ff2d55;
+    --text-main: #ffffff;
+    --text-muted: #8a9a92;
+    --font-primary: 'Inter', sans-serif;
+    --font-display: 'Outfit', sans-serif;
+    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-primary);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 900px;
+    height: 92vh;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-image:
+        radial-gradient(circle at 50% -20%, rgba(46, 204, 113, 0.12), transparent 50%),
+        radial-gradient(circle at center, rgba(255, 204, 0, 0.04), transparent 80%);
+    overflow: hidden;
+}
+
+/* Header */
+.game-header {
+    padding: 18px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-btn {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.home-btn:hover {
+    background: rgba(46, 204, 113, 0.25);
+}
+
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.logo-text .accent {
+    color: var(--accent-green);
+}
+
+.balance-container {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 22px;
+    border-radius: 50px;
+    text-align: center;
+    border: 1px solid rgba(46, 204, 113, 0.25);
+}
+
+.balance-label {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.balance-value {
+    color: var(--accent-green);
+    font-weight: 900;
+    font-size: 1.15rem;
+    font-family: var(--font-display);
+}
+
+/* Main */
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 30px 26px;
+    gap: 10px;
+    min-height: 0;
+}
+
+.table-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    width: 100%;
+}
+
+.card-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.slot-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+}
+
+.vs-badge {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-gold);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Cards */
+.card {
+    width: 150px;
+    height: 210px;
+    background: #fdfdfd;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    color: #1a1a1a;
+}
+
+.card.red {
+    color: #d32f2f;
+}
+
+.card.black {
+    color: #1a1a1a;
+}
+
+.corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.corner.top {
+    top: 10px;
+    left: 12px;
+}
+
+.corner.bottom {
+    bottom: 10px;
+    right: 12px;
+    transform: rotate(180deg);
+}
+
+.corner .rank {
+    font-size: 1.5rem;
+    font-family: var(--font-display);
+}
+
+.corner .suit {
+    font-size: 1.1rem;
+}
+
+.center-suit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4.2rem;
+}
+
+/* Flip */
+.flip-card {
+    width: 150px;
+    height: 210px;
+    perspective: 1200px;
+}
+
+.flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flip-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.face.front {
+    transform: rotateY(180deg);
+}
+
+.face.back {
+    background:
+        repeating-linear-gradient(45deg, #123a6b 0 10px, #0d2b50 10px 20px);
+    border: 4px solid #fdfdfd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.face.back::after {
+    content: "\f004";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 2.4rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Result */
+.result-text {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    color: var(--text-muted);
+    min-height: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.result-text.win {
+    color: var(--accent-green);
+}
+
+.result-text.lose {
+    color: var(--accent-red);
+}
+
+/* Controls */
+.controls-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.selection-panel {
+    display: flex;
+    gap: 16px;
+}
+
+.side-btn {
+    width: 170px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 2px solid #22352c;
+    background: #13261e;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: var(--transition);
+    color: var(--text-main);
+}
+
+.side-btn .side-label {
+    font-size: 1.05rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.side-btn .payout-label {
+    font-size: 0.75rem;
+    color: var(--accent-gold);
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.side-btn.higher.active {
+    border-color: var(--accent-green);
+    background: rgba(46, 204, 113, 0.14);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(46, 204, 113, 0.2);
+}
+
+.side-btn.lower.active {
+    border-color: var(--accent-red);
+    background: rgba(255, 45, 85, 0.14);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(255, 45, 85, 0.2);
+}
+
+.side-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.bet-panel {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.bet-input-group {
+    background: #13261e;
+    padding: 10px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.adjust-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #22352c;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.adjust-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#bet-amount {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.15rem;
+    outline: none;
+}
+
+#bet-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.quick-bets {
+    display: flex;
+    gap: 5px;
+}
+
+.quick-btn {
+    flex: 1;
+    background: #22352c;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quick-btn:hover {
+    background: #2f4a3d;
+}
+
+.deal-btn {
+    width: 220px;
+    height: 96px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(180deg, #34d17c, #1f9e59);
+    color: #06240f;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(46, 204, 113, 0.35);
+}
+
+.deal-btn:hover {
+    transform: translateY(-2px);
+}
+
+.deal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary-text {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.btn-secondary-text {
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+/* Notifications */
+#notification-area {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+    body {
+        overflow: auto;
+        height: auto;
+        align-items: flex-start;
+    }
+
+    .app-container {
+        height: 100dvh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .game-header {
+        padding: 12px 15px;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .balance-container {
+        padding: 6px 14px;
+    }
+
+    .balance-value {
+        font-size: 0.95rem;
+    }
+
+    .game-main {
+        padding: 16px 14px;
+        gap: 8px;
+        overflow-y: auto;
+    }
+
+    .table-area {
+        gap: 12px;
+    }
+
+    .card,
+    .flip-card {
+        width: 110px;
+        height: 156px;
+    }
+
+    .corner .rank {
+        font-size: 1.15rem;
+    }
+
+    .corner .suit {
+        font-size: 0.85rem;
+    }
+
+    .center-suit {
+        font-size: 3rem;
+    }
+
+    .vs-badge {
+        width: 34px;
+        height: 34px;
+        font-size: 0.9rem;
+    }
+
+    .result-text {
+        font-size: 1.15rem;
+    }
+
+    .selection-panel {
+        gap: 10px;
+        width: 100%;
+    }
+
+    .side-btn {
+        flex: 1;
+        width: auto;
+        padding: 11px;
+    }
+
+    .side-btn .side-label {
+        font-size: 0.9rem;
+    }
+
+    .bet-panel {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .bet-input-group {
+        width: 100%;
+    }
+
+    #bet-amount {
+        width: 100%;
+    }
+
+    .deal-btn {
+        width: 100%;
+        height: 70px;
+    }
+
+    .btn-primary-text {
+        font-size: 1.25rem;
+    }
+}
+
+    /* AUTO BET */
+.auto-toggle{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);cursor:pointer;user-select:none;margin-top:8px;}
+.auto-toggle input{accent-color:#ffcc00;width:15px;height:15px;cursor:pointer;}
+.auto-label{font-weight:800;font-size:.75rem;letter-spacing:1px;color:#cfd3dc;}
+@media (max-width: 600px), (max-height: 620px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .app-container {
+        height: auto;
+        min-height: 100dvh;
+    }
+
+    .game-main {
+        flex: none;
+        overflow: visible;
+        padding: 16px 14px;
+        gap: 12px;
+    }
+
+    .table-area {
+        gap: 8px;
+    }
+
+    #current-card,
+    .flip-card {
+        width: clamp(88px, 30vw, 110px);
+        height: auto;
+        aspect-ratio: 5 / 7;
+    }
+
+    .corner .rank {
+        font-size: 1.1rem;
+    }
+
+    .corner .suit {
+        font-size: 0.8rem;
+    }
+
+    .center-suit {
+        font-size: 2.8rem;
+    }
+}
+        .quick-bets {
+            gap: 7px;
+        }
+
+        .quick-bets .quick-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.72);
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .quick-bets .quick-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .quick-bets .quick-btn,
+        .quick-bets .q-btn {
+            min-height: 38px;
+            padding: 9px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .quick-bets .quick-btn:hover,
+        .quick-bets .q-btn:hover {
+            border-color: rgba(255, 204, 0, 0.65);
+            background: rgba(255, 204, 0, 0.2);
+        }
+
+        .quick-bets .quick-btn:active,
+        .quick-bets .q-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .quick-bets {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                width: 100%;
+                min-width: 0;
+                margin-top: 8px;
+            }
+
+            .quick-bets .quick-btn,
+            .quick-bets .q-btn {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                padding: 9px 4px;
+            }
+        }
+    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="logo">
+                <div class="home-btn" onclick="GameBridge.goHome()">
+                    <i class="fas fa-home"></i> <span>HOME</span>
+                </div>
+                <span class="logo-text">TASH<span class="accent">BD</span></span>
+            </div>
+            <div class="balance-container">
+                <span class="balance-label">YOUR BALANCE</span>
+                <span class="balance-value" id="balance-amount">৳0.00</span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <!-- Cards -->
+            <div class="table-area">
+                <div class="card-slot">
+                    <span class="slot-label">CURRENT</span>
+                    <div class="card" id="current-card">
+                        <div class="corner top"><span class="rank">A</span><span class="suit">♠</span></div>
+                        <div class="center-suit">♠</div>
+                        <div class="corner bottom"><span class="rank">A</span><span class="suit">♠</span></div>
+                    </div>
+                </div>
+
+                <div class="vs-badge" id="vs-badge"><i class="fas fa-arrow-right"></i></div>
+
+                <div class="card-slot">
+                    <span class="slot-label">NEXT</span>
+                    <div class="flip-card">
+                        <div class="flip-inner" id="flip-inner">
+                            <div class="face back" id="next-card-back"></div>
+                            <div class="face front card" id="next-card">
+                                <div class="corner top"><span class="rank">A</span><span class="suit">♠</span></div>
+                                <div class="center-suit">♠</div>
+                                <div class="corner bottom"><span class="rank">A</span><span class="suit">♠</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-text" id="result-display">PICK HIGHER OR LOWER</div>
+
+            <!-- Interaction -->
+            <div class="controls-container">
+                <div class="selection-panel">
+                    <button class="side-btn higher active" data-side="higher">
+                        <span class="side-label"><i class="fas fa-arrow-up"></i> HIGHER</span>
+                        <span class="payout-label">2x</span>
+                    </button>
+                    <button class="side-btn lower" data-side="lower">
+                        <span class="side-label"><i class="fas fa-arrow-down"></i> LOWER</span>
+                        <span class="payout-label">2x</span>
+                    </button>
+                </div>
+
+                <div class="bet-panel">
+                    <div class="bet-input-group">
+                        <div class="input-wrapper">
+                            <button class="adjust-btn" id="minus-bet">-</button>
+                            <input type="number" id="bet-amount" value="10" step="1" min="1">
+                            <button class="adjust-btn" id="plus-bet">+</button>
+                        </div>
+                        <div class="quick-bets" role="group" aria-label="Quick bet amounts">
+                            <span class="quick-label">QUICK BET</span>
+                            <button class="quick-btn" data-val="10">10</button>
+                            <button class="quick-btn" data-val="50">50</button>
+                            <button class="quick-btn" data-val="100">100</button>
+                            <button class="quick-btn" data-val="500">500</button>
+                        </div>
+                        <div class="auto-toggle"><input type="checkbox" id="auto-spin-switch"><span class="auto-label"><i class="fas fa-rotate"></i> AUTO BET</span></div>
+                    </div>
+                    <button class="deal-btn" id="deal-btn">
+                        <span class="btn-primary-text">DEAL</span>
+                        <span class="btn-secondary-text" id="btn-bet-info">10 ৳</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <div id="notification-area"></div>
+    </div>
+
+    <script src="../balancer.js?v=5"></script>
+    <script>
+// Hi-Lo Cards (CardHiLo / TashBD)
+// Guess whether the next card is HIGHER or LOWER than the current card.
+// Winning percentage is controlled from the admin panel via GameBridge.getGameConfig().
+// Wins return 2x the bet.
+
+const CONFIG = {
+    MIN_BET: 1,
+    MAX_BET: 100000,
+    FLIP_MS: 650,
+};
+
+// State
+let balance = GameBridge.getBalance();
+let prediction = 'higher'; // 'higher' | 'lower'
+let isDealing = false;
+let winChance = 50; // Admin-configurable win chance (%)
+
+// Load admin-configured win chance
+GameBridge.getGameConfig().then(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+GameBridge.onGameConfigUpdate(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+
+// Deck definition (Ace high: 2..14)
+const SUITS = [
+    { sym: '♠', color: 'black' },
+    { sym: '♥', color: 'red' },
+    { sym: '♦', color: 'red' },
+    { sym: '♣', color: 'black' },
+];
+
+function rankLabel(rank) {
+    if (rank === 11) return 'J';
+    if (rank === 12) return 'Q';
+    if (rank === 13) return 'K';
+    if (rank === 14) return 'A';
+    return String(rank);
+}
+
+function makeCard(rank, suit) {
+    return { rank, rankLabel: rankLabel(rank), suit };
+}
+
+function randomCard() {
+    const rank = Math.floor(Math.random() * 13) + 2; // 2..14
+    const suit = SUITS[Math.floor(Math.random() * SUITS.length)];
+    return makeCard(rank, suit);
+}
+
+// DOM Elements
+const balanceDisplay = document.getElementById('balance-amount');
+const betInput = document.getElementById('bet-amount');
+const btnBetInfo = document.getElementById('btn-bet-info');
+const currentCardEl = document.getElementById('current-card');
+const nextCardEl = document.getElementById('next-card');
+const flipInner = document.getElementById('flip-inner');
+const resultDisplay = document.getElementById('result-display');
+const dealBtn = document.getElementById('deal-btn');
+const sideBtns = document.querySelectorAll('.side-btn');
+const higherBtn = document.querySelector('.side-btn.higher');
+const lowerBtn = document.querySelector('.side-btn.lower');
+
+// Current/next card state
+let currentCard = randomCard();
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+function init() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login to play!', 'err');
+    }
+    updateBalanceDisplay();
+    updateBetDisplay();
+    renderCard(currentCardEl, currentCard);
+    updatePredictionAvailability();
+    addEventListeners();
+}
+
+function updateBalanceDisplay() {
+    balanceDisplay.innerText = `৳${balance.toFixed(2)}`;
+}
+
+function updateBetDisplay() {
+    const val = parseFloat(betInput.value) || 0;
+    btnBetInfo.innerText = `${GameBridge.formatBetAmount(val)} ৳`;
+}
+
+function renderCard(cardEl, card) {
+    cardEl.classList.remove('red', 'black');
+    cardEl.classList.add(card.suit.color);
+    cardEl.querySelectorAll('.rank').forEach(el => el.innerText = card.rankLabel);
+    cardEl.querySelectorAll('.suit').forEach(el => el.innerText = card.suit.sym);
+    const center = cardEl.querySelector('.center-suit');
+    if (center) center.innerText = card.suit.sym;
+}
+
+// ---------------------------------------------------------------------------
+// Events
+// ---------------------------------------------------------------------------
+function addEventListeners() {
+    document.getElementById('plus-bet').addEventListener('click', () => {
+        if (isDealing) return;
+        betInput.value = GameBridge.formatBetAmount((parseFloat(betInput.value) || 0) + 10);
+        updateBetDisplay();
+    });
+
+    document.getElementById('minus-bet').addEventListener('click', () => {
+        if (isDealing) return;
+        const val = parseFloat(betInput.value) || 0;
+        if (val > 10) {
+            betInput.value = GameBridge.formatBetAmount(val - 10);
+            updateBetDisplay();
+        }
+    });
+
+    betInput.addEventListener('input', updateBetDisplay);
+
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isDealing) return;
+            betInput.value = btn.dataset.val;
+            updateBetDisplay();
+        });
+    });
+
+    sideBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isDealing || btn.disabled) return;
+            selectSide(btn.dataset.side);
+        });
+    });
+
+    dealBtn.addEventListener('click', handleDeal);
+}
+
+function selectSide(side) {
+    prediction = side;
+    sideBtns.forEach(b => b.classList.toggle('active', b.dataset.side === side));
+    if (!isDealing) {
+        resultDisplay.className = 'result-text';
+        resultDisplay.innerText = `BETTING ON ${side.toUpperCase()}`;
+    }
+}
+
+// Disable an impossible prediction (can't go higher than Ace, lower than 2)
+function updatePredictionAvailability() {
+    higherBtn.disabled = currentCard.rank >= 14;
+    lowerBtn.disabled = currentCard.rank <= 2;
+
+    if (prediction === 'higher' && higherBtn.disabled) {
+        selectSide('lower');
+    } else if (prediction === 'lower' && lowerBtn.disabled) {
+        selectSide('higher');
+    } else {
+        sideBtns.forEach(b => b.classList.toggle('active', b.dataset.side === prediction));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Gameplay
+// ---------------------------------------------------------------------------
+// Pick the next card, biased so the player wins `winChance`% of the time.
+function pickNextCard(current, prediction, shouldWin) {
+    const ranks = [];
+    for (let r = 2; r <= 14; r++) ranks.push(r);
+
+    let candidates;
+    if (prediction === 'higher') {
+        candidates = shouldWin ? ranks.filter(r => r > current.rank) : ranks.filter(r => r <= current.rank);
+    } else {
+        candidates = shouldWin ? ranks.filter(r => r < current.rank) : ranks.filter(r => r >= current.rank);
+    }
+    if (candidates.length === 0) candidates = ranks;
+
+    const rank = candidates[Math.floor(Math.random() * candidates.length)];
+    const suit = SUITS[Math.floor(Math.random() * SUITS.length)];
+    return makeCard(rank, suit);
+}
+
+async function handleDeal() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login first!', 'err');
+        return;
+    }
+    if (isDealing) return;
+
+    const amount = parseFloat(betInput.value) || 0;
+    if (amount < CONFIG.MIN_BET) {
+        notify(`Minimum bet is ৳${CONFIG.MIN_BET}`, 'err');
+        return;
+    }
+    if (amount > balance) {
+        notify('Insufficient funds!', 'err');
+        return;
+    }
+
+    // Deduct the bet first
+    const newBalance = balance - amount;
+    const sync = await GameBridge.updateBalance(newBalance, -amount, `Bet on Card Hi-Lo`);
+    if (sync && sync.error) {
+        notify('Sync Error: Bet failed. Try again.', 'err');
+        return;
+    }
+    balance = newBalance;
+    updateBalanceDisplay();
+
+    isDealing = true;
+    dealBtn.disabled = true;
+    resultDisplay.className = 'result-text';
+    resultDisplay.innerText = 'DEALING...';
+
+    // Outcome biased by admin-configured win chance
+    const shouldWin = Math.random() * 100 < winChance;
+    const next = pickNextCard(currentCard, prediction, shouldWin);
+
+    // Render + flip the next card
+    renderCard(nextCardEl, next);
+    flipInner.classList.remove('flipped');
+    void flipInner.offsetWidth; // reflow so the flip animates
+    flipInner.classList.add('flipped');
+
+    setTimeout(async () => {
+        const won = (prediction === 'higher' && next.rank > currentCard.rank) ||
+            (prediction === 'lower' && next.rank < currentCard.rank);
+
+        if (won) {
+            const winMult = 2;
+            const winAmount = GameBridge.calculatePayout(amount, winMult);
+            const winBalance = balance + winAmount;
+            const winSync = await GameBridge.updateBalance(winBalance, winAmount, `Win on Card Hi-Lo`);
+            if (!(winSync && winSync.error)) {
+                balance = winBalance;
+                updateBalanceDisplay();
+            }
+            resultDisplay.innerText = `YOU WON! ${next.rankLabel} IS ${prediction === 'higher' ? 'HIGHER' : 'LOWER'} (${winMult.toFixed(2)}x)`;
+            resultDisplay.classList.add('win');
+            notify(`WON ৳${winAmount.toFixed(2)} (${winMult.toFixed(2)}x)`, 'win');
+        } else {
+            const tie = next.rank === currentCard.rank;
+            resultDisplay.innerText = tie
+                ? `TIE! HOUSE WINS (${next.rankLabel})`
+                : `YOU LOST! (${next.rankLabel})`;
+            resultDisplay.classList.add('lose');
+            notify(`LOST ৳${amount.toFixed(2)}`, 'err');
+        }
+
+        // The next card becomes the current card for the following round
+        currentCard = next;
+        renderCard(currentCardEl, currentCard);
+
+        // Hide the next card again so the deck is ready for a fast new round
+        setTimeout(() => {
+            flipInner.classList.remove('flipped');
+            isDealing = false;
+            dealBtn.disabled = false;
+            updatePredictionAvailability();
+
+            if (document.getElementById('auto-spin-switch').checked && !isDealing) {
+                setTimeout(handleDeal, 400);
+            }
+        }, 900);
+    }, CONFIG.FLIP_MS);
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+function notify(text, type) {
+    const area = document.getElementById('notification-area');
+    if (!area) return;
+    const note = document.createElement('div');
+    note.style.cssText = `
+        background: ${type === 'win' ? '#2ecc71' : '#ff2d55'};
+        color: white; padding: 12px 25px; border-radius: 12px;
+        margin-bottom: 10px; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        transform: translateY(-20px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    `;
+    note.innerText = text;
+    area.appendChild(note);
+
+    setTimeout(() => {
+        note.style.transform = 'translateY(0)';
+        note.style.opacity = '1';
+    }, 10);
+    setTimeout(() => {
+        note.style.transform = 'translateY(-20px)';
+        note.style.opacity = '0';
+        setTimeout(() => note.remove(), 300);
+    }, 4000);
+}
+
+init();
+
+    </script>
+</body>
+
+</html>

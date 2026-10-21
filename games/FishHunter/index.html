@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fish Hunter BD</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Outfit:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #ffcc00;
+            --cyan: #35e0ff;
+            --line: rgba(120, 200, 255, 0.18);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #020b16;
+            color: #fff;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app {
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at 50% 0%, #0b3b57 0%, #031525 45%, #01070d 100%);
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(1, 8, 16, 0.72);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+            color: #dff6ff;
+            font: 700 0.78rem 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .home-btn:hover {
+            background: rgba(53, 224, 255, 0.15);
+            border-color: rgba(53, 224, 255, 0.4);
+        }
+
+        .game-title {
+            flex: 1;
+            text-align: center;
+            font: 900 clamp(1rem, 2.6vw, 1.5rem) 'Outfit', sans-serif;
+            letter-spacing: 1.5px;
+            color: #e9fbff;
+            text-shadow: 0 0 18px rgba(53, 224, 255, 0.35);
+            white-space: nowrap;
+        }
+
+        .game-title span {
+            color: var(--gold);
+            text-shadow: 0 0 18px rgba(255, 204, 0, 0.35);
+        }
+
+        .game-title small {
+            font-size: 0.55em;
+            color: #7dd3fc;
+            margin-left: 4px;
+            letter-spacing: 2px;
+        }
+
+        .balance-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(255, 204, 0, 0.08);
+            border: 1px solid rgba(255, 204, 0, 0.22);
+            flex-shrink: 0;
+        }
+
+        .balance-label {
+            font: 700 0.58rem 'Inter', sans-serif;
+            letter-spacing: 1.5px;
+            color: #9fbfd4;
+        }
+
+        .balance-value {
+            font: 900 1.05rem 'Outfit', sans-serif;
+            color: var(--gold);
+        }
+
+        .game-main {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stage {
+            position: relative;
+            flex: 1;
+            min-height: 260px;
+            overflow: hidden;
+        }
+
+        #game-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .stage-hud {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 8px;
+            pointer-events: none;
+            z-index: 4;
+            flex-wrap: wrap;
+        }
+
+        .hud-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(1, 10, 20, 0.65);
+            border: 1px solid var(--line);
+            font: 800 0.76rem 'Inter', sans-serif;
+            color: #cfefff;
+            backdrop-filter: blur(6px);
+        }
+
+        .hud-item i {
+            color: var(--cyan);
+            font-size: 0.78rem;
+        }
+
+        .hud-item.gold {
+            color: var(--gold);
+            border-color: rgba(255, 204, 0, 0.25);
+        }
+
+        .hud-item.gold i {
+            color: var(--gold);
+        }
+
+        .hint {
+            position: absolute;
+            left: 50%;
+            bottom: 104px;
+            transform: translateX(-50%);
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: rgba(1, 10, 20, 0.7);
+            border: 1px solid var(--line);
+            color: #bde9ff;
+            font: 700 0.78rem 'Inter', sans-serif;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s;
+            z-index: 4;
+            backdrop-filter: blur(6px);
+        }
+
+        .hint.hide {
+            opacity: 0;
+        }
+
+        .boss-banner {
+            position: absolute;
+            top: 64px;
+            left: 50%;
+            transform: translate(-50%, -12px);
+            padding: 8px 20px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(255, 60, 60, 0.2), rgba(255, 204, 0, 0.25));
+            border: 1px solid rgba(255, 204, 0, 0.55);
+            color: var(--gold);
+            font: 900 1rem 'Outfit', sans-serif;
+            letter-spacing: 2px;
+            text-shadow: 0 0 18px rgba(255, 204, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            z-index: 5;
+            white-space: nowrap;
+        }
+
+        .boss-banner.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .notification-area {
+            position: absolute;
+            top: 60px;
+            right: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 6;
+            pointer-events: none;
+            max-width: min(320px, 80vw);
+        }
+
+        .notification {
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(2, 15, 28, 0.94);
+            border: 1px solid var(--line);
+            color: #dff6ff;
+            font: 700 0.8rem 'Inter', sans-serif;
+            transform: translateX(20px);
+            opacity: 0;
+            transition: 0.25s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.err {
+            border-color: rgba(255, 77, 109, 0.45);
+            color: #ffb3c1;
+        }
+
+        .notification.win {
+            border-color: rgba(255, 204, 0, 0.5);
+            color: var(--gold);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+            background: rgba(1, 8, 16, 0.92);
+            border-top: 1px solid var(--line);
+            backdrop-filter: blur(10px);
+            z-index: 7;
+            flex-shrink: 0;
+        }
+
+        .bet-control {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .bet-label {
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            color: #8fb4cc;
+        }
+
+        .bet-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 6px;
+            border-radius: 12px;
+            background: #071a2c;
+            border: 1px solid #23445f;
+        }
+
+        .round-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(53, 224, 255, 0.12);
+            color: #9deaff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .round-btn:hover {
+            background: rgba(53, 224, 255, 0.25);
+        }
+
+        .round-btn:active {
+            transform: scale(0.94);
+        }
+
+        #bet-amount {
+            width: 68px;
+            height: 30px;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #fff;
+            font: 900 1rem 'Outfit', sans-serif;
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        #bet-amount::-webkit-outer-spin-button,
+        #bet-amount::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .currency {
+            color: var(--gold);
+            font: 900 0.9rem 'Outfit', sans-serif;
+            margin-right: 2px;
+        }
+
+        .quick-bets {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 1 auto;
+            min-width: 0;
+        }
+
+        .quick-label {
+            flex: 0 0 auto;
+            margin-right: 2px;
+            color: #8fb4cc;
+            font: 800 0.58rem 'Inter', sans-serif;
+            letter-spacing: 1.2px;
+            white-space: nowrap;
+        }
+
+        .quick-btn {
+            flex: 1 1 0;
+            min-width: 44px;
+            min-height: 36px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(53, 224, 255, 0.3);
+            background: linear-gradient(180deg, rgba(53, 224, 255, 0.16), rgba(53, 224, 255, 0.06));
+            color: #eafcff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(53, 224, 255, 0.24);
+            border-color: rgba(53, 224, 255, 0.55);
+        }
+
+        .quick-btn:active {
+            transform: scale(0.96);
+        }
+
+        .sound-btn {
+            width: 38px;
+            height: 38px;
+            margin-left: auto;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.05);
+            color: #cfefff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .sound-btn:hover {
+            background: rgba(53, 224, 255, 0.12);
+        }
+
+        .sound-btn.muted {
+            color: #64748b;
+        }
+
+        @media (max-width: 640px) {
+            .game-header {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                gap: 8px;
+                padding: 9px 10px;
+            }
+
+            .game-title {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 0.98rem;
+                letter-spacing: 0.6px;
+            }
+
+            .game-title small {
+                display: none;
+            }
+
+            .balance-label {
+                display: none;
+            }
+
+            .balance-box {
+                min-width: 0;
+                padding: 7px 9px;
+            }
+
+            .balance-value {
+                white-space: nowrap;
+            }
+
+            .home-btn span {
+                display: none;
+            }
+
+            .home-btn {
+                padding: 9px 11px;
+            }
+
+            .controls {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+            }
+
+            .bet-control {
+                grid-column: 1;
+                grid-row: 1;
+                min-width: 0;
+                gap: 6px;
+            }
+
+            .bet-label {
+                flex: 0 0 auto;
+            }
+
+            .bet-input-wrap {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            #bet-amount {
+                flex: 1 1 auto;
+                width: auto;
+                min-width: 0;
+            }
+
+            .sound-btn {
+                grid-column: 2;
+                grid-row: 1;
+                width: 34px;
+                height: 34px;
+                margin-left: 0;
+            }
+
+            .quick-bets {
+                grid-column: 1 / -1;
+                grid-row: 2;
+                display: grid;
+                grid-template-columns: auto repeat(4, minmax(0, 1fr));
+                gap: 6px;
+                width: auto;
+                min-width: 0;
+            }
+
+            .quick-btn {
+                min-width: 0;
+                min-height: 38px;
+                padding: 8px 4px;
+            }
+
+            .hint {
+                font-size: 0.7rem;
+                padding: 7px 12px;
+                bottom: 100px;
+            }
+
+            .stage-hud {
+                top: 8px;
+                left: 8px;
+                gap: 5px;
+            }
+
+            .hud-item {
+                padding: 5px 8px;
+                font-size: 0.68rem;
+            }
+
+            .notification-area {
+                top: 50px;
+                right: 8px;
+            }
+        }
+
+        @media (max-height: 620px) {
+            .stage {
+                min-height: 190px;
+            }
+
+            .game-header {
+                padding: 7px 10px;
+            }
+
+            .controls {
+                padding-top: 6px;
+                padding-bottom: calc(6px + env(safe-area-inset-bottom));
+            }
+        }
+        .quick-bets {
+            gap: 7px;
+        }
+
+        .quick-bets .quick-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.72);
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .quick-bets .quick-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .quick-bets .quick-btn,
+        .quick-bets .q-btn {
+            min-height: 38px;
+            padding: 9px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .quick-bets .quick-btn:hover,
+        .quick-bets .q-btn:hover {
+            border-color: rgba(255, 204, 0, 0.65);
+            background: rgba(255, 204, 0, 0.2);
+        }
+
+        .quick-bets .quick-btn:active,
+        .quick-bets .q-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .quick-bets {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                width: 100%;
+                min-width: 0;
+                margin-top: 8px;
+            }
+
+            .quick-bets .quick-btn,
+            .quick-bets .q-btn {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                padding: 9px 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="game-header">
+            <button class="home-btn" type="button" onclick="GameBridge.goHome()">
+                <i class="fas fa-home"></i> <span>HOME</span>
+            </button>
+            <div class="game-title">FISH <span>HUNTER</span><small>BD</small></div>
+            <div class="balance-box">
+                <span class="balance-label">BALANCE</span>
+                <span class="balance-value" id="balance-amount">৳0</span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <section class="stage" id="stage">
+                <canvas id="game-canvas"></canvas>
+
+                <div class="stage-hud">
+                    <div class="hud-item"><i class="fas fa-crosshairs"></i><span id="shots-count">0</span></div>
+                    <div class="hud-item"><i class="fas fa-fish"></i><span id="kills-count">0</span></div>
+                    <div class="hud-item gold"><i class="fas fa-coins"></i><span id="won-amount">৳0</span></div>
+                </div>
+
+                <div class="hint" id="hint">Aim at a fish and tap / hold to fire</div>
+                <div class="boss-banner" id="boss-banner"><i class="fas fa-crown"></i> BOSS SHARK!</div>
+                <div class="notification-area" id="notification-area"></div>
+            </section>
+
+            <section class="controls">
+                <div class="bet-control">
+                    <span class="bet-label">SHOT COST</span>
+                    <div class="bet-input-wrap">
+                        <button type="button" class="round-btn" id="minus-bet" aria-label="Decrease shot cost">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="bet-amount" value="10" step="1" min="1" inputmode="numeric">
+                        <span class="currency">৳</span>
+                        <button type="button" class="round-btn" id="plus-bet" aria-label="Increase shot cost">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quick-bets" role="group" aria-label="Quick bet amounts">
+                    <span class="quick-label">QUICK BET</span>
+                    <button type="button" class="quick-btn" data-val="10">10</button>
+                    <button type="button" class="quick-btn" data-val="50">50</button>
+                    <button type="button" class="quick-btn" data-val="100">100</button>
+                    <button type="button" class="quick-btn" data-val="500">500</button>
+                </div>
+
+                <button type="button" class="sound-btn" id="sound-toggle" aria-label="Toggle sound">
+                    <i class="fas fa-volume-high"></i>
+                </button>
+            </section>
+        </main>
+    </div>
+
+    <script src="../balancer.js?v=6"></script>
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const stage = document.getElementById('stage');
+        const betInput = document.getElementById('bet-amount');
+        const balanceEl = document.getElementById('balance-amount');
+        const shotsEl = document.getElementById('shots-count');
+        const killsEl = document.getElementById('kills-count');
+        const wonEl = document.getElementById('won-amount');
+        const hintEl = document.getElementById('hint');
+        const bossBanner = document.getElementById('boss-banner');
+        const notificationArea = document.getElementById('notification-area');
+        const soundBtn = document.getElementById('sound-toggle');
+
+        const CONFIG = {
+            MIN_BET: 1,
+            SHOT_COOLDOWN: 380,
+            BLAST_RADIUS: 54,
+            MAX_FISH: 9,
+            SPAWN_MIN: 0.85,
+            SPAWN_MAX: 1.6,
+            SHELL_FLIGHT: 0.28
+        };
+
+        const FISH_TYPES = [
+            { id: 'small', emoji: '🐟', hp: 1, size: 38, speed: [70, 115], reward: 1.2, weight: 55, color: '#7ef9ff' },
+            { id: 'medium', emoji: '🐠', hp: 2, size: 50, speed: [50, 85], reward: 3, weight: 30, color: '#ffd166' },
+            { id: 'large', emoji: '🐡', hp: 3, size: 62, speed: [36, 60], reward: 4.5, weight: 12, color: '#ff8fab' },
+            { id: 'boss', emoji: '🦈', hp: 5, size: 84, speed: [24, 42], reward: 8, weight: 3, color: '#c77dff' }
+        ];
+
+        let W = 0;
+        let H = 0;
+        let DPR = 1;
+        let bgGradient = null;
+
+        let balance = 0;
+        let winChance = 50;
+
+        let fishes = [];
+        let shells = [];
+        let explosions = [];
+        let particles = [];
+        let bubbles = [];
+        let floatTexts = [];
+
+        let shotsFired = 0;
+        let kills = 0;
+        let totalWon = 0;
+
+        let lastShot = 0;
+        let spawnTimer = 1.2;
+        let muzzleFlash = 0;
+
+        let firing = false;
+        let fireTimer = null;
+
+        let aim = { x: 0, y: 0 };
+        let cannon = { x: 0, y: 0, angle: -Math.PI / 2 };
+
+        let lastFrame = 0;
+        let hintDismissed = false;
+        let bossTimer = null;
+        let syncChain = Promise.resolve();
+
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        try {
+            soundEnabled = localStorage.getItem('fish_hunter_sound') !== 'off';
+        } catch (e) { }
+
+        function rand(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function formatMoney(value) {
+            const num = Number(value) || 0;
+            return num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function formatBet(value) {
+            if (typeof GameBridge !== 'undefined' && GameBridge && typeof GameBridge.formatBetAmount === 'function') {
+                return GameBridge.formatBetAmount(value);
+            }
+            const amount = parseFloat(value);
+            if (!isFinite(amount)) return '0';
+            return Number.isInteger(amount) ? String(amount) : String(Math.round(amount * 100) / 100);
+        }
+
+        function updateBalanceDisplay() {
+            balanceEl.innerText = `৳${formatMoney(balance)}`;
+        }
+
+        function updateHud() {
+            shotsEl.textContent = shotsFired;
+            killsEl.textContent = kills;
+            wonEl.textContent = `৳${formatMoney(totalWon)}`;
+        }
+
+        function notify(text, type = 'info') {
+            const note = document.createElement('div');
+            note.className = `notification ${type === 'info' ? '' : type}`;
+            note.textContent = text;
+            notificationArea.appendChild(note);
+            requestAnimationFrame(() => note.classList.add('show'));
+            setTimeout(() => {
+                note.classList.remove('show');
+                setTimeout(() => note.remove(), 250);
+            }, 2600);
+        }
+
+        function getBet() {
+            const raw = parseFloat(betInput.value);
+            if (!isFinite(raw) || raw <= 0) return 0;
+            return Math.max(CONFIG.MIN_BET, Math.round(raw));
+        }
+
+        function normalizeBetInput() {
+            const value = Math.max(CONFIG.MIN_BET, Math.round(parseFloat(betInput.value) || 0));
+            betInput.value = formatBet(value);
+        }
+
+        function fishReward(fish) {
+            const baseCost = fish.hits > 0 ? fish.invested / fish.hits : getBet();
+            return Math.max(1, Math.round(baseCost * fish.rewardMult));
+        }
+
+        function pickFishType() {
+            const total = FISH_TYPES.reduce((sum, type) => sum + type.weight, 0);
+            let roll = Math.random() * total;
+            for (const type of FISH_TYPES) {
+                roll -= type.weight;
+                if (roll <= 0) return type;
+            }
+            return FISH_TYPES[0];
+        }
+
+        function spawnFish(forcedType) {
+            if (fishes.length >= CONFIG.MAX_FISH) return;
+
+            const type = forcedType || pickFishType();
+            const size = type.size * rand(0.9, 1.1);
+            const fromLeft = Math.random() < 0.5;
+
+            let baseY = rand(80, Math.max(100, H - 150));
+            for (let i = 0; i < 14; i++) {
+                const candidate = rand(80, Math.max(100, H - 150));
+                if (!fishes.some(fish => Math.abs(fish.baseY - candidate) < 72)) {
+                    baseY = candidate;
+                    break;
+                }
+                baseY = candidate;
+            }
+
+            fishes.push({
+                type,
+                size,
+                baseY,
+                x: fromLeft ? -size : W + size,
+                y: baseY,
+                speed: rand(type.speed[0], type.speed[1]) * (fromLeft ? 1 : -1),
+                hp: type.hp,
+                maxHp: type.hp,
+                rewardMult: type.reward,
+                hits: 0,
+                invested: 0,
+                phase: rand(0, Math.PI * 2),
+                waveAmp: rand(10, 32),
+                waveSpeed: rand(0.8, 1.8),
+                wobble: rand(0, Math.PI * 2),
+                hitFlash: 0
+            });
+
+            if (type.id === 'boss') showBossBanner();
+        }
+
+        function showBossBanner() {
+            bossBanner.classList.add('show');
+            clearTimeout(bossTimer);
+            bossTimer = setTimeout(() => bossBanner.classList.remove('show'), 2200);
+            playBossSound();
+        }
+
+        function resize() {
+            const rect = stage.getBoundingClientRect();
+            W = Math.max(320, rect.width);
+            H = Math.max(220, rect.height);
+            DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+            canvas.width = Math.round(W * DPR);
+            canvas.height = Math.round(H * DPR);
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+            cannon.x = W / 2;
+            cannon.y = H - 34;
+
+            if (!aim.x && !aim.y) {
+                aim.x = W / 2;
+                aim.y = H / 2;
+            }
+            aim.x = Math.max(8, Math.min(W - 8, aim.x));
+            aim.y = Math.max(8, Math.min(H - 8, aim.y));
+
+            bgGradient = ctx.createLinearGradient(0, 0, 0, H);
+            bgGradient.addColorStop(0, '#06324a');
+            bgGradient.addColorStop(0.45, '#05283c');
+            bgGradient.addColorStop(0.78, '#031a29');
+            bgGradient.addColorStop(1, '#020e17');
+
+            createBubbles();
+        }
+
+        function createBubbles() {
+            bubbles = [];
+            const count = Math.max(18, Math.min(55, Math.round((W * H) / 18000)));
+            for (let i = 0; i < count; i++) {
+                bubbles.push(makeBubble(true));
+            }
+        }
+
+        function makeBubble(anywhere) {
+            return {
+                x: rand(0, W),
+                y: anywhere ? rand(0, H) : H + rand(4, 30),
+                r: rand(1.5, 5.5),
+                speed: rand(14, 42),
+                drift: rand(4, 14),
+                wobble: rand(0, Math.PI * 2),
+                alpha: rand(0.12, 0.45)
+            };
+        }
+
+        function updateBubbles(dt) {
+            bubbles.forEach(bubble => {
+                bubble.y -= bubble.speed * dt;
+                bubble.wobble += dt * 2;
+                bubble.x += Math.sin(bubble.wobble) * bubble.drift * dt;
+                if (bubble.y < -bubble.r) {
+                    Object.assign(bubble, makeBubble(false));
+                }
+            });
+        }
+
+        function updateCannon() {
+            cannon.x = W / 2;
+            cannon.y = H - 34;
+
+            const targetY = Math.min(aim.y, cannon.y - 28);
+            let angle = Math.atan2(targetY - cannon.y, aim.x - cannon.x);
+
+            if (angle > -0.12) angle = -0.12;
+            if (angle < -Math.PI + 0.12) angle = -Math.PI + 0.12;
+
+            cannon.angle = angle;
+        }
+
+        function getMuzzle() {
+            const length = 58;
+            return {
+                x: cannon.x + Math.cos(cannon.angle) * length,
+                y: cannon.y + Math.sin(cannon.angle) * length
+            };
+        }
+
+        function updateFish(dt) {
+            for (let i = fishes.length - 1; i >= 0; i--) {
+                const fish = fishes[i];
+                fish.x += fish.speed * dt;
+                fish.wobble += dt * fish.waveSpeed;
+                fish.y = fish.baseY + Math.sin(fish.wobble + fish.phase) * fish.waveAmp;
+                fish.hitFlash = Math.max(0, fish.hitFlash - dt);
+
+                if (fish.x < -fish.size * 2 || fish.x > W + fish.size * 2) {
+                    fishes.splice(i, 1);
+                }
+            }
+        }
+
+        function fire() {
+            const now = performance.now();
+            if (now - lastShot < CONFIG.SHOT_COOLDOWN) return;
+
+            const cost = getBet();
+            if (cost < CONFIG.MIN_BET) {
+                notify('Minimum shot cost is ৳1', 'err');
+                stopFiring();
+                return;
+            }
+
+            if (!GameBridge.isLoggedIn()) {
+                notify('Please login to play!', 'err');
+                stopFiring();
+                return;
+            }
+
+            if (cost > balance) {
+                notify('Insufficient balance!', 'err');
+                stopFiring();
+                return;
+            }
+
+            lastShot = now;
+            betInput.value = formatBet(cost);
+            balance -= cost;
+            shotsFired += 1;
+            muzzleFlash = 0.09;
+
+            updateBalanceDisplay();
+            updateHud();
+            dismissHint();
+            playShotSound();
+
+            updateCannon();
+            const muzzle = getMuzzle();
+            shells.push({
+                sx: muzzle.x,
+                sy: muzzle.y,
+                tx: aim.x,
+                ty: aim.y,
+                x: muzzle.x,
+                y: muzzle.y,
+                t: 0,
+                dur: CONFIG.SHELL_FLIGHT,
+                cost
+            });
+
+            syncBalance(balance, -cost, 'Fish Hunter shot');
+        }
+
+        function startFiring() {
+            if (firing) return;
+            firing = true;
+            fire();
+            if (firing) scheduleNextShot();
+        }
+
+        function scheduleNextShot() {
+            clearTimeout(fireTimer);
+            fireTimer = setTimeout(() => {
+                if (!firing) return;
+                fire();
+                if (firing) scheduleNextShot();
+            }, CONFIG.SHOT_COOLDOWN + 10);
+        }
+
+        function stopFiring() {
+            firing = false;
+            clearTimeout(fireTimer);
+            fireTimer = null;
+        }
+
+        function updateShells(dt) {
+            for (let i = shells.length - 1; i >= 0; i--) {
+                const shell = shells[i];
+                shell.t += dt;
+                const progress = Math.min(1, shell.t / shell.dur);
+                shell.x = shell.sx + (shell.tx - shell.sx) * progress;
+                shell.y = shell.sy + (shell.ty - shell.sy) * progress - Math.sin(progress * Math.PI) * 72;
+
+                if (progress >= 1) {
+                    shells.splice(i, 1);
+                    explode(shell);
+                }
+            }
+        }
+
+        function explode(shell) {
+            explosions.push({
+                x: shell.tx,
+                y: shell.ty,
+                t: 0,
+                life: 0.4,
+                maxR: CONFIG.BLAST_RADIUS
+            });
+
+            playExplosionSound();
+
+            const targets = fishes.filter(fish => {
+                const distance = Math.hypot(fish.x - shell.tx, fish.y - shell.ty);
+                return distance <= CONFIG.BLAST_RADIUS + fish.size * 0.28;
+            });
+
+            if (targets.length === 0) {
+                addFloatText(shell.tx, shell.ty - 8, 'MISS', '#9fb6c9');
+                return;
+            }
+
+            let damaged = false;
+
+            targets.forEach(fish => {
+                if (Math.random() * 100 >= winChance) return;
+                damaged = true;
+                fish.hp -= 1;
+                fish.hits += 1;
+                fish.invested += shell.cost;
+                fish.hitFlash = 0.3;
+                spawnSparks(fish.x, fish.y, fish.type.color, 8);
+
+                if (fish.hp <= 0) {
+                    killFish(fish);
+                }
+            });
+
+            if (!damaged) {
+                addFloatText(shell.tx, shell.ty - 8, 'DEFLECTED', '#ffd166');
+            }
+        }
+
+        function killFish(fish) {
+            const index = fishes.indexOf(fish);
+            if (index !== -1) fishes.splice(index, 1);
+
+            const avgCost = fish.invested / Math.max(1, fish.hits);
+            const rawReward = Math.round(avgCost * fish.rewardMult);
+            const maxReward = Math.round(avgCost * GameBridge.MAX_WIN_MULTIPLIER);
+            const reward = Math.max(1, Math.min(rawReward, maxReward));
+
+            balance += reward;
+            totalWon += reward;
+            kills += 1;
+
+            updateBalanceDisplay();
+            updateHud();
+            addFloatText(fish.x, fish.y - 10, `+৳${formatMoney(reward)}`, '#ffcc00');
+            spawnSparks(fish.x, fish.y, '#ffcc00', 16);
+            playKillSound();
+
+            syncBalance(balance, reward, 'Fish Hunter win');
+        }
+
+        function spawnSparks(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x,
+                    y,
+                    vx: rand(-130, 130),
+                    vy: rand(-150, 70),
+                    size: rand(1.5, 4),
+                    color,
+                    t: 0,
+                    life: rand(0.35, 0.8)
+                });
+            }
+        }
+
+        function addFloatText(x, y, text, color) {
+            floatTexts.push({ x, y, text, color, t: 0, life: 0.9 });
+        }
+
+        function updateExplosions(dt) {
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                explosions[i].t += dt;
+                if (explosions[i].t >= explosions[i].life) explosions.splice(i, 1);
+            }
+        }
+
+        function updateParticles(dt) {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.t += dt;
+                particle.x += particle.vx * dt;
+                particle.y += particle.vy * dt;
+                particle.vy += 120 * dt;
+                if (particle.t >= particle.life) particles.splice(i, 1);
+            }
+        }
+
+        function updateFloatTexts(dt) {
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                const text = floatTexts[i];
+                text.t += dt;
+                text.y -= 34 * dt;
+                if (text.t >= text.life) floatTexts.splice(i, 1);
+            }
+        }
+
+        function drawLightRays(now) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            for (let i = 0; i < 3; i++) {
+                const x = W * 0.18 + i * W * 0.3 + Math.sin(now / 5200 + i) * 40;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x + 90, 0);
+                ctx.lineTo(x - 80, H);
+                ctx.lineTo(x - 190, H);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(80, 190, 255, 0.035)';
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function drawBubbles() {
+            ctx.save();
+            bubbles.forEach(bubble => {
+                ctx.globalAlpha = bubble.alpha;
+                ctx.strokeStyle = 'rgba(170, 240, 255, 0.75)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(bubble.x, bubble.y, bubble.r, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+
+        function drawSeabed() {
+            const y = H - 12;
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(3, 24, 36, 0.92)';
+            ctx.beginPath();
+            ctx.moveTo(0, H);
+            ctx.lineTo(0, y);
+            ctx.quadraticCurveTo(W * 0.25, y - 18, W * 0.5, y);
+            ctx.quadraticCurveTo(W * 0.75, y + 12, W, y - 4);
+            ctx.lineTo(W, H);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(22, 120, 96, 0.45)';
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            for (let i = 0; i < 5; i++) {
+                const x = 30 + i * (W - 60) / 4;
+                ctx.beginPath();
+                ctx.moveTo(x, H - 6);
+                ctx.bezierCurveTo(x - 14, H - 50, x + 18, H - 80, x - 6, H - 120);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawFish(fish) {
+            ctx.save();
+            ctx.translate(fish.x, fish.y);
+            if (fish.speed > 0) ctx.scale(-1, 1);
+
+            if (fish.type.id === 'boss') {
+                ctx.shadowColor = 'rgba(199, 125, 255, 0.9)';
+                ctx.shadowBlur = 24;
+            } else if (fish.hitFlash > 0) {
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 18;
+            }
+
+            ctx.font = `${Math.round(fish.size)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(fish.type.emoji, 0, 0);
+            ctx.restore();
+
+            if (fish.hp < fish.maxHp || fish.type.id === 'boss') {
+                const barWidth = fish.size * 0.9;
+                const barHeight = 5;
+                const barX = fish.x - barWidth / 2;
+                const barY = fish.y - fish.size * 0.62;
+                const ratio = Math.max(0, fish.hp / fish.maxHp);
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.fillRect(barX, barY, barWidth, barHeight);
+                ctx.fillStyle = ratio > 0.5 ? '#4ade80' : ratio > 0.25 ? '#facc15' : '#ef4444';
+                ctx.fillRect(barX, barY, barWidth * ratio, barHeight);
+                ctx.restore();
+            }
+
+            ctx.save();
+            ctx.font = '800 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'rgba(255, 204, 0, 0.92)';
+            ctx.fillText(`৳${formatMoney(fishReward(fish))}`, fish.x, fish.y + fish.size * 0.55);
+            ctx.restore();
+        }
+
+        function roundRectPath(x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        function drawCannon() {
+            ctx.save();
+            ctx.translate(cannon.x, cannon.y);
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 23, 44, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.save();
+            ctx.rotate(cannon.angle);
+            ctx.fillStyle = '#173950';
+            roundRectPath(0, -12, 60, 24, 11);
+            ctx.fill();
+            ctx.fillStyle = '#3f759b';
+            roundRectPath(5, -7, 46, 14, 7);
+            ctx.fill();
+            ctx.fillStyle = '#0b1a29';
+            ctx.beginPath();
+            ctx.arc(60, 0, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#122b40';
+            ctx.beginPath();
+            ctx.arc(0, 4, 30, Math.PI, 0);
+            ctx.fill();
+            ctx.fillStyle = '#1e4a68';
+            ctx.beginPath();
+            ctx.arc(0, 2, 22, Math.PI, 0);
+            ctx.fill();
+
+            ctx.shadowColor = 'rgba(53, 224, 255, 0.8)';
+            ctx.shadowBlur = 18;
+            ctx.fillStyle = '#35e0ff';
+            ctx.beginPath();
+            ctx.arc(0, 2, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            if (muzzleFlash > 0) {
+                const muzzle = getMuzzle();
+                ctx.save();
+                ctx.globalAlpha = Math.min(1, muzzleFlash * 10);
+                ctx.fillStyle = '#ffcc00';
+                ctx.shadowColor = '#ffcc00';
+                ctx.shadowBlur = 24;
+                ctx.beginPath();
+                ctx.arc(muzzle.x, muzzle.y, 10 + muzzleFlash * 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function drawShells() {
+            shells.forEach(shell => {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 170, 60, 0.35)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(shell.sx, shell.sy);
+                ctx.lineTo(shell.x, shell.y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffb347';
+                ctx.shadowColor = '#ffb347';
+                ctx.shadowBlur = 14;
+                ctx.beginPath();
+                ctx.arc(shell.x, shell.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function drawExplosions() {
+            explosions.forEach(explosion => {
+                const progress = explosion.t / explosion.life;
+                const radius = explosion.maxR * (0.3 + 0.7 * progress);
+
+                ctx.save();
+                ctx.globalAlpha = 1 - progress;
+                ctx.strokeStyle = '#ffd166';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(explosion.x, explosion.y, radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fillStyle = `rgba(255, 140, 0, ${0.16 * (1 - progress)})`;
+                ctx.beginPath();
+                ctx.arc(explosion.x, explosion.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function drawParticles() {
+            particles.forEach(particle => {
+                const progress = particle.t / particle.life;
+                ctx.save();
+                ctx.globalAlpha = 1 - progress;
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function drawFloatTexts() {
+            floatTexts.forEach(text => {
+                const progress = text.t / text.life;
+                ctx.save();
+                ctx.globalAlpha = 1 - progress;
+                ctx.font = '900 16px Outfit, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.strokeText(text.text, text.x, text.y);
+                ctx.fillStyle = text.color;
+                ctx.fillText(text.text, text.x, text.y);
+                ctx.restore();
+            });
+        }
+
+        function drawAim(now) {
+            const muzzle = getMuzzle();
+            const radius = 15 + Math.sin(now / 200) * 1.5;
+
+            ctx.save();
+            ctx.strokeStyle = 'rgba(120, 235, 255, 0.22)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 8]);
+            ctx.beginPath();
+            ctx.moveTo(muzzle.x, muzzle.y);
+            ctx.lineTo(aim.x, aim.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = 'rgba(180, 245, 255, 0.85)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(aim.x, aim.y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(aim.x - radius - 7, aim.y);
+            ctx.lineTo(aim.x - 4, aim.y);
+            ctx.moveTo(aim.x + 4, aim.y);
+            ctx.lineTo(aim.x + radius + 7, aim.y);
+            ctx.moveTo(aim.x, aim.y - radius - 7);
+            ctx.lineTo(aim.x, aim.y - 4);
+            ctx.moveTo(aim.x, aim.y + 4);
+            ctx.lineTo(aim.x, aim.y + radius + 7);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function render(now) {
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = bgGradient || '#031525';
+            ctx.fillRect(0, 0, W, H);
+
+            drawLightRays(now);
+            drawBubbles();
+            drawSeabed();
+
+            fishes.forEach(drawFish);
+
+            drawCannon();
+            drawShells();
+            drawExplosions();
+            drawParticles();
+            drawFloatTexts();
+            drawAim(now);
+        }
+
+        function update(dt) {
+            const now = performance.now();
+
+            updateCannon();
+            updateFish(dt);
+            updateShells(dt);
+            updateExplosions(dt);
+            updateParticles(dt);
+            updateFloatTexts(dt);
+            updateBubbles(dt);
+
+            muzzleFlash = Math.max(0, muzzleFlash - dt);
+
+            spawnTimer -= dt;
+            if (spawnTimer <= 0) {
+                if (fishes.length < CONFIG.MAX_FISH) spawnFish();
+                spawnTimer = rand(CONFIG.SPAWN_MIN, CONFIG.SPAWN_MAX);
+            }
+
+            render(now);
+        }
+
+        function loop(timestamp) {
+            if (!lastFrame) lastFrame = timestamp;
+            const dt = Math.min(0.05, (timestamp - lastFrame) / 1000);
+            lastFrame = timestamp;
+            update(dt);
+            requestAnimationFrame(loop);
+        }
+
+        function dismissHint() {
+            if (hintDismissed) return;
+            hintDismissed = true;
+            hintEl.classList.add('hide');
+        }
+
+        function updateAimFromEvent(event) {
+            const rect = canvas.getBoundingClientRect();
+            aim.x = (event.clientX - rect.left) * (W / rect.width);
+            aim.y = (event.clientY - rect.top) * (H / rect.height);
+            aim.x = Math.max(8, Math.min(W - 8, aim.x));
+            aim.y = Math.max(8, Math.min(H - 8, aim.y));
+        }
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioCtor = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtor) return null;
+                audioCtx = new AudioCtor();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function tone(frequency, duration, type = 'sine', volume = 0.05, slideTo = null) {
+            if (!soundEnabled) return;
+            const audio = ensureAudio();
+            if (!audio) return;
+
+            const oscillator = audio.createOscillator();
+            const gain = audio.createGain();
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audio.currentTime);
+            if (slideTo) {
+                oscillator.frequency.exponentialRampToValueAtTime(slideTo, audio.currentTime + duration);
+            }
+            gain.gain.setValueAtTime(volume, audio.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration);
+            oscillator.connect(gain);
+            gain.connect(audio.destination);
+            oscillator.start();
+            oscillator.stop(audio.currentTime + duration);
+        }
+
+        function playShotSound() {
+            tone(220, 0.09, 'square', 0.035, 110);
+        }
+
+        function playExplosionSound() {
+            tone(120, 0.25, 'sawtooth', 0.05, 35);
+        }
+
+        function playKillSound() {
+            tone(660, 0.1, 'sine', 0.05);
+            setTimeout(() => tone(990, 0.12, 'sine', 0.04), 70);
+        }
+
+        function playBossSound() {
+            tone(180, 0.3, 'sawtooth', 0.05, 90);
+            setTimeout(() => tone(140, 0.35, 'sawtooth', 0.04, 70), 120);
+        }
+
+        function updateSoundButton() {
+            soundBtn.innerHTML = soundEnabled
+                ? '<i class="fas fa-volume-high"></i>'
+                : '<i class="fas fa-volume-xmark"></i>';
+            soundBtn.classList.toggle('muted', !soundEnabled);
+        }
+
+        function syncBalance(newTotal, change, description) {
+            syncChain = syncChain
+                .catch(() => { })
+                .then(() => GameBridge.updateBalance(newTotal, change, description))
+                .then(result => {
+                    if (result && result.error) {
+                        console.warn('[Fish Hunter] Balance sync warning:', result.error);
+                    }
+                });
+            return syncChain;
+        }
+
+        function initGame() {
+            if (!GameBridge.isLoggedIn()) {
+                notify('Please login to play!', 'err');
+            }
+
+            balance = Number(GameBridge.getBalance()) || 0;
+            updateBalanceDisplay();
+            updateHud();
+            updateSoundButton();
+            normalizeBetInput();
+            resize();
+
+        for (let i = 0; i < 5; i++) {
+            spawnFish();
+            const fish = fishes[fishes.length - 1];
+            if (!fish) continue;
+            fish.x = rand(fish.size + 8, Math.max(fish.size + 9, W - fish.size - 8));
+            fish.speed = Math.abs(fish.speed) * (fish.x < W / 2 ? 1 : -1);
+        }
+        spawnTimer = rand(CONFIG.SPAWN_MIN, CONFIG.SPAWN_MAX);
+
+            GameBridge.getGameConfig().then(config => {
+                if (config && typeof config.winChance === 'number') {
+                    winChance = Math.max(0, Math.min(100, config.winChance));
+                }
+            });
+
+            GameBridge.onGameConfigUpdate(config => {
+                if (config && typeof config.winChance === 'number') {
+                    winChance = Math.max(0, Math.min(100, config.winChance));
+                }
+            });
+
+            requestAnimationFrame(loop);
+        }
+
+        document.getElementById('plus-bet').addEventListener('click', () => {
+            betInput.value = formatBet(getBet() + 10);
+        });
+
+        document.getElementById('minus-bet').addEventListener('click', () => {
+            betInput.value = formatBet(Math.max(CONFIG.MIN_BET, getBet() - 10));
+        });
+
+        document.querySelectorAll('.quick-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const value = Math.max(CONFIG.MIN_BET, parseInt(button.dataset.val, 10) || 0);
+                betInput.value = formatBet(value);
+            });
+        });
+
+        betInput.addEventListener('change', normalizeBetInput);
+        betInput.addEventListener('blur', normalizeBetInput);
+
+        soundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            try {
+                localStorage.setItem('fish_hunter_sound', soundEnabled ? 'on' : 'off');
+            } catch (e) { }
+            updateSoundButton();
+            if (soundEnabled) {
+                ensureAudio();
+                tone(880, 0.08, 'sine', 0.03);
+            }
+        });
+
+        canvas.addEventListener('pointermove', event => {
+            updateAimFromEvent(event);
+        });
+
+        canvas.addEventListener('pointerdown', event => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            event.preventDefault();
+            updateAimFromEvent(event);
+            startFiring();
+            try {
+                canvas.setPointerCapture(event.pointerId);
+            } catch (e) { }
+        });
+
+        canvas.addEventListener('pointerup', stopFiring);
+        canvas.addEventListener('pointercancel', stopFiring);
+        canvas.addEventListener('pointerleave', event => {
+            if (event.pointerType === 'mouse') stopFiring();
+        });
+        canvas.addEventListener('contextmenu', event => event.preventDefault());
+
+        window.addEventListener('blur', stopFiring);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) stopFiring();
+        });
+
+        if (window.ResizeObserver) {
+            new ResizeObserver(resize).observe(stage);
+        }
+        window.addEventListener('resize', resize);
+
+        setTimeout(dismissHint, 9000);
+
+        initGame();
+    </script>
+</body>
+
+</html>

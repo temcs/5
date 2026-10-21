@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlinkoBD - Drop & Win</title>
+    <style>
+:root {
+    --bg-dark: #0a0b10;
+    --card-bg: #141621;
+    --accent-yellow: #ffcc00;
+    --accent-red: #ff2d55;
+    --accent-green: #2ecc71;
+    --text-main: #ffffff;
+    --text-muted: #8a8e9e;
+    --font-primary: 'Inter', sans-serif;
+    --font-display: 'Outfit', sans-serif;
+    --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-primary);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 720px;
+    height: 92vh;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-image:
+        radial-gradient(circle at 50% 0%, rgba(255, 204, 0, 0.08), transparent 55%);
+    overflow: hidden;
+}
+
+.game-header {
+    padding: 18px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-btn {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.home-btn:hover {
+    background: rgba(255, 204, 0, 0.2);
+}
+
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.logo-text .accent {
+    color: var(--accent-yellow);
+}
+
+.balance-container {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 22px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 204, 0, 0.2);
+    text-align: center;
+}
+
+.balance-label {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.balance-value {
+    color: var(--accent-yellow);
+    font-weight: 900;
+    font-size: 1.1rem;
+    font-family: var(--font-display);
+}
+
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px 0;
+    min-height: 0;
+}
+
+.board-area {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#plinko-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.history-bar {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 3;
+    pointer-events: none;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.history-pill {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-weight: 900;
+    font-size: 0.72rem;
+    padding: 3px 9px;
+    border-radius: 50px;
+    font-family: var(--font-display);
+    animation: pillIn 0.3s ease;
+}
+
+.history-pill.low {
+    color: var(--accent-red);
+}
+
+.history-pill.mid {
+    color: #7fb2ff;
+}
+
+.history-pill.high {
+    color: var(--accent-yellow);
+}
+
+@keyframes pillIn {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.result-overlay {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 2.4rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+    white-space: nowrap;
+}
+
+.result-overlay.show {
+    animation: popResult 1.4s ease forwards;
+}
+
+@keyframes popResult {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.5);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    75% {
+        opacity: 1;
+        transform: translate(-50%, -55%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -85%) scale(0.95);
+    }
+}
+
+/* Controls */
+.controls-container {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.bet-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.bet-input-group {
+    background: #1c1f2d;
+    padding: 8px 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.adjust-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #2a2e3e;
+    background: transparent;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.adjust-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#bet-amount {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 90px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+#bet-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.group-cap {
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin: 0 4px 0 2px;
+}
+
+.balls-count {
+    min-width: 26px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.05rem;
+    font-family: var(--font-display);
+    color: var(--text-main);
+}
+
+.drop-btn {
+    height: 58px;
+    padding: 0 40px;
+    border-radius: 15px;
+    border: none;
+    background: linear-gradient(180deg, #ffd84d, #ffb300);
+    color: #221a00;
+    font-weight: 900;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 8px 24px rgba(255, 204, 0, 0.3);
+}
+
+.drop-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(255, 204, 0, 0.42);
+}
+
+.drop-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#notification-area {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+    body {
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    .app-container {
+        height: 100dvh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .game-header {
+        padding: 12px 15px;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .balance-container {
+        padding: 5px 14px;
+    }
+
+    .balance-value {
+        font-size: 0.9rem;
+    }
+
+    .game-main {
+        padding: 8px 8px 0;
+    }
+
+    .result-overlay {
+        font-size: 1.9rem;
+    }
+
+    .controls-container {
+        padding: 12px;
+    }
+
+    .bet-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .bet-input-group {
+        justify-content: space-between;
+    }
+
+    #bet-amount {
+        width: 50px;
+    }
+
+    .drop-btn {
+        height: 52px;
+        padding: 0 12px;
+        font-size: 1rem;
+        grid-column: span 2;
+    }
+}
+    /* AUTO BET */
+.auto-toggle{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);cursor:pointer;user-select:none;margin-top:8px;}
+.auto-toggle input{accent-color:#ffcc00;width:15px;height:15px;cursor:pointer;}
+.auto-label{font-weight:800;font-size:.75rem;letter-spacing:1px;color:#cfd3dc;}
+@media (max-width: 600px), (max-height: 620px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        align-items: flex-start;
+    }
+
+    .app-container {
+        height: auto;
+        min-height: 100dvh;
+        max-width: 100%;
+        border-radius: 0;
+    }
+
+    .game-main {
+        flex: none;
+        overflow: visible;
+        padding: 8px;
+    }
+
+    .board-area {
+        flex: 0 0 auto;
+        height: clamp(260px, 50vh, 420px);
+        min-height: 260px;
+    }
+
+    .controls-container {
+        padding: 12px;
+    }
+
+    .bet-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .bet-input-group {
+        min-width: 0;
+        padding: 6px 4px;
+        gap: 2px;
+    }
+
+    .group-cap {
+        margin: 0;
+        font-size: 0.5rem;
+    }
+
+    .balls-count {
+        min-width: 18px;
+    }
+
+    .drop-btn {
+        grid-column: span 2;
+    }
+}
+</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="logo">
+                <div class="home-btn" onclick="GameBridge.goHome()">
+                    <i class="fas fa-home"></i> <span>HOME</span>
+                </div>
+                <span class="logo-text">PLINKO<span class="accent">BD</span></span>
+            </div>
+            <div class="balance-container">
+                <span class="balance-label">YOUR BALANCE</span>
+                <span class="balance-value" id="balance-amount">৳0.00</span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="board-area" id="board-area">
+                <div class="history-bar" id="history-bar"></div>
+                <canvas id="plinko-canvas"></canvas>
+                <div class="result-overlay" id="result-overlay"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-container">
+                <div class="bet-panel">
+                    <div class="bet-input-group">
+                        <button class="adjust-btn" id="minus-bet">-</button>
+                        <input type="number" id="bet-amount" value="10" step="1" min="1">
+                        <button class="adjust-btn" id="plus-bet">+</button>
+                    </div>
+                    <div class="bet-input-group">
+                        <span class="group-cap">BALLS</span>
+                        <button class="adjust-btn" id="minus-balls">-</button>
+                        <span class="balls-count" id="balls-count">1</span>
+                        <button class="adjust-btn" id="plus-balls">+</button>
+                    </div>
+                    <div class="auto-toggle"><input type="checkbox" id="auto-spin-switch"><span class="auto-label"><i class="fas fa-rotate"></i> AUTO BET</span></div>
+                    <button class="drop-btn" id="drop-btn">DROP BALL</button>
+                </div>
+            </div>
+        </main>
+
+        <div id="notification-area"></div>
+    </div>
+    <script src="../balancer.js?v=5"></script>
+    <script>
+// ---------------------------------------------------------------------------
+// PlinkoBD - Drop a ball from the top of a pin pyramid.
+// It bounces down into multiplier buckets (0.5x .. 50x).
+// The landing bucket (and therefore the win rate) is controlled from the
+// admin panel via GameBridge.getGameConfig() -> winChance.
+// Center is the common losing 0.5x; 1x-5x are common wins and 50x edges are rare.
+// ---------------------------------------------------------------------------
+
+const ROWS = 8;                                   // pin rows (ROWS + 1 buckets)
+const BUCKETS = [50, 5, 2, 1, 0.5, 1, 2, 5, 50];
+const CONFIG = { MIN_BET: 1, SEGMENT_MS: 140 };
+
+// State
+let balance = GameBridge.getBalance();
+let winChance = 50;              // Admin-configurable win chance (%)
+let balls = [];                  // active balls in flight
+let markers = [];                // recently landed ball positions
+let history = [];                // last multipliers
+let dropInProgress = false;      // prevents overlapping drop batches
+let syncChain = Promise.resolve(); // serializes DB writes
+
+// Load admin-configured win chance
+GameBridge.getGameConfig().then(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+GameBridge.onGameConfigUpdate(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+
+// DOM Elements
+const balanceDisplay = document.getElementById('balance-amount');
+const betInput = document.getElementById('bet-amount');
+const dropBtn = document.getElementById('drop-btn');
+const ballsCountEl = document.getElementById('balls-count');
+const canvas = document.getElementById('plinko-canvas');
+const ctx = canvas.getContext('2d');
+const boardArea = document.getElementById('board-area');
+const historyBar = document.getElementById('history-bar');
+const resultOverlay = document.getElementById('result-overlay');
+
+// Geometry (recomputed on resize)
+let W = 0, H = 0, S = 0, dy = 0, apexY = 0, centerX = 0;
+let ballR = 7, bucketH = 40, bucketW = 40, bucketCenterY = 0;
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+function init() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login to play!', 'err');
+    }
+    updateBalanceDisplay();
+    addEventListeners();
+
+    const ro = new ResizeObserver(resizeCanvas);
+    ro.observe(boardArea);
+    resizeCanvas();
+
+    requestAnimationFrame(loop);
+}
+
+function updateBalanceDisplay() {
+    balanceDisplay.innerText = `৳${balance.toFixed(2)}`;
+}
+
+function getBallsCount() {
+    return Math.max(1, Math.min(50, parseInt(ballsCountEl.textContent) || 1));
+}
+
+function setBallsCount(n) {
+    ballsCountEl.textContent = Math.max(1, Math.min(50, n));
+    updateDropBtnLabel();
+}
+
+function updateDropBtnLabel() {
+    const n = getBallsCount();
+    const amount = parseFloat(betInput.value) || 0;
+    dropBtn.innerText = n > 1 ? `DROP ${n}  •  ৳${GameBridge.formatBetAmount(amount * n)}` : 'DROP BALL';
+}
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// Serialize DB writes so overlapping balls never clobber each other
+function syncBalance(newTotal, change, desc) {
+    syncChain = syncChain.catch(() => { }).then(() => GameBridge.updateBalance(newTotal, change, desc));
+    return syncChain;
+}
+
+function resizeCanvas() {
+    const rect = boardArea.getBoundingClientRect();
+    if (rect.width < 10 || rect.height < 10) return;
+    W = rect.width;
+    H = rect.height;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const sideMargin = 18;
+    S = (W - 2 * sideMargin) / ROWS;
+    bucketH = Math.max(30, Math.min(44, S * 0.8));
+    bucketW = S * 0.9;
+    ballR = Math.max(5, Math.min(10, S * 0.15));
+
+    const topArea = 44;
+    const bottomPad = 8;
+    dy = (H - topArea - bucketH - bottomPad) / ROWS;
+
+    const maxDy = S * 1.05;
+    if (dy > maxDy) {
+        apexY = topArea + ((dy - maxDy) * ROWS) / 2;
+        dy = maxDy;
+    } else {
+        apexY = topArea;
+    }
+
+    centerX = W / 2;
+    bucketCenterY = apexY + ROWS * dy + bucketH / 2;
+}
+
+// ---------------------------------------------------------------------------
+// Events
+// ---------------------------------------------------------------------------
+function addEventListeners() {
+    document.getElementById('plus-bet').addEventListener('click', () => {
+        betInput.value = GameBridge.formatBetAmount(parseFloat(betInput.value) + 10);
+        updateDropBtnLabel();
+    });
+
+    document.getElementById('minus-bet').addEventListener('click', () => {
+        const val = parseFloat(betInput.value);
+        if (val > 10) betInput.value = GameBridge.formatBetAmount(val - 10);
+        updateDropBtnLabel();
+    });
+
+    betInput.addEventListener('input', updateDropBtnLabel);
+
+    document.getElementById('plus-balls').addEventListener('click', () => setBallsCount(getBallsCount() + 1));
+    document.getElementById('minus-balls').addEventListener('click', () => setBallsCount(getBallsCount() - 1));
+
+    dropBtn.addEventListener('click', dropBall);
+
+    updateDropBtnLabel();
+}
+
+// ---------------------------------------------------------------------------
+// Outcome selection (admin-controlled)
+// ---------------------------------------------------------------------------
+function pickBucketIndex() {
+    const center = ROWS / 2;
+    const sigma = ROWS / 2.6;
+    const shouldWin = Math.random() * 100 < winChance;
+
+    const indices = [];
+    for (let b = 0; b <= ROWS; b++) {
+        const m = BUCKETS[b];
+        if (shouldWin ? m >= 1 : m < 1) indices.push(b);
+    }
+    if (indices.length === 0) {
+        for (let b = 0; b <= ROWS; b++) indices.push(b);
+    }
+
+    // Weight toward the middle for a natural landing, and heavily down-weight
+    // higher multipliers so 5x is uncommon and 50x edges stay very rare.
+    const weights = indices.map(b => {
+        const boardWeight = Math.exp(-0.5 * Math.pow((b - center) / sigma, 2));
+        const mult = BUCKETS[b];
+        const rarity = mult > 1 ? 1 / Math.pow(mult, 1.5) : 1;
+        return boardWeight * rarity;
+    });
+    const total = weights.reduce((a, b) => a + b, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < indices.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return indices[i];
+    }
+    return indices[indices.length - 1];
+}
+
+// Build a shuffled sequence of `rights` right-bounces and the rest left-bounces
+function makeBounces(rights) {
+    const arr = [];
+    for (let i = 0; i < ROWS; i++) arr.push(i < rights ? 1 : 0);
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+}
+
+// Precompute the exact zig-zag waypoints that land the ball in `bucketIndex`
+function buildWaypoints(bucketIndex) {
+    const bounces = makeBounces(bucketIndex);
+    const wp = [{ x: centerX, y: apexY - dy * 0.75, pin: false }];
+
+    let k = 0;
+    for (let r = 0; r < ROWS; r++) {
+        wp.push({ x: centerX + (k - r / 2) * S, y: apexY + r * dy, pin: true });
+        k += bounces[r];
+    }
+    wp.push({ x: centerX + (k - ROWS / 2) * S, y: bucketCenterY, pin: false });
+    return wp;
+}
+
+// ---------------------------------------------------------------------------
+// Drop
+// ---------------------------------------------------------------------------
+async function dropBall() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login first!', 'err');
+        return;
+    }
+    if (dropInProgress) return;
+
+    const amount = parseFloat(betInput.value);
+    if (!(amount >= CONFIG.MIN_BET)) {
+        notify(`Minimum bet is ৳${CONFIG.MIN_BET}`, 'err');
+        return;
+    }
+
+    const count = getBallsCount();
+    const totalCost = amount * count;
+    if (totalCost > balance) {
+        notify(`Need ৳${GameBridge.formatBetAmount(totalCost)} for ${count} ball${count > 1 ? 's' : ''}!`, 'err');
+        return;
+    }
+
+    dropInProgress = true;
+    dropBtn.disabled = true;
+
+    if (count > 1) {
+        notify(`Dropped ${count} balls`, 'win');
+    }
+
+    for (let i = 0; i < count; i++) {
+        if (amount > balance) {
+            notify('Balance exhausted!', 'err');
+            break;
+        }
+
+        // Deduct synchronously so concurrent landings stay consistent
+        const newBalance = balance - amount;
+        balance = newBalance;
+        updateBalanceDisplay();
+
+        const res = await syncBalance(newBalance, -amount, `Bet on Plinko`);
+        if (res && res.error) {
+            balance += amount; // rollback
+            updateBalanceDisplay();
+            notify('Sync Error: Bet failed. Try again.', 'err');
+            break;
+        }
+
+        spawnBall(amount, count > 1);
+        await sleep(80); // stagger drops so they look like a stream
+    }
+
+    dropInProgress = false;
+    dropBtn.disabled = false;
+
+    // Autobet: drop another round automatically if enabled
+    if (document.getElementById('auto-spin-switch').checked) {
+        setTimeout(() => { if (!dropInProgress) dropBall(); }, 700);
+    }
+}
+
+function spawnBall(amount, silent) {
+    const bucketIndex = pickBucketIndex();
+    balls.push({
+        bet: amount,
+        bucketIndex,
+        silent: !!silent,
+        waypoints: buildWaypoints(bucketIndex),
+        seg: 0,
+        segStart: performance.now(),
+        x: centerX,
+        y: apexY - dy * 0.75,
+        landed: false,
+        pulse: 0,
+        trail: []
+    });
+}
+
+function landBall(b) {
+    b.landed = true;
+
+        const mult = BUCKETS[b.bucketIndex];
+        const payout = GameBridge.calculatePayout(b.bet, mult);
+
+    // Fade the settled ball into a marker
+    markers.push({ x: b.x, y: b.y });
+    if (markers.length > 10) markers.shift();
+
+    // Credit payout synchronously, then persist in order
+    balance += payout;
+    updateBalanceDisplay();
+    syncBalance(balance, payout, `Win on Plinko`);
+
+    addHistory(mult);
+    if (!b.silent) showResult(mult, payout, b.bet);
+}
+
+// ---------------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------------
+function loop(now) {
+    update(now);
+    draw();
+    requestAnimationFrame(loop);
+}
+
+function update(now) {
+    for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        const from = b.waypoints[b.seg];
+        const to = b.waypoints[b.seg + 1];
+        let t = (now - b.segStart) / CONFIG.SEGMENT_MS;
+        if (t > 1) t = 1;
+
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // easeInOutQuad (x)
+        b.x = from.x + (to.x - from.x) * eased;
+        b.y = from.y + (to.y - from.y) * t; // fall is more linear
+
+        b.trail.push({ x: b.x, y: b.y });
+        if (b.trail.length > 12) b.trail.shift();
+
+        if (t >= 1) {
+            b.seg++;
+            b.segStart = now;
+            if (to.pin) b.pulse = 1; // bounce off a pin
+            if (b.seg >= b.waypoints.length - 1) {
+                landBall(b);
+                balls.splice(i, 1);
+                continue;
+            }
+        }
+
+        b.pulse *= 0.9;
+    }
+}
+
+function draw() {
+    if (W === 0) return;
+    ctx.clearRect(0, 0, W, H);
+
+    drawPins();
+    drawBuckets();
+    drawMarkers();
+
+    for (const b of balls) drawBall(b);
+}
+
+function drawBall(b) {
+    // trail
+    for (let i = 0; i < b.trail.length; i++) {
+        const p = b.trail[i];
+        const a = (i / b.trail.length) * 0.35;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, ballR * (0.4 + 0.5 * (i / b.trail.length)), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 204, 0, ${a})`;
+        ctx.fill();
+    }
+
+    const r = ballR * (1 + b.pulse * 0.35);
+    const grad = ctx.createRadialGradient(b.x - r * 0.3, b.y - r * 0.3, r * 0.15, b.x, b.y, r);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.5, '#ffe680');
+    grad.addColorStop(1, '#ffb300');
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 204, 0, 0.9)';
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+}
+
+function drawPins() {
+    for (let r = 0; r < ROWS; r++) {
+        const y = apexY + r * dy;
+        for (let i = 0; i <= r; i++) {
+            const x = centerX + (i - r / 2) * S;
+            const pr = Math.max(2, S * 0.05);
+            ctx.beginPath();
+            ctx.arc(x, y, pr, 0, Math.PI * 2);
+            ctx.fillStyle = '#3d4360';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x - pr * 0.25, y - pr * 0.25, pr * 0.55, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.fill();
+        }
+    }
+}
+
+function bucketGradient(m) {
+    if (m >= 10) return ['#ffe44d', '#ff9500'];
+    if (m >= 2) return ['#ff9f1c', '#ff6b00'];
+    if (m >= 1) return ['#3aa0ff', '#1f6fd0'];
+    if (m >= 0.5) return ['#5b6178', '#3a3f52'];
+    return ['#8a3b4a', '#5c2430'];
+}
+
+function drawBuckets() {
+    const y = bucketCenterY - bucketH / 2;
+    for (let b = 0; b <= ROWS; b++) {
+        const x = centerX + (b - ROWS / 2) * S;
+        const grad = bucketGradient(BUCKETS[b]);
+        const g = ctx.createLinearGradient(0, y, 0, y + bucketH);
+        g.addColorStop(0, grad[0]);
+        g.addColorStop(1, grad[1]);
+
+        roundRect(x - bucketW / 2, y, bucketW, bucketH, 7);
+        ctx.fillStyle = g;
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.max(10, S * 0.26)}px Outfit, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${BUCKETS[b]}x`, x, y + bucketH / 2);
+    }
+}
+
+function drawMarkers() {
+    for (let i = 0; i < markers.length; i++) {
+        const m = markers[i];
+        const a = 0.12 + (i / markers.length) * 0.25;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, ballR * 0.7, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${a})`;
+        ctx.fill();
+    }
+}
+
+function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) {
+        ctx.roundRect(x, y, w, h, r);
+    } else {
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Feedback
+// ---------------------------------------------------------------------------
+function addHistory(mult) {
+    history.unshift(mult);
+    if (history.length > 8) history.pop();
+
+    historyBar.innerHTML = '';
+    history.forEach(m => {
+        const pill = document.createElement('div');
+        pill.className = 'history-pill ' + (m >= 2 ? 'high' : (m >= 1 ? 'mid' : 'low'));
+        pill.innerText = `${m}x`;
+        historyBar.appendChild(pill);
+    });
+}
+
+function showResult(mult, payout, bet) {
+    const net = payout - bet;
+    resultOverlay.className = 'result-overlay';
+    resultOverlay.style.color = net > 0 ? 'var(--accent-green)' : (net < 0 ? 'var(--accent-red)' : 'var(--accent-yellow)');
+    resultOverlay.innerText = `${mult}x  •  ৳${payout.toFixed(2)}`;
+    void resultOverlay.offsetWidth;
+    resultOverlay.classList.add('show');
+
+    if (net > 0) {
+        notify(`WON ৳${net.toFixed(2)}`, 'win');
+    } else if (net < 0) {
+        notify(`LOST ৳${(-net).toFixed(2)}`, 'err');
+    } else {
+        notify(`PUSH ${mult}x ৳${payout.toFixed(2)}`, 'win');
+    }
+}
+
+function notify(text, type) {
+    const area = document.getElementById('notification-area');
+    const note = document.createElement('div');
+    note.style.cssText = `
+        background: ${type === 'win' ? '#2ecc71' : '#ff2d55'};
+        color: white; padding: 12px 25px; border-radius: 12px;
+        margin-bottom: 10px; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        transform: translateY(-20px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    `;
+    note.innerText = text;
+    area.appendChild(note);
+
+    setTimeout(() => {
+        note.style.transform = 'translateY(0)';
+        note.style.opacity = '1';
+    }, 10);
+    setTimeout(() => {
+        note.style.transform = 'translateY(-20px)';
+        note.style.opacity = '0';
+        setTimeout(() => note.remove(), 300);
+    }, 4000);
+}
+
+init();
+    </script>
+</body>
+
+</html>

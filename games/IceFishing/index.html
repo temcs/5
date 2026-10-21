@@ -1,0 +1,4576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ice Fishing BD</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:wght@400;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ice-0: #020b16;
+            --ice-1: #061a2b;
+            --ice-2: #0a2e46;
+            --ice-3: #0e4a66;
+            --cyan: #5eead4;
+            --sky: #38bdf8;
+            --gold: #ffcc00;
+            --gold-2: #f59e0b;
+            --red: #fb7185;
+            --orange: #fb923c;
+            --text: #e8fbff;
+            --muted: #8fb4cc;
+            --line: rgba(148, 210, 255, 0.16);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ice-0);
+            color: var(--text);
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .app {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 24% 8%, rgba(56, 189, 248, 0.16), transparent 34%),
+                radial-gradient(circle at 78% 84%, rgba(94, 234, 212, 0.09), transparent 38%),
+                linear-gradient(180deg, #072337 0%, #041727 48%, #010a13 100%);
+        }
+
+        .app::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.32;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.5px),
+                radial-gradient(circle, rgba(191, 239, 255, 0.45) 0 1.2px, transparent 1.8px);
+            background-size: 92px 92px, 137px 137px;
+            background-position: 4px 8px, 44px 52px;
+        }
+
+        .app::after {
+            content: '';
+            position: absolute;
+            top: -22%;
+            left: -15%;
+            width: 130%;
+            height: 58%;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(30px);
+            opacity: 0.75;
+            background:
+                radial-gradient(ellipse at 30% 55%, rgba(94, 234, 212, 0.2), transparent 58%),
+                radial-gradient(ellipse at 72% 34%, rgba(56, 189, 248, 0.16), transparent 56%);
+            animation: aurora 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes aurora {
+            from {
+                transform: translate3d(-3%, 0, 0) scale(1);
+            }
+
+            to {
+                transform: translate3d(4%, 3%, 0) scale(1.08);
+            }
+        }
+
+        .game-header {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            padding: 10px 14px;
+            background: rgba(1, 10, 20, 0.72);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+            color: #dff6ff;
+            font: 700 0.78rem 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .home-btn:hover {
+            background: rgba(94, 234, 212, 0.14);
+            border-color: rgba(94, 234, 212, 0.35);
+        }
+
+        .game-title {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            white-space: nowrap;
+            font: 900 clamp(1rem, 2.6vw, 1.5rem) 'Outfit', sans-serif;
+            letter-spacing: 1.5px;
+            color: #e9fbff;
+            text-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+        }
+
+        .game-title span {
+            color: var(--cyan);
+            text-shadow: 0 0 18px rgba(94, 234, 212, 0.35);
+        }
+
+        .game-title small {
+            margin-left: 4px;
+            font-size: 0.55em;
+            letter-spacing: 2px;
+            color: #7dd3fc;
+        }
+
+        .balance-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1px;
+            flex-shrink: 0;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(255, 204, 0, 0.08);
+            border: 1px solid rgba(255, 204, 0, 0.22);
+        }
+
+        .balance-label {
+            font: 700 0.58rem 'Inter', sans-serif;
+            letter-spacing: 1.5px;
+            color: #9fbfd4;
+        }
+
+        .balance-value {
+            font: 900 1.05rem 'Outfit', sans-serif;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .game-main {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr);
+        }
+
+        .wheel-panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 0;
+            padding: 18px 18px 12px;
+            overflow: hidden;
+        }
+
+        .wheel-wrap {
+            position: relative;
+            width: min(100%, 470px);
+            aspect-ratio: 1;
+            flex-shrink: 0;
+            filter: drop-shadow(0 24px 50px rgba(1, 12, 22, 0.7));
+        }
+
+        #wheel-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .wheel-hud {
+            position: absolute;
+            top: 14px;
+            left: 16px;
+            z-index: 3;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .hud-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(1, 10, 20, 0.62);
+            color: #cfefff;
+            font: 800 0.68rem 'Inter', sans-serif;
+            backdrop-filter: blur(6px);
+        }
+
+        .hud-pill i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+        }
+
+        .hud-pill.gold {
+            color: var(--gold);
+            border-color: rgba(255, 204, 0, 0.25);
+        }
+
+        .hud-pill.gold i {
+            color: var(--gold);
+        }
+
+        .wheel-meta {
+            width: min(100%, 470px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .boost-summary {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            min-height: 24px;
+            font: 700 0.62rem 'Inter', sans-serif;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            text-align: center;
+        }
+
+        .boost-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 204, 0, 0.28);
+            background: rgba(255, 204, 0, 0.08);
+            color: var(--gold);
+            font: 800 0.58rem 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .boost-pill.muted {
+            color: #7593a8;
+            border-color: var(--line);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .result-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 32px;
+            max-width: 100%;
+            padding: 6px 13px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(1, 10, 20, 0.55);
+            color: var(--muted);
+            font: 700 0.7rem 'Inter', sans-serif;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .result-banner.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-banner strong {
+            font: 900 0.76rem 'Outfit', sans-serif;
+            letter-spacing: 0.6px;
+        }
+
+        .result-banner.win {
+            color: var(--gold);
+            border-color: rgba(255, 204, 0, 0.35);
+            background: rgba(255, 204, 0, 0.08);
+        }
+
+        .result-banner.lose {
+            color: #a9c2d4;
+        }
+
+        .bet-panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+            padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+            overflow-y: auto;
+            background: linear-gradient(180deg, rgba(4, 23, 39, 0.9), rgba(1, 10, 19, 0.96));
+            border-left: 1px solid var(--line);
+            backdrop-filter: blur(14px);
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .panel-title {
+            font: 900 0.8rem 'Outfit', sans-serif;
+            letter-spacing: 1.4px;
+            color: #dff6ff;
+        }
+
+        .panel-title span {
+            color: var(--cyan);
+        }
+
+        .panel-head-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cfefff;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(94, 234, 212, 0.12);
+            border-color: rgba(94, 234, 212, 0.3);
+        }
+
+        .chip-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip-label {
+            margin-right: 2px;
+            font: 800 0.56rem 'Inter', sans-serif;
+            letter-spacing: 1.2px;
+            color: var(--muted);
+        }
+
+        .chip {
+            padding: 7px 10px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cfefff;
+            font: 800 0.72rem 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .chip:hover {
+            border-color: rgba(94, 234, 212, 0.35);
+        }
+
+        .chip.active {
+            color: #062033;
+            background: linear-gradient(135deg, #99f6e4, #5eead4 55%, #38bdf8);
+            border-color: rgba(153, 246, 228, 0.8);
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.18);
+        }
+
+        .bet-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .bet-card {
+            --cc: #38bdf8;
+            position: relative;
+            min-height: 60px;
+            padding: 8px 30px 8px 12px;
+            border-radius: 11px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s;
+        }
+
+        .bet-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            bottom: 11px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--cc);
+            box-shadow: 0 0 10px var(--cc);
+        }
+
+        .bet-card:hover {
+            border-color: rgba(148, 210, 255, 0.34);
+            transform: translateY(-1px);
+        }
+
+        .bet-card.active {
+            border-color: rgba(255, 204, 0, 0.55);
+            background: linear-gradient(180deg, rgba(255, 204, 0, 0.09), rgba(255, 255, 255, 0.02));
+            box-shadow: inset 0 0 0 1px rgba(255, 204, 0, 0.08);
+        }
+
+        .bet-card.boosted {
+            border-color: rgba(255, 204, 0, 0.7);
+            box-shadow: inset 0 0 18px rgba(255, 204, 0, 0.08), 0 0 16px rgba(255, 204, 0, 0.1);
+        }
+
+        .bet-name {
+            display: block;
+            padding-right: 2px;
+            font: 800 0.74rem 'Outfit', sans-serif;
+            letter-spacing: 0.4px;
+            color: #eafcff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bet-name i {
+            margin-right: 4px;
+            color: var(--cc);
+            font-size: 0.68rem;
+        }
+
+        .bet-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 1px;
+            font: 600 0.55rem 'Inter', sans-serif;
+            color: var(--muted);
+            letter-spacing: 0.2px;
+        }
+
+        .boost-tag {
+            display: none;
+            align-items: center;
+            padding: 1px 5px;
+            border-radius: 999px;
+            background: rgba(255, 204, 0, 0.16);
+            border: 1px solid rgba(255, 204, 0, 0.32);
+            color: var(--gold);
+            font: 900 0.5rem 'Inter', sans-serif;
+            letter-spacing: 0.2px;
+        }
+
+        .bet-amount {
+            position: absolute;
+            right: 9px;
+            bottom: 7px;
+            font: 900 0.78rem 'Outfit', sans-serif;
+            color: var(--gold);
+        }
+
+        .card-clear {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 18px;
+            height: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(0, 0, 0, 0.35);
+            color: #dff6ff;
+            font: 700 0.68rem 'Inter', sans-serif;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .bet-card.active .card-clear {
+            display: flex;
+        }
+
+        .bet-panel.locked .chip-row,
+        .bet-panel.locked .bet-options,
+        .bet-panel.locked .ghost-btn {
+            opacity: 0.62;
+            pointer-events: none;
+        }
+
+        .panel-totals {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .total-box {
+            padding: 7px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .total-box span {
+            display: block;
+            font: 700 0.54rem 'Inter', sans-serif;
+            letter-spacing: 1.1px;
+            color: var(--muted);
+        }
+
+        .total-box strong {
+            display: block;
+            margin-top: 1px;
+            font: 900 0.92rem 'Outfit', sans-serif;
+            color: #eafcff;
+        }
+
+        .total-box.gold strong {
+            color: var(--gold);
+        }
+
+        .spin-btn {
+            width: 100%;
+            padding: 12px 14px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #99f6e4 0%, #38bdf8 42%, #facc15 100%);
+            color: #052033;
+            font: 900 1rem 'Outfit', sans-serif;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            box-shadow: 0 10px 26px rgba(34, 211, 238, 0.2);
+            transition: transform 0.18s, opacity 0.18s, box-shadow 0.18s;
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(34, 211, 238, 0.26);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .spin-btn .spin-sub {
+            display: block;
+            margin-top: 1px;
+            font: 800 0.58rem 'Inter', sans-serif;
+            letter-spacing: 0.4px;
+            opacity: 0.72;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ghost-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            color: #bde9ff;
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 0.6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(94, 234, 212, 0.1);
+            border-color: rgba(94, 234, 212, 0.3);
+        }
+
+        .notification-area {
+            position: fixed;
+            top: 70px;
+            right: 12px;
+            z-index: 95;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .notification {
+            max-width: 280px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(2, 16, 28, 0.92);
+            color: #dff6ff;
+            font: 700 0.72rem 'Inter', sans-serif;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateX(16px);
+            transition: opacity 0.22s, transform 0.22s;
+            backdrop-filter: blur(8px);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.err {
+            color: #ffb3c1;
+            border-color: rgba(255, 77, 109, 0.45);
+        }
+
+        .notification.win {
+            color: var(--gold);
+            border-color: rgba(255, 204, 0, 0.45);
+        }
+
+        .bonus-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 85;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background:
+                radial-gradient(circle at 50% 28%, rgba(14, 74, 102, 0.96), rgba(1, 10, 20, 0.98) 64%),
+                rgba(1, 10, 20, 0.98);
+            backdrop-filter: blur(12px);
+        }
+
+        .bonus-overlay.open {
+            display: flex;
+        }
+
+        .bonus-overlay.lil {
+            --fish: #60a5fa;
+            --fish-2: #2563eb;
+        }
+
+        .bonus-overlay.big {
+            --fish: #fb923c;
+            --fish-2: #ea580c;
+        }
+
+        .bonus-overlay.huge {
+            --fish: #fb7185;
+            --fish-2: #e11d48;
+        }
+
+        .bonus-card {
+            position: relative;
+            width: min(460px, calc(100vw - 36px));
+            max-width: calc(100vw - 36px);
+            min-width: 0;
+            padding: 20px 20px 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(125, 211, 252, 0.25);
+            background: linear-gradient(180deg, rgba(9, 47, 69, 0.98), rgba(2, 16, 28, 0.99));
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .bonus-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.3;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 1px, transparent 1.4px),
+                radial-gradient(circle, rgba(186, 230, 253, 0.5) 0 1px, transparent 1.6px);
+            background-size: 74px 74px, 113px 113px;
+            background-position: 8px 12px, 40px 36px;
+        }
+
+        .bonus-eyebrow {
+            position: relative;
+            z-index: 1;
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 2px;
+            color: var(--muted);
+        }
+
+        .bonus-title {
+            position: relative;
+            z-index: 1;
+            margin-top: 4px;
+            font: 900 1.65rem 'Outfit', sans-serif;
+            letter-spacing: 1px;
+            color: var(--fish);
+            text-shadow: 0 0 22px rgba(96, 165, 250, 0.3);
+        }
+
+        .ice-hole {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 320px;
+            height: 190px;
+            margin: 10px auto 2px;
+        }
+
+        .ice-hole::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 8px;
+            width: 250px;
+            height: 54px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            border: 1px solid rgba(125, 234, 255, 0.25);
+            background: radial-gradient(ellipse, rgba(125, 234, 255, 0.26), rgba(2, 16, 28, 0.92) 70%);
+            box-shadow: 0 0 44px rgba(56, 189, 248, 0.16);
+        }
+
+        .fishing-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 84px;
+            border-left: 1px dashed rgba(255, 255, 255, 0.32);
+        }
+
+        .fish-wrap {
+            position: absolute;
+            left: 50%;
+            bottom: 26px;
+            width: 216px;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.42));
+            animation: fishRise 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .fish-svg {
+            display: block;
+            width: 100%;
+        }
+
+        .fish-body {
+            fill: var(--fish);
+        }
+
+        .fish-tail,
+        .fish-fin {
+            fill: var(--fish-2);
+        }
+
+        .fish-eye {
+            fill: #041420;
+        }
+
+        .fish-eye-dot {
+            fill: #e8fbff;
+        }
+
+        .fish-bubble {
+            fill: rgba(224, 251, 255, 0.6);
+        }
+
+        .fish-mult {
+            position: absolute;
+            left: 50%;
+            bottom: 100px;
+            z-index: 2;
+            transform: translateX(-50%);
+            font: 900 2.2rem 'Outfit', sans-serif;
+            color: var(--gold);
+            text-shadow: 0 0 24px rgba(255, 204, 0, 0.4);
+            animation: multPop 0.45s 0.75s both;
+            white-space: nowrap;
+        }
+
+        @keyframes fishRise {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 56px) scale(0.62) rotate(-8deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(1) rotate(0);
+            }
+        }
+
+        @keyframes multPop {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.55);
+            }
+
+            70% {
+                transform: translateX(-50%) scale(1.1);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        .bonus-sub {
+            position: relative;
+            z-index: 1;
+            margin-top: 2px;
+            font: 700 0.7rem 'Inter', sans-serif;
+            color: #bde9ff;
+        }
+
+        .bonus-breakdown {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 10px 0 12px;
+            font: 600 0.71rem 'Inter', sans-serif;
+            color: #cfefff;
+        }
+
+        .bonus-breakdown .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 5px 9px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(148, 210, 255, 0.09);
+        }
+
+        .bonus-breakdown .row span {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .bonus-breakdown strong {
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .collect-btn {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 12px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            color: #111827;
+            font: 900 0.98rem 'Outfit', sans-serif;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            box-shadow: 0 12px 26px rgba(245, 158, 11, 0.22);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0, 8, 15, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(520px, calc(100vw - 36px));
+            max-width: calc(100vw - 36px);
+            min-width: 0;
+            max-height: 82vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(9, 47, 69, 0.98), rgba(2, 16, 28, 0.99));
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font: 900 1rem 'Outfit', sans-serif;
+            letter-spacing: 1px;
+            color: #eafcff;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cfefff;
+            cursor: pointer;
+        }
+
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font: 600 0.76rem/1.5 'Inter', sans-serif;
+            color: #cfefff;
+        }
+
+        .rules-list li {
+            list-style: none;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .rules-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--cyan);
+            font-size: 0.6rem;
+        }
+
+        .rules-list b {
+            color: var(--gold);
+        }
+
+        .rules-foot {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line);
+            font: 600 0.64rem/1.5 'Inter', sans-serif;
+            color: var(--muted);
+        }
+
+        @media (max-width: 860px) {
+            .game-main {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .wheel-panel {
+                flex: 0 0 auto;
+                padding: 8px 10px 4px;
+                gap: 5px;
+                overflow: visible;
+            }
+
+            .wheel-wrap {
+                width: min(72vw, 300px, 40vh);
+            }
+
+            .wheel-meta {
+                width: min(100%, 300px);
+                gap: 4px;
+            }
+
+            .wheel-hud {
+                top: 8px;
+                left: 8px;
+            }
+
+            .hud-pill {
+                padding: 4px 7px;
+                font-size: 0.62rem;
+            }
+
+            .bet-panel {
+                flex: 0 0 auto;
+                overflow: visible;
+                gap: 8px;
+                padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+                border-left: 0;
+                border-top: 1px solid var(--line);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .game-header {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                gap: 8px;
+                padding: 9px 10px;
+            }
+
+            .game-title {
+                overflow: hidden;
+                font-size: 0.98rem;
+                letter-spacing: 0.6px;
+                text-overflow: ellipsis;
+            }
+
+            .game-title small,
+            .balance-label,
+            .home-btn span {
+                display: none;
+            }
+
+            .home-btn {
+                padding: 9px 11px;
+            }
+
+            .balance-box {
+                padding: 7px 9px;
+            }
+
+            .bet-card {
+                min-height: 56px;
+                padding: 7px 28px 7px 10px;
+            }
+
+            .bet-name {
+                font-size: 0.69rem;
+            }
+
+            .bet-meta {
+                font-size: 0.52rem;
+            }
+        }
+
+        :root {
+            --panel-ink: #07324c;
+            --panel-muted: #557f95;
+            --azure: #0b91d0;
+            --azure-deep: #075f95;
+            --gold: #ffd45a;
+            --gold-deep: #c88608;
+            --line: rgba(8, 70, 99, 0.16);
+        }
+
+        html,
+        body {
+            background: #d9f6ff;
+        }
+
+        body {
+            color: var(--panel-ink);
+        }
+
+        .app {
+            background: #79cee9;
+            isolation: isolate;
+        }
+
+        .app::before,
+        .app::after {
+            display: none;
+        }
+
+        .game-header {
+            flex: 0 0 58px;
+            height: 58px;
+            padding: 0 16px;
+            gap: 10px;
+            background:
+                radial-gradient(circle at 18% -60%, rgba(96, 228, 255, 0.26), transparent 42%),
+                linear-gradient(180deg, rgba(5, 43, 68, 0.99), rgba(3, 27, 46, 0.97));
+            border-bottom: 1px solid rgba(183, 242, 255, 0.28);
+            box-shadow: 0 9px 30px rgba(0, 32, 53, 0.34);
+            backdrop-filter: blur(16px);
+        }
+
+        .home-btn {
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 9px;
+            border: 1px solid rgba(199, 246, 255, 0.2);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+            color: #eafdff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+
+        .home-btn:hover {
+            background: rgba(103, 224, 255, 0.16);
+            border-color: rgba(125, 236, 255, 0.5);
+        }
+
+        .game-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.5rem, 2.5vw, 1.9rem);
+            line-height: 1;
+            letter-spacing: 1.6px;
+            color: #f8feff;
+            text-shadow: 0 2px 0 #0c5f83, 0 0 20px rgba(114, 226, 255, 0.5);
+        }
+
+        .game-title span {
+            color: #8cefff;
+            text-shadow: 0 2px 0 #0b658d, 0 0 18px rgba(88, 221, 255, 0.45);
+        }
+
+        .game-title small {
+            margin-left: 5px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.48em;
+            letter-spacing: 1.8px;
+            color: #b9f4ff;
+            opacity: 0.8;
+        }
+
+        .live-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 7px;
+            padding: 3px 7px;
+            border: 1px solid rgba(255, 111, 137, 0.52);
+            border-radius: 999px;
+            background: rgba(243, 59, 93, 0.18);
+            color: #ffe8ed;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.45rem;
+            font-style: normal;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            line-height: 1;
+            vertical-align: middle;
+            transform: translateY(-2px);
+        }
+
+        .live-mini i,
+        .stage-live i {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #ff4768;
+            box-shadow: 0 0 8px #ff4768;
+            animation: livePulse 1.5s infinite;
+        }
+
+        @keyframes livePulse {
+            50% {
+                opacity: 0.35;
+                transform: scale(0.72);
+            }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .header-sound {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(196, 244, 255, 0.2);
+            background: rgba(255, 255, 255, 0.07);
+            color: #dffaff;
+            border-radius: 9px;
+            font-size: 0.78rem;
+        }
+
+        .header-sound:hover {
+            background: rgba(126, 233, 255, 0.15);
+            color: #fff;
+        }
+
+        .balance-box {
+            min-height: 38px;
+            padding: 5px 12px;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 210, 90, 0.38);
+            background: linear-gradient(180deg, rgba(255, 210, 90, 0.14), rgba(255, 210, 90, 0.06));
+            box-shadow: inset 0 1px 0 rgba(255, 245, 196, 0.12);
+        }
+
+        .balance-label {
+            color: #a9cfde;
+            font-size: 0.5rem;
+            letter-spacing: 1.4px;
+        }
+
+        .balance-value {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.24rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #ffd65c;
+            text-shadow: 0 1px 8px rgba(255, 191, 49, 0.35);
+        }
+
+        .game-main {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .wheel-panel {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            padding: 12px 16px 6px;
+            gap: 3px;
+            justify-content: center;
+            overflow: hidden;
+            background: #86d5ec;
+            isolation: isolate;
+        }
+
+        .studio-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .studio-bg svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wheel-panel::before {
+            content: '';
+            position: absolute;
+            z-index: 0;
+            top: 47%;
+            left: 50%;
+            width: min(78vh, 710px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.52) 0%, rgba(199, 247, 255, 0.24) 36%, rgba(116, 213, 238, 0) 68%);
+        }
+
+        .wheel-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(10, 66, 92, 0.22), transparent 20%, transparent 80%, rgba(10, 66, 92, 0.22)),
+                linear-gradient(0deg, rgba(6, 59, 85, 0.28), transparent 24%);
+        }
+
+        .snowfall {
+            position: absolute;
+            inset: -20% 0 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.7;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1.4px, transparent 2px),
+                radial-gradient(circle, rgba(223, 250, 255, 0.7) 0 1px, transparent 1.7px);
+            background-size: 83px 97px, 121px 143px;
+            background-position: 8px 12px, 47px 33px;
+            animation: snowDrift 22s linear infinite;
+        }
+
+        @keyframes snowDrift {
+            to {
+                transform: translate3d(-38px, 210px, 0);
+            }
+        }
+
+        .wheel-panel > .wheel-hud,
+        .wheel-panel > .wheel-wrap,
+        .wheel-panel > .wheel-meta,
+        .wheel-panel > .stage-topline,
+        .wheel-panel > .stage-max {
+            z-index: 2;
+        }
+
+        .stage-topline {
+            position: absolute;
+            top: 12px;
+            left: 18px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            pointer-events: none;
+        }
+
+        .stage-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 126, 151, 0.55);
+            background: rgba(4, 31, 50, 0.62);
+            color: #ffedf1;
+            font: 800 0.52rem 'Inter', sans-serif;
+            letter-spacing: 1.1px;
+            backdrop-filter: blur(8px);
+        }
+
+        .stage-tag {
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(223, 248, 255, 0.4);
+            color: #0a4967;
+            font: 800 0.52rem 'Inter', sans-serif;
+            letter-spacing: 0.9px;
+            backdrop-filter: blur(8px);
+        }
+
+        .stage-max {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 221, 122, 0.72);
+            background: linear-gradient(180deg, rgba(255, 249, 216, 0.86), rgba(255, 207, 90, 0.82));
+            color: #5a3a00;
+            font: 800 0.52rem 'Inter', sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 14px rgba(117, 75, 0, 0.18), inset 0 1px 0 #fffbe1;
+            pointer-events: none;
+        }
+
+        .stage-max b {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 0.2px;
+        }
+
+        .wheel-wrap {
+            width: min(100%, 480px, calc(100dvh - 330px));
+            flex-shrink: 0;
+            filter: drop-shadow(0 28px 40px rgba(2, 42, 65, 0.38)) drop-shadow(0 4px 9px rgba(2, 31, 49, 0.2));
+        }
+
+        #wheel-canvas {
+            border-radius: 50%;
+        }
+
+        .wheel-hud {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hud-pill {
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            background: rgba(232, 251, 255, 0.62);
+            color: #0a4967;
+            box-shadow: 0 5px 16px rgba(4, 59, 84, 0.12), inset 0 1px 0 #fff;
+            font-size: 0.62rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hud-pill i {
+            color: #0a8dc7;
+        }
+
+        .hud-pill.gold {
+            border-color: rgba(255, 219, 111, 0.76);
+            color: #9a6a00;
+            background: rgba(255, 248, 210, 0.78);
+        }
+
+        .hud-pill.gold i {
+            color: #c58a00;
+        }
+
+        .wheel-meta {
+            position: relative;
+            width: min(100%, 480px);
+            min-height: 43px;
+            justify-content: flex-start;
+            gap: 4px;
+        }
+
+        .boost-summary {
+            min-height: 24px;
+            color: #0b526e;
+            font-size: 0.58rem;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        .boost-pill {
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            background: rgba(237, 252, 255, 0.66);
+            color: #0b5780;
+            box-shadow: 0 3px 10px rgba(4, 64, 88, 0.1), inset 0 1px 0 #fff;
+            font-size: 0.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .boost-pill i {
+            color: #0a8dc7;
+        }
+
+        .boost-pill.muted {
+            color: #34657c;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(226, 248, 255, 0.4);
+        }
+
+        .result-banner {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translate(-50%, 4px);
+            max-width: min(96vw, 430px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: rgba(242, 253, 255, 0.94);
+            color: #174f6b;
+            box-shadow: 0 7px 20px rgba(4, 60, 85, 0.2);
+            font-size: 0.66rem;
+            z-index: 4;
+            backdrop-filter: blur(12px);
+        }
+
+        .result-banner.show {
+            transform: translate(-50%, 0);
+        }
+
+        .result-banner.win {
+            border-color: rgba(255, 212, 90, 0.86);
+            color: #9b5b00;
+            background: rgba(255, 250, 226, 0.97);
+        }
+
+        .result-banner.lose {
+            color: #386a82;
+        }
+
+        .bet-panel {
+            flex: 0 0 auto;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-areas:
+                "head chips"
+                "cards cards"
+                "footer footer";
+            gap: 8px 14px;
+            min-height: 0;
+            padding: 9px clamp(14px, 2.8vw, 36px) calc(11px + env(safe-area-inset-bottom));
+            overflow: visible;
+            color: var(--panel-ink);
+            background:
+                radial-gradient(ellipse at 17% -60%, rgba(255, 255, 255, 0.95), transparent 55%),
+                linear-gradient(180deg, rgba(240, 253, 255, 0.97), rgba(190, 233, 247, 0.98));
+            border-top: 1px solid rgba(255, 255, 255, 0.92);
+            box-shadow: 0 -16px 38px rgba(3, 56, 82, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(18px);
+        }
+
+        .panel-head {
+            grid-area: head;
+            display: block;
+            align-self: center;
+            min-width: 0;
+            padding: 0;
+        }
+
+        .panel-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.42rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: 1.4px;
+            color: #07324c;
+            white-space: nowrap;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .panel-title span {
+            color: #078ac6;
+        }
+
+        .panel-note {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+            color: var(--panel-muted);
+            font: 800 0.47rem 'Inter', sans-serif;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .panel-note i {
+            color: #0b94ce;
+            font-size: 0.5rem;
+        }
+
+        .chip-row {
+            grid-area: chips;
+            justify-self: end;
+            align-self: center;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 6px;
+            border-radius: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.42);
+            box-shadow: inset 0 1px 4px rgba(2, 59, 84, 0.07), 0 2px 8px rgba(5, 63, 87, 0.04);
+        }
+
+        .chip-label {
+            padding: 0 2px;
+            color: #5c8498;
+            font-size: 0.5rem;
+            letter-spacing: 1.1px;
+        }
+
+        .chip {
+            min-width: 42px;
+            height: 31px;
+            padding: 0 9px;
+            border-radius: 9px;
+            border: 1px solid rgba(8, 86, 118, 0.13);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(227, 247, 253, 0.82));
+            color: #0a4a68;
+            font: 800 0.7rem 'Inter', sans-serif;
+            box-shadow: 0 2px 5px rgba(4, 59, 82, 0.08), inset 0 1px 0 #fff;
+        }
+
+        .chip:hover {
+            border-color: rgba(9, 132, 181, 0.38);
+            color: #0874a5;
+            transform: translateY(-1px);
+        }
+
+        .chip.active {
+            border-color: #d79b10;
+            background: linear-gradient(180deg, #fff3b9, #ffd05a);
+            color: #5b3a00;
+            box-shadow: 0 4px 11px rgba(181, 121, 5, 0.24), inset 0 1px 0 #fffbe0;
+        }
+
+        .bet-options {
+            grid-area: cards;
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .bet-card {
+            position: relative;
+            min-width: 0;
+            min-height: 70px;
+            padding: 8px 10px 7px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: linear-gradient(145deg, var(--tile-1), var(--tile-2));
+            color: var(--ink);
+            box-shadow: 0 5px 13px rgba(4, 66, 91, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+            overflow: hidden;
+            cursor: pointer;
+            isolation: isolate;
+            transition: transform 0.16s, box-shadow 0.16s, border-color 0.16s;
+        }
+
+        .bet-card[data-bet-option="leaf1"] {
+            --tile-1: #fbffff;
+            --tile-2: #d7f2fb;
+            --ink: #073d57;
+            --cc: #3ba8d7;
+        }
+
+        .bet-card[data-bet-option="leaf2"] {
+            --tile-1: #8fd7ee;
+            --tile-2: #4fa9d0;
+            --ink: #063e59;
+            --cc: #147daa;
+        }
+
+        .bet-card[data-bet-option="lil"] {
+            --tile-1: #28b5f0;
+            --tile-2: #0b6dbb;
+            --ink: #ffffff;
+            --cc: #7ee9ff;
+        }
+
+        .bet-card[data-bet-option="big"] {
+            --tile-1: #ffb23f;
+            --tile-2: #e86b14;
+            --ink: #ffffff;
+            --cc: #ffe08d;
+        }
+
+        .bet-card[data-bet-option="huge"] {
+            --tile-1: #ef5366;
+            --tile-2: #bd1c39;
+            --ink: #ffffff;
+            --cc: #ffb0b9;
+        }
+
+        .bet-card[data-bet-option="all"] {
+            --tile-1: #164f72;
+            --tile-2: #062b48;
+            --ink: #ffffff;
+            --cc: #ffd45a;
+        }
+
+        .bet-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(118deg, rgba(255, 255, 255, 0.34), transparent 39%),
+                radial-gradient(circle at 88% 115%, rgba(255, 255, 255, 0.24), transparent 45%);
+            pointer-events: none;
+        }
+
+        .bet-card::after {
+            content: '\f578';
+            position: absolute;
+            right: 9px;
+            top: 7px;
+            z-index: -1;
+            font-family: 'Font Awesome 6 Free';
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--ink);
+            opacity: 0.12;
+            transform: rotate(-8deg);
+            pointer-events: none;
+        }
+
+        .bet-card[data-bet-option="leaf1"]::after,
+        .bet-card[data-bet-option="leaf2"]::after {
+            content: '\f06c';
+        }
+
+        .bet-card[data-bet-option="all"]::after {
+            content: '\f005';
+            color: #ffd45a;
+            opacity: 0.2;
+        }
+
+        .bet-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 9px 20px rgba(4, 66, 91, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .bet-card.active {
+            border-color: #ffd45a;
+            box-shadow: 0 0 0 2px rgba(255, 210, 90, 0.7), 0 8px 20px rgba(86, 61, 4, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .bet-card.boosted {
+            border-color: rgba(255, 212, 90, 0.92);
+            box-shadow: 0 0 16px rgba(255, 205, 79, 0.32), inset 0 0 18px rgba(255, 239, 176, 0.16);
+        }
+
+        .bet-name {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding-right: 2px;
+            color: var(--ink);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 800;
+            letter-spacing: 0.45px;
+            line-height: 1.05;
+            white-space: nowrap;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.14);
+        }
+
+        .bet-name i {
+            color: var(--cc);
+            font-size: 0.84em;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.08));
+        }
+
+        .bet-card[data-bet-option="leaf1"] .bet-name i,
+        .bet-card[data-bet-option="leaf2"] .bet-name i {
+            color: #1789b6;
+        }
+
+        .bet-meta {
+            position: relative;
+            z-index: 1;
+            max-width: 100%;
+            margin-top: 2px;
+            color: var(--ink);
+            font-size: 0.45rem;
+            font-weight: 700;
+            letter-spacing: 0.45px;
+            line-height: 1.2;
+            opacity: 0.72;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bet-amount {
+            position: absolute;
+            right: 10px;
+            bottom: 8px;
+            z-index: 2;
+            color: var(--ink);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.08rem;
+            font-weight: 900;
+            letter-spacing: 0.2px;
+            line-height: 1;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.16);
+        }
+
+        .boost-tag {
+            margin-left: 2px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            background: #ffd45a;
+            color: #5a3900;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.39rem;
+            font-weight: 900;
+            letter-spacing: 0;
+            line-height: 1.1;
+            vertical-align: 1px;
+        }
+
+        .card-clear {
+            top: 4px;
+            right: 4px;
+            z-index: 4;
+            width: 17px;
+            height: 17px;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            background: rgba(5, 39, 58, 0.55);
+            color: #ffffff;
+            font-size: 0.55rem;
+        }
+
+        .bet-panel.locked .chip-row,
+        .bet-panel.locked .bet-options,
+        .bet-panel.locked .panel-actions {
+            opacity: 0.58;
+            pointer-events: none;
+        }
+
+        .bet-footer {
+            grid-area: footer;
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .panel-totals {
+            display: flex;
+            gap: 7px;
+            flex: 0 1 auto;
+            min-width: 0;
+        }
+
+        .total-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 88px;
+            padding: 4px 9px;
+            border-radius: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 1px 0 #fff, 0 2px 7px rgba(7, 74, 102, 0.05);
+        }
+
+        .total-box span {
+            color: #60849a;
+            font: 800 0.43rem 'Inter', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .total-box strong {
+            color: #07354f;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.02rem;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: 0.2px;
+        }
+
+        .total-box.gold strong {
+            color: #a76e00;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 5px;
+            flex: 0 0 auto;
+        }
+
+        .ghost-btn {
+            min-width: 64px;
+            padding: 0 12px;
+            border: 1px solid rgba(8, 84, 114, 0.16);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.52);
+            color: #0c4b68;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.73rem;
+            font-weight: 800;
+            letter-spacing: 0.9px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+        }
+
+        .ghost-btn:hover {
+            border-color: rgba(9, 128, 175, 0.35);
+            background: rgba(255, 255, 255, 0.8);
+            color: #087aab;
+        }
+
+        .spin-btn {
+            position: relative;
+            width: auto;
+            flex: 0 0 300px;
+            min-width: 210px;
+            min-height: 48px;
+            margin-left: auto;
+            padding: 4px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            border-radius: 13px;
+            background: linear-gradient(180deg, #13a8e2 0%, #087bb9 55%, #075d92 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(4, 89, 130, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.48), 0 0 0 3px rgba(255, 255, 255, 0.28);
+            overflow: hidden;
+            gap: 1px;
+        }
+
+        .spin-btn::before {
+            content: '';
+            position: absolute;
+            top: -70%;
+            left: -35%;
+            width: 42%;
+            height: 240%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+            transform: rotate(20deg);
+            animation: spinShine 4.4s ease-in-out infinite;
+        }
+
+        @keyframes spinShine {
+            0%,
+            58% {
+                left: -55%;
+            }
+            78%,
+            100% {
+                left: 125%;
+            }
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            filter: brightness(1.06);
+            transform: translateY(-1px);
+        }
+
+        .spin-btn:disabled {
+            background: linear-gradient(180deg, #c1dfe9, #9fc4d3);
+            color: rgba(5, 47, 67, 0.5);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 0 0 3px rgba(255, 255, 255, 0.18);
+        }
+
+        .spin-btn:disabled::before {
+            display: none;
+        }
+
+        .spin-main {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.62rem;
+            font-weight: 900;
+            line-height: 0.92;
+            letter-spacing: 1.8px;
+            text-shadow: 0 2px 5px rgba(0, 43, 67, 0.32);
+        }
+
+        .spin-btn .spin-sub {
+            color: rgba(255, 255, 255, 0.82);
+            font: 800 0.46rem 'Inter', sans-serif;
+            letter-spacing: 0.9px;
+            line-height: 1.1;
+        }
+
+        .spin-btn:disabled .spin-sub {
+            color: rgba(5, 47, 67, 0.46);
+        }
+
+        .notification-area {
+            top: 70px;
+            right: 14px;
+        }
+
+        .notification {
+            border: 1px solid rgba(159, 239, 255, 0.5);
+            background: rgba(4, 46, 69, 0.94);
+            color: #ebfdff;
+            box-shadow: 0 10px 26px rgba(1, 31, 48, 0.28);
+            backdrop-filter: blur(12px);
+        }
+
+        .notification.err {
+            background: rgba(126, 24, 45, 0.96);
+            border-color: rgba(255, 144, 161, 0.5);
+        }
+
+        .notification.win {
+            background: rgba(116, 80, 4, 0.96);
+            border-color: rgba(255, 222, 118, 0.55);
+            color: #fff8da;
+        }
+
+        .bonus-overlay {
+            padding: 14px;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 50% 32%, rgba(48, 174, 218, 0.45), transparent 54%),
+                radial-gradient(ellipse at 12% 84%, rgba(21, 120, 168, 0.36), transparent 46%),
+                linear-gradient(180deg, #0b6c99 0%, #063e62 44%, #021b31 100%);
+        }
+
+        .bonus-overlay::before {
+            content: '';
+            position: absolute;
+            inset: -30% -20%;
+            pointer-events: none;
+            opacity: 0.38;
+            background:
+                linear-gradient(112deg, transparent 42%, rgba(197, 250, 255, 0.3) 43%, transparent 44%),
+                linear-gradient(106deg, transparent 53%, rgba(197, 250, 255, 0.2) 54%, transparent 55%),
+                linear-gradient(118deg, transparent 65%, rgba(197, 250, 255, 0.26) 66%, transparent 67%);
+            filter: blur(4px);
+            animation: waterShift 9s ease-in-out infinite alternate;
+        }
+
+        @keyframes waterShift {
+            to {
+                transform: translate3d(3%, 2%, 0) scale(1.06);
+            }
+        }
+
+        .bonus-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 34%, rgba(0, 15, 28, 0.48) 100%);
+        }
+
+        .bonus-ambient {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .amb-fish {
+            position: absolute;
+            color: rgba(180, 246, 255, 0.16);
+            filter: drop-shadow(0 5px 12px rgba(0, 15, 28, 0.2));
+            animation: ambSwim 12s ease-in-out infinite alternate;
+        }
+
+        .amb-fish.a1 {
+            left: -2%;
+            top: 22%;
+            font-size: 4.6rem;
+            animation-duration: 15s;
+        }
+
+        .amb-fish.a2 {
+            right: 2%;
+            top: 18%;
+            font-size: 2.8rem;
+            color: rgba(255, 206, 113, 0.14);
+            animation-duration: 18s;
+            animation-delay: -4s;
+        }
+
+        .amb-fish.a3 {
+            left: 8%;
+            bottom: 6%;
+            font-size: 2rem;
+            animation-duration: 11s;
+            animation-delay: -6s;
+        }
+
+        .amb-fish.a4 {
+            right: 10%;
+            bottom: 10%;
+            font-size: 5.8rem;
+            color: rgba(255, 140, 157, 0.1);
+            animation-duration: 16s;
+            animation-delay: -2s;
+        }
+
+        .amb-fish.a5 {
+            left: 42%;
+            top: 7%;
+            font-size: 1.5rem;
+            opacity: 0.7;
+            animation-duration: 9s;
+        }
+
+        @keyframes ambSwim {
+            to {
+                transform: translate3d(46px, -24px, 0) rotate(-4deg);
+            }
+        }
+
+        .amb-bubble {
+            position: absolute;
+            bottom: -20px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 1px solid rgba(208, 252, 255, 0.34);
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.22);
+            animation: bubbleRise 9s linear infinite;
+        }
+
+        .amb-bubble.b1 {
+            left: 9%;
+            animation-delay: -1s;
+        }
+
+        .amb-bubble.b2 {
+            left: 18%;
+            width: 5px;
+            height: 5px;
+            animation-delay: -6s;
+            animation-duration: 11s;
+        }
+
+        .amb-bubble.b3 {
+            left: 34%;
+            width: 13px;
+            height: 13px;
+            animation-delay: -4s;
+            animation-duration: 13s;
+        }
+
+        .amb-bubble.b4 {
+            left: 56%;
+            width: 6px;
+            height: 6px;
+            animation-delay: -8s;
+        }
+
+        .amb-bubble.b5 {
+            left: 68%;
+            width: 11px;
+            height: 11px;
+            animation-delay: -3s;
+            animation-duration: 12s;
+        }
+
+        .amb-bubble.b6 {
+            left: 78%;
+            width: 4px;
+            height: 4px;
+            animation-delay: -5s;
+        }
+
+        .amb-bubble.b7 {
+            left: 87%;
+            width: 8px;
+            height: 8px;
+            animation-delay: -9s;
+            animation-duration: 14s;
+        }
+
+        .amb-bubble.b8 {
+            left: 44%;
+            width: 4px;
+            height: 4px;
+            animation-delay: -2s;
+        }
+
+        @keyframes bubbleRise {
+            from {
+                transform: translate3d(0, 0, 0) scale(0.7);
+                opacity: 0;
+            }
+            14% {
+                opacity: 0.85;
+            }
+            to {
+                transform: translate3d(24px, -110vh, 0) scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .bonus-card {
+            position: relative;
+            z-index: 2;
+            width: min(840px, calc(100vw - 28px));
+            max-height: calc(100dvh - 28px);
+            padding: 16px 16px 14px;
+            overflow-y: auto;
+            border-radius: 23px;
+            border: 1px solid rgba(161, 242, 255, 0.44);
+            background:
+                radial-gradient(circle at 16% 0%, rgba(111, 225, 255, 0.22), transparent 37%),
+                linear-gradient(180deg, rgba(8, 57, 88, 0.94), rgba(2, 25, 44, 0.98));
+            box-shadow: 0 34px 90px rgba(0, 12, 24, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+            text-align: center;
+            color: #effeff;
+            backdrop-filter: blur(16px);
+            overflow-x: hidden;
+        }
+
+        .bonus-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: inherit;
+            pointer-events: none;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.5px),
+                radial-gradient(circle, rgba(171, 240, 255, 0.3) 0 1px, transparent 1.4px);
+            background-size: 77px 83px, 121px 131px;
+            opacity: 0.32;
+        }
+
+        .bonus-head {
+            position: relative;
+            z-index: 2;
+        }
+
+        .bonus-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(151, 236, 255, 0.36);
+            background: rgba(211, 250, 255, 0.08);
+            color: #b7f1ff;
+            font: 800 0.53rem 'Inter', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        .bonus-eyebrow i {
+            color: #76e9ff;
+        }
+
+        .bonus-title {
+            margin: 5px 0 8px;
+            color: #ffffff;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: clamp(2rem, 4.4vw, 2.75rem);
+            font-weight: 900;
+            font-style: italic;
+            letter-spacing: 2px;
+            line-height: 0.9;
+            text-shadow: 0 2px 0 #06324e, 0 0 24px rgba(111, 226, 255, 0.35);
+        }
+
+        .bonus-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+            gap: 13px;
+            align-items: stretch;
+            text-align: left;
+        }
+
+        .bonus-overlay.lil {
+            --fish-main: #24b8f2;
+            --fish-dark: #0868b3;
+            --fish-light: #86ecff;
+            --fish-glow: rgba(52, 207, 255, 0.5);
+        }
+
+        .bonus-overlay.big {
+            --fish-main: #ff9f2e;
+            --fish-dark: #bc5306;
+            --fish-light: #ffd888;
+            --fish-glow: rgba(255, 166, 54, 0.45);
+        }
+
+        .bonus-overlay.huge {
+            --fish-main: #ec4058;
+            --fish-dark: #9e132f;
+            --fish-light: #ff93a0;
+            --fish-glow: rgba(255, 79, 107, 0.45);
+        }
+
+        .ice-hole {
+            position: relative;
+            min-height: 278px;
+            border-radius: 19px;
+            border: 1px solid rgba(166, 242, 255, 0.34);
+            background:
+                radial-gradient(ellipse at 50% 108%, var(--fish-glow), transparent 52%),
+                radial-gradient(ellipse at 50% 20%, rgba(170, 246, 255, 0.23), transparent 45%),
+                linear-gradient(180deg, #0a78a5 0%, #064e78 48%, #021c31 100%);
+            box-shadow: inset 0 0 40px rgba(0, 22, 38, 0.52), 0 10px 26px rgba(0, 18, 31, 0.25);
+            overflow: hidden;
+        }
+
+        .ice-hole::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -8%;
+            right: -8%;
+            height: 27%;
+            z-index: 3;
+            background:
+                linear-gradient(180deg, rgba(239, 254, 255, 0.9), rgba(178, 239, 251, 0.6) 55%, rgba(124, 210, 233, 0));
+            clip-path: polygon(0 0, 100% 0, 100% 58%, 86% 68%, 78% 56%, 64% 72%, 52% 54%, 38% 68%, 26% 52%, 14% 66%, 0 54%);
+            opacity: 0.46;
+            pointer-events: none;
+        }
+
+        .water-caustics {
+            position: absolute;
+            inset: -20% -15%;
+            opacity: 0.42;
+            background:
+                repeating-linear-gradient(114deg, transparent 0 32px, rgba(167, 245, 255, 0.18) 33px 34px, transparent 35px 67px),
+                repeating-linear-gradient(72deg, transparent 0 47px, rgba(181, 248, 255, 0.11) 48px 50px, transparent 51px 92px);
+            filter: blur(2px);
+            animation: waterShift 7s ease-in-out infinite alternate;
+        }
+
+        .fishing-line {
+            position: absolute;
+            top: -12px;
+            left: 52%;
+            z-index: 2;
+            width: 2px;
+            height: 55%;
+            background: linear-gradient(180deg, rgba(235, 254, 255, 0.82), rgba(206, 248, 255, 0.4));
+            box-shadow: 0 0 8px rgba(172, 242, 255, 0.35);
+            transform: rotate(5deg);
+            transform-origin: top center;
+        }
+
+        .fishing-line span {
+            position: absolute;
+            left: -5px;
+            bottom: -10px;
+            width: 12px;
+            height: 18px;
+            border: 2px solid rgba(225, 253, 255, 0.9);
+            border-top: 0;
+            border-radius: 0 0 9px 9px;
+        }
+
+        .fish-wrap {
+            position: absolute;
+            left: 49%;
+            bottom: 9px;
+            z-index: 2;
+            width: min(88%, 355px);
+            transform: translateX(-50%);
+            animation: fishRise 1.15s cubic-bezier(0.16, 0.84, 0.27, 1.06) both;
+        }
+
+        @keyframes fishRise {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 82px) rotate(-5deg) scale(0.78);
+            }
+            58% {
+                transform: translate(-50%, -7px) rotate(1deg) scale(1.03);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0) rotate(0) scale(1);
+            }
+        }
+
+        .fish-svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .fish-body {
+            fill: var(--fish-main);
+        }
+
+        .fish-tail,
+        .fish-fin {
+            fill: var(--fish-dark);
+        }
+
+        .fish-pectoral {
+            fill: var(--fish-light);
+            opacity: 0.9;
+        }
+
+        .fish-belly {
+            fill: #ffffff;
+            opacity: 0.18;
+        }
+
+        .fish-eye {
+            fill: #052330;
+        }
+
+        .fish-eye-dot {
+            fill: #ffffff;
+        }
+
+        .fish-bubble {
+            fill: none;
+            stroke: #d8faff;
+            stroke-opacity: 0.7;
+            stroke-width: 2;
+        }
+
+        .fish-mult {
+            position: absolute;
+            right: 13px;
+            bottom: 12px;
+            z-index: 4;
+            padding: 0 13px 2px;
+            border-radius: 13px;
+            border: 2px solid rgba(255, 223, 111, 0.88);
+            background: linear-gradient(180deg, rgba(7, 47, 73, 0.94), rgba(2, 25, 42, 0.96));
+            color: #ffda66;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: clamp(2.5rem, 5.2vw, 3.7rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 0 #8d5600, 0 0 18px rgba(255, 207, 72, 0.44);
+            box-shadow: 0 9px 24px rgba(0, 15, 26, 0.42), inset 0 1px 0 rgba(255, 253, 221, 0.24);
+            transform: rotate(-4deg);
+            animation: multPop 0.62s cubic-bezier(0.17, 0.85, 0.3, 1.3) 0.46s both;
+        }
+
+        @keyframes multPop {
+            from {
+                opacity: 0;
+                transform: rotate(-9deg) scale(0.62);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(-4deg) scale(1);
+            }
+        }
+
+        .ice-shelf {
+            position: absolute;
+            left: -10%;
+            right: -10%;
+            bottom: -7px;
+            z-index: 1;
+            height: 18%;
+            background: linear-gradient(180deg, rgba(183, 240, 251, 0.08), rgba(10, 49, 69, 0.35));
+            clip-path: polygon(0 42%, 18% 20%, 34% 48%, 49% 15%, 62% 44%, 79% 13%, 100% 48%, 100% 100%, 0 100%);
+            opacity: 0.7;
+        }
+
+        .bonus-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+            padding: 4px 2px;
+        }
+
+        .catch-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #ffdc74;
+            font: 800 0.52rem 'Inter', sans-serif;
+            letter-spacing: 1.8px;
+        }
+
+        .catch-label span {
+            width: 26px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 220, 116, 0.7));
+        }
+
+        .catch-label span:last-child {
+            background: linear-gradient(90deg, rgba(255, 220, 116, 0.7), transparent);
+        }
+
+        .bonus-sub {
+            color: #c9efff;
+            font-size: 0.68rem;
+            line-height: 1.45;
+            text-align: center;
+            min-height: 34px;
+        }
+
+        .bonus-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 8px 0 10px;
+        }
+
+        .bonus-breakdown .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 7px 9px;
+            border-radius: 8px;
+            border: 1px solid rgba(160, 237, 255, 0.15);
+            background: rgba(255, 255, 255, 0.055);
+            color: #bcdfef;
+            font: 700 0.62rem 'Inter', sans-serif;
+        }
+
+        .bonus-breakdown .row span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bonus-breakdown strong {
+            color: #ffdc76;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.08rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .collect-btn {
+            width: 100%;
+            min-height: 48px;
+            padding: 0 18px;
+            border: 1px solid rgba(255, 252, 211, 0.8);
+            border-radius: 11px;
+            background: linear-gradient(180deg, #fff2ac 0%, #ffd159 50%, #e9a61d 100%);
+            color: #4c3305;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            box-shadow: 0 8px 20px rgba(114, 71, 0, 0.32), inset 0 1px 0 #fffbe4;
+        }
+
+        .collect-btn:hover {
+            filter: brightness(1.04);
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            padding: 14px;
+            background: rgba(1, 23, 40, 0.75);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-card {
+            width: min(560px, calc(100vw - 28px));
+            max-height: calc(100dvh - 28px);
+            overflow-y: auto;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            background:
+                radial-gradient(circle at 20% 0%, #ffffff, transparent 48%),
+                linear-gradient(180deg, #f7feff, #dff4fc);
+            color: #17465f;
+            box-shadow: 0 30px 80px rgba(0, 17, 30, 0.48), inset 0 1px 0 #fff;
+        }
+
+        .modal-head {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            padding: 14px 17px;
+            background: rgba(247, 254, 255, 0.94);
+            border-bottom: 1px solid rgba(8, 82, 112, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-title {
+            color: #073b58;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+        }
+
+        .modal-close {
+            width: 31px;
+            height: 31px;
+            border: 1px solid rgba(8, 91, 125, 0.18);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            color: #0b5879;
+        }
+
+        .modal-close:hover {
+            background: #e6f8fe;
+        }
+
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 13px 17px 0;
+            list-style: none;
+            color: #2b5b73;
+            font-size: 0.76rem;
+            line-height: 1.46;
+        }
+
+        .rules-list li {
+            position: relative;
+            padding: 8px 10px 8px 31px;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(8, 92, 124, 0.09);
+        }
+
+        .rules-list li::before {
+            content: '\f06c';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ffd45a;
+            color: #5d3b00;
+            font-family: 'Font Awesome 6 Free';
+            font-size: 0.4rem;
+            font-weight: 900;
+        }
+
+        .rules-list b {
+            color: #083c59;
+        }
+
+        .rules-foot {
+            padding: 12px 17px 14px;
+            color: #638298;
+            font-size: 0.68rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 860px) {
+            .game-header {
+                flex-basis: 52px;
+                height: 52px;
+                padding: 0 10px;
+                gap: 6px;
+            }
+
+            .home-btn {
+                width: 34px;
+                height: 34px;
+                padding: 0;
+                justify-content: center;
+            }
+
+            .home-btn span {
+                display: none;
+            }
+
+            .game-title {
+                font-size: 1.28rem;
+                letter-spacing: 0.8px;
+            }
+
+            .game-title small {
+                display: none;
+            }
+
+            .live-mini {
+                gap: 3px;
+                margin-left: 4px;
+                padding: 3px 5px;
+                font-size: 0.4rem;
+                letter-spacing: 0.8px;
+            }
+
+            .header-right {
+                gap: 5px;
+            }
+
+            .header-sound {
+                width: 32px;
+                height: 32px;
+                font-size: 0.7rem;
+            }
+
+            .balance-box {
+                min-height: 34px;
+                padding: 4px 8px;
+            }
+
+            .balance-label {
+                display: none;
+            }
+
+            .balance-value {
+                font-size: 1.08rem;
+            }
+
+            .wheel-panel {
+                padding: 3px 7px 3px;
+                gap: 1px;
+            }
+
+            .wheel-panel::before {
+                width: 112vw;
+            }
+
+            .stage-topline,
+            .stage-max,
+            .wheel-hud {
+                display: none;
+            }
+
+            .wheel-wrap {
+                width: min(88vw, 344px, calc(100dvh - 350px));
+            }
+
+            .wheel-meta {
+                width: min(100%, 344px);
+                min-height: 38px;
+                gap: 2px;
+            }
+
+            .boost-summary {
+                gap: 4px;
+                font-size: 0.52rem;
+            }
+
+            .boost-pill {
+                padding: 3px 6px;
+                font-size: 0.46rem;
+            }
+
+            .result-banner {
+                font-size: 0.61rem;
+                min-height: 27px;
+                padding: 4px 9px;
+            }
+
+            .bet-panel {
+                gap: 5px 6px;
+                padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
+            }
+
+            .panel-head {
+                align-self: center;
+            }
+
+            .panel-note {
+                display: none;
+            }
+
+            .panel-title {
+                font-size: 1.12rem;
+                letter-spacing: 0.8px;
+            }
+
+            .chip-row {
+                justify-self: end;
+                gap: 4px;
+                padding: 3px 4px;
+                border-radius: 10px;
+            }
+
+            .chip-label {
+                display: none;
+            }
+
+            .chip {
+                min-width: 33px;
+                height: 25px;
+                padding: 0 7px;
+                border-radius: 7px;
+                font-size: 0.59rem;
+            }
+
+            .bet-options {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 5px;
+            }
+
+            .bet-card {
+                min-height: 54px;
+                padding: 6px 7px 5px;
+                border-radius: 9px;
+            }
+
+            .bet-name {
+                gap: 4px;
+                font-size: 0.71rem;
+                letter-spacing: 0.2px;
+            }
+
+            .bet-name i {
+                font-size: 0.61rem;
+            }
+
+            .bet-meta {
+                margin-top: 1px;
+                font-size: 0.4rem;
+                letter-spacing: 0.15px;
+            }
+
+            .bet-amount {
+                right: 7px;
+                bottom: 4px;
+                font-size: 0.85rem;
+            }
+
+            .bet-card::after {
+                right: 7px;
+                top: 6px;
+                font-size: 1.55rem;
+            }
+
+            .boost-tag {
+                padding: 1px 3px;
+                font-size: 0.35rem;
+            }
+
+            .card-clear {
+                top: 3px;
+                right: 3px;
+                width: 15px;
+                height: 15px;
+                font-size: 0.48rem;
+            }
+
+            .bet-footer {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                grid-template-areas:
+                    "totals actions"
+                    "spin spin";
+                gap: 5px;
+            }
+
+            .panel-totals {
+                grid-area: totals;
+                gap: 5px;
+                min-width: 0;
+            }
+
+            .total-box {
+                flex: 1;
+                min-width: 0;
+                padding: 3px 7px;
+                border-radius: 8px;
+            }
+
+            .total-box span {
+                font-size: 0.39rem;
+            }
+
+            .total-box strong {
+                font-size: 0.84rem;
+            }
+
+            .panel-actions {
+                grid-area: actions;
+                gap: 4px;
+            }
+
+            .ghost-btn {
+                min-width: 44px;
+                padding: 0 8px;
+                border-radius: 8px;
+                font-size: 0.59rem;
+            }
+
+            .spin-btn {
+                grid-area: spin;
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                margin-left: 0;
+                padding: 3px 20px;
+                border-radius: 10px;
+            }
+
+            .spin-main {
+                font-size: 1.3rem;
+                letter-spacing: 1.3px;
+            }
+
+            .spin-btn .spin-sub {
+                font-size: 0.4rem;
+            }
+
+            .bonus-card {
+                width: min(430px, calc(100vw - 18px));
+                max-height: calc(100dvh - 18px);
+                padding: 11px 11px 10px;
+                border-radius: 17px;
+            }
+
+            .bonus-title {
+                margin: 4px 0 6px;
+                font-size: 1.95rem;
+                letter-spacing: 1.4px;
+            }
+
+            .bonus-eyebrow {
+                padding: 3px 7px;
+                font-size: 0.46rem;
+                letter-spacing: 1.5px;
+            }
+
+            .bonus-body {
+                grid-template-columns: 1fr;
+                gap: 7px;
+            }
+
+            .ice-hole {
+                min-height: 151px;
+                border-radius: 13px;
+            }
+
+            .fish-wrap {
+                width: min(82%, 270px);
+                bottom: 3px;
+            }
+
+            .fish-mult {
+                right: 9px;
+                bottom: 8px;
+                padding: 0 9px 1px;
+                border-radius: 10px;
+                font-size: 2.05rem;
+            }
+
+            .fishing-line {
+                left: 53%;
+                height: 52%;
+            }
+
+            .bonus-info {
+                padding: 0;
+            }
+
+            .catch-label {
+                display: none;
+            }
+
+            .bonus-sub {
+                min-height: 0;
+                font-size: 0.62rem;
+                line-height: 1.35;
+            }
+
+            .bonus-breakdown {
+                gap: 4px;
+                margin: 5px 0 7px;
+            }
+
+            .bonus-breakdown .row {
+                padding: 5px 8px;
+                border-radius: 7px;
+                font-size: 0.56rem;
+            }
+
+            .bonus-breakdown strong {
+                font-size: 0.96rem;
+            }
+
+            .collect-btn {
+                min-height: 41px;
+                border-radius: 9px;
+                font-size: 1.05rem;
+            }
+
+            .amb-fish.a4,
+            .amb-fish.a5 {
+                display: none;
+            }
+
+            .notification-area {
+                top: 60px;
+                right: 9px;
+            }
+
+            .modal {
+                padding: 10px;
+            }
+
+            .modal-card {
+                width: min(540px, calc(100vw - 20px));
+                max-height: calc(100dvh - 20px);
+                border-radius: 15px;
+            }
+
+            .modal-head {
+                padding: 12px 14px;
+            }
+
+            .modal-title {
+                font-size: 1.28rem;
+            }
+
+            .rules-list {
+                padding: 10px 13px 0;
+                gap: 6px;
+                font-size: 0.7rem;
+            }
+
+            .rules-list li {
+                padding: 7px 8px 7px 28px;
+            }
+
+            .rules-list li::before {
+                left: 8px;
+                top: 7px;
+            }
+
+            .rules-foot {
+                padding: 10px 13px 12px;
+                font-size: 0.63rem;
+            }
+        }
+
+        @media (max-width: 860px) and (max-height: 700px) {
+            .wheel-wrap {
+                width: min(84vw, 328px, calc(100dvh - 350px));
+            }
+
+            .wheel-meta {
+                min-height: 33px;
+            }
+
+            .boost-summary {
+                font-size: 0.48rem;
+            }
+
+            .boost-pill {
+                padding: 2px 5px;
+                font-size: 0.42rem;
+            }
+
+            .bet-card {
+                min-height: 52px;
+            }
+
+            .panel-title {
+                font-size: 1.02rem;
+            }
+
+            .chip {
+                height: 24px;
+            }
+
+            .spin-btn {
+                min-height: 40px;
+            }
+
+            .spin-main {
+                font-size: 1.22rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .game-title {
+                font-size: 1.12rem;
+            }
+
+            .live-mini {
+                display: none;
+            }
+
+            .panel-title {
+                font-size: 0.98rem;
+            }
+
+            .chip {
+                min-width: 31px;
+                padding: 0 6px;
+            }
+
+            .bet-name {
+                font-size: 0.68rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="game-header">
+            <button class="home-btn" type="button" onclick="GameBridge.goHome()">
+                <i class="fas fa-home"></i> <span>HOME</span>
+            </button>
+            <div class="game-title">ICE <span>FISHING</span><em class="live-mini"><i></i>LIVE</em><small>BD</small></div>
+            <div class="header-right">
+                <button type="button" class="icon-btn header-sound" id="sound-toggle" aria-label="Toggle sound">
+                    <i class="fas fa-volume-high"></i>
+                </button>
+                <div class="balance-box">
+                    <span class="balance-label">BALANCE</span>
+                    <span class="balance-value" id="balance-amount">৳0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <section class="wheel-panel">
+                <div class="studio-bg" aria-hidden="true">
+                    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+                        <defs>
+                            <linearGradient id="studioSky" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#edfdff"/>
+                                <stop offset="0.32" stop-color="#bceefb"/>
+                                <stop offset="0.64" stop-color="#68c5e4"/>
+                                <stop offset="1" stop-color="#0b5b80"/>
+                            </linearGradient>
+                            <radialGradient id="studioGlow" cx="0.5" cy="0.43" r="0.48">
+                                <stop offset="0" stop-color="#ffffff" stop-opacity="0.92"/>
+                                <stop offset="0.45" stop-color="#d7f7ff" stop-opacity="0.45"/>
+                                <stop offset="1" stop-color="#9ae5fa" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="studioIceLeft" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#ebfcff"/>
+                                <stop offset="0.42" stop-color="#a9e6f6"/>
+                                <stop offset="1" stop-color="#4c9fc2"/>
+                            </linearGradient>
+                            <linearGradient id="studioIceRight" x1="1" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#f4feff"/>
+                                <stop offset="0.4" stop-color="#b4ebf9"/>
+                                <stop offset="1" stop-color="#3e90b4"/>
+                            </linearGradient>
+                            <linearGradient id="studioLake" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#a9eaf9"/>
+                                <stop offset="0.48" stop-color="#5fbfdd"/>
+                                <stop offset="1" stop-color="#17688d"/>
+                            </linearGradient>
+                            <linearGradient id="studioAurora" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+                                <stop offset="0.45" stop-color="#a9fff4" stop-opacity="0.42"/>
+                                <stop offset="1" stop-color="#e8ffff" stop-opacity="0"/>
+                            </linearGradient>
+                            <filter id="studioBlur" x="-40%" y="-40%" width="180%" height="180%">
+                                <feGaussianBlur stdDeviation="16"/>
+                            </filter>
+                            <filter id="studioSoft" x="-30%" y="-30%" width="160%" height="160%">
+                                <feGaussianBlur stdDeviation="5"/>
+                            </filter>
+                        </defs>
+                        <rect width="1440" height="900" fill="url(#studioSky)"/>
+                        <ellipse cx="720" cy="410" rx="520" ry="430" fill="url(#studioGlow)"/>
+                        <path d="M-60 45 Q260 175 585 70 T1110 112 T1500 42 L1500 -30 L-60 -30 Z" fill="url(#studioAurora)" filter="url(#studioBlur)"/>
+                        <g opacity="0.23" fill="none" stroke="#ffffff" stroke-width="3" filter="url(#studioSoft)">
+                            <path d="M90 132 Q360 242 665 148 T1355 124"/>
+                            <path d="M210 78 Q455 166 760 90 T1250 64"/>
+                        </g>
+                        <g fill="#f7feff">
+                            <circle cx="132" cy="88" r="4" opacity="0.8"/>
+                            <circle cx="310" cy="156" r="2.6" opacity="0.6"/>
+                            <circle cx="486" cy="72" r="3.2" opacity="0.72"/>
+                            <circle cx="638" cy="142" r="2" opacity="0.5"/>
+                            <circle cx="836" cy="66" r="3.8" opacity="0.66"/>
+                            <circle cx="1046" cy="136" r="2.4" opacity="0.56"/>
+                            <circle cx="1218" cy="92" r="3.4" opacity="0.7"/>
+                            <circle cx="1386" cy="158" r="2.2" opacity="0.5"/>
+                        </g>
+                        <path d="M0 392 L118 344 L204 374 L296 318 L390 366 L502 332 L596 382 L720 340 L848 380 L962 326 L1068 372 L1188 322 L1288 372 L1420 330 L1440 380 L1440 900 L0 900 Z" fill="#c8f2fd" opacity="0.5"/>
+                        <path d="M0 458 L150 410 L264 456 L370 400 L468 454 L580 418 L690 462 L820 408 L944 458 L1072 412 L1186 456 L1314 406 L1440 448 L1440 900 L0 900 Z" fill="#8fd6ec" opacity="0.42"/>
+                        <path d="M0 0 L166 0 L126 96 L166 184 L112 278 L154 378 L80 492 L120 622 L36 748 L0 786 Z" fill="url(#studioIceLeft)" opacity="0.94"/>
+                        <path d="M0 82 L104 24 L74 136 L132 224 L64 326 L104 438 L40 536 L74 660 L0 758 Z" fill="#e4fbff" opacity="0.5"/>
+                        <path d="M0 236 L56 208 L34 320 L90 402 L20 514 L52 624 L0 690 Z" fill="#51a8c9" opacity="0.22"/>
+                        <path d="M1440 0 L1272 0 L1322 112 L1272 202 L1334 304 L1286 414 L1362 526 L1316 658 L1404 774 L1440 812 Z" fill="url(#studioIceRight)" opacity="0.94"/>
+                        <path d="M1440 92 L1330 28 L1364 142 L1300 238 L1372 332 L1328 448 L1398 552 L1360 672 L1440 760 Z" fill="#f7feff" opacity="0.48"/>
+                        <path d="M1440 252 L1380 214 L1404 330 L1344 414 L1414 520 L1380 636 L1440 700 Z" fill="#3f96b9" opacity="0.2"/>
+                        <g opacity="0.5" fill="#dffaff">
+                            <path d="M0 610 L1440 610 L1440 900 L0 900 Z" fill="url(#studioLake)"/>
+                        </g>
+                        <g stroke="#f4feff" fill="none" opacity="0.35" stroke-linecap="round">
+                            <path d="M96 690 L242 718 L346 702 L470 746" stroke-width="2.3"/>
+                            <path d="M980 676 L1112 708 L1216 690 L1336 734" stroke-width="2"/>
+                            <path d="M356 786 L470 766 L586 802 L676 780" stroke-width="1.5"/>
+                            <path d="M848 760 L956 786 L1080 756" stroke-width="1.6"/>
+                        </g>
+                        <g opacity="0.63" fill="#0b5374">
+                            <path d="M242 514 L226 610 L286 610 L270 514 Z"/>
+                            <path d="M312 540 L300 610 L344 610 L332 540 Z"/>
+                            <path d="M1226 500 L1208 610 L1282 610 L1258 500 Z"/>
+                            <path d="M1150 548 L1138 610 L1178 610 L1168 548 Z"/>
+                        </g>
+                        <g transform="translate(214 466)">
+                            <path d="M0 28 L42 8 L88 28 L88 78 L0 78 Z" fill="#0d5e7e" opacity="0.8"/>
+                            <path d="M-12 28 L44 0 L100 28 L88 38 L44 18 L0 38 Z" fill="#0a4565" opacity="0.9"/>
+                            <rect x="34" y="40" width="18" height="20" rx="3" fill="#ffe59a"/>
+                            <path d="M44 40 L44 20" stroke="#0a4565" stroke-width="3"/>
+                        </g>
+                        <g transform="translate(1246 454)" opacity="0.75">
+                            <path d="M0 68 Q12 15 38 20 Q26 44 24 68" fill="#0b4e6e"/>
+                            <path d="M18 68 Q28 32 46 36 Q38 54 36 68" fill="#0a4565"/>
+                            <path d="M36 68 Q42 42 58 46 Q52 58 50 68" fill="#0c5b7d"/>
+                            <path d="M0 68 L68 68" stroke="#e9fdff" stroke-width="3" opacity="0.65"/>
+                        </g>
+                        <g transform="translate(900 688)" opacity="0.28">
+                            <path d="M-52 0 Q-20 -30 32 0 Q-20 30 -52 0 Z" fill="#effeff"/>
+                            <path d="M32 0 L58 -22 L54 0 L58 22 Z" fill="#effeff"/>
+                            <circle cx="18" cy="-5" r="4" fill="#0d5b7c"/>
+                        </g>
+                        <g transform="translate(438 748) scale(-0.8 0.8)" opacity="0.24">
+                            <path d="M-66 0 Q-24 -34 44 0 Q-24 34 -66 0 Z" fill="#e9fdff"/>
+                            <path d="M44 0 L76 -25 L70 0 L76 25 Z" fill="#e9fdff"/>
+                            <circle cx="28" cy="-6" r="4.5" fill="#0d5b7c"/>
+                        </g>
+                        <g fill="#f8feff" opacity="0.78">
+                            <circle cx="340" cy="252" r="2.8"/>
+                            <circle cx="360" cy="292" r="1.6"/>
+                            <circle cx="1088" cy="234" r="2.3"/>
+                            <circle cx="1114" cy="300" r="1.4"/>
+                            <circle cx="1200" cy="238" r="1.8"/>
+                            <circle cx="182" cy="350" r="2"/>
+                            <circle cx="1300" cy="374" r="1.7"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="snowfall" aria-hidden="true"></div>
+
+                <div class="stage-topline">
+                    <span class="stage-live"><i></i>LIVE WHEEL</span>
+                    <span class="stage-tag">12 SEGMENTS · 3 FISH BONUSES</span>
+                </div>
+                <div class="stage-max">WIN UP TO <b>50×</b></div>
+
+                <div class="wheel-hud">
+                    <div class="hud-pill"><i class="fas fa-rotate"></i> <span id="spins-count">0</span></div>
+                    <div class="hud-pill gold"><i class="fas fa-coins"></i> <span id="won-amount">৳0</span></div>
+                </div>
+
+                <div class="wheel-wrap" id="wheel-wrap">
+                    <canvas id="wheel-canvas"></canvas>
+                </div>
+
+                <div class="wheel-meta">
+                    <div class="boost-summary" id="boost-summary"></div>
+                    <div class="result-banner" id="last-result"><strong>PLACE YOUR BETS</strong><span>then spin the wheel</span></div>
+                </div>
+            </section>
+
+            <section class="bet-panel" id="bet-panel">
+                <div class="panel-head">
+                    <div class="panel-title">PLACE <span>YOUR BETS</span></div>
+                    <div class="panel-note"><i class="fas fa-snowflake"></i> PICK A SPOT ON THE ICE WHEEL</div>
+                </div>
+
+                <div class="chip-row">
+                    <span class="chip-label">CHIP</span>
+                    <button type="button" class="chip active" data-chip="10">10</button>
+                    <button type="button" class="chip" data-chip="50">50</button>
+                    <button type="button" class="chip" data-chip="100">100</button>
+                    <button type="button" class="chip" data-chip="500">500</button>
+                </div>
+
+                <div class="bet-options" id="bet-options">
+                    <div class="bet-card" data-bet-option="leaf1" role="button" tabindex="0" style="--cc:#2dd4bf">
+                        <span class="bet-name"><i class="fas fa-leaf"></i>LEAF 1</span>
+                        <span class="bet-meta">PAYS 1.2× <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="leaf1" aria-label="Clear Leaf 1 bet">×</button>
+                    </div>
+
+                    <div class="bet-card" data-bet-option="leaf2" role="button" tabindex="0" style="--cc:#38bdf8">
+                        <span class="bet-name"><i class="fas fa-leaf"></i>LEAF 2</span>
+                        <span class="bet-meta">PAYS 1.6× <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="leaf2" aria-label="Clear Leaf 2 bet">×</button>
+                    </div>
+
+                    <div class="bet-card" data-bet-option="lil" role="button" tabindex="0" style="--cc:#3b82f6">
+                        <span class="bet-name"><i class="fas fa-fish"></i>LIL' BLUES</span>
+                        <span class="bet-meta">UP TO 7× <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="lil" aria-label="Clear Lil' Blues bet">×</button>
+                    </div>
+
+                    <div class="bet-card" data-bet-option="big" role="button" tabindex="0" style="--cc:#fb923c">
+                        <span class="bet-name"><i class="fas fa-fish"></i>BIG ORANGES</span>
+                        <span class="bet-meta">UP TO 15× <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="big" aria-label="Clear Big Oranges bet">×</button>
+                    </div>
+
+                    <div class="bet-card" data-bet-option="huge" role="button" tabindex="0" style="--cc:#fb7185">
+                        <span class="bet-name"><i class="fas fa-fish"></i>HUGE REDS</span>
+                        <span class="bet-meta">UP TO 50× <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="huge" aria-label="Clear Huge Reds bet">×</button>
+                    </div>
+
+                    <div class="bet-card" data-bet-option="all" role="button" tabindex="0" style="--cc:#ffcc00">
+                        <span class="bet-name"><i class="fas fa-star"></i>ALL BONUSES</span>
+                        <span class="bet-meta">COVERS 3 FISH <span class="boost-tag" data-boost-tag></span></span>
+                        <span class="bet-amount" data-amount>৳0</span>
+                        <button type="button" class="card-clear" data-clear="all" aria-label="Clear All Bonuses bet">×</button>
+                    </div>
+                </div>
+
+                <div class="bet-footer">
+                    <div class="panel-totals">
+                        <div class="total-box">
+                            <span>TOTAL BET</span>
+                            <strong id="total-bet">৳0</strong>
+                        </div>
+                        <div class="total-box gold">
+                            <span>LAST WIN</span>
+                            <strong id="last-win">৳0</strong>
+                        </div>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button type="button" class="ghost-btn" id="clear-bets">CLEAR</button>
+                        <button type="button" class="ghost-btn" id="rules-btn">RULES</button>
+                    </div>
+
+                    <button type="button" class="spin-btn" id="spin-btn" disabled>
+                        <span class="spin-main">SPIN</span>
+                        <span class="spin-sub">PLACE A BET TO SPIN</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="bonus-overlay" id="bonus-overlay" aria-hidden="true">
+        <div class="bonus-ambient" aria-hidden="true">
+            <i class="fas fa-fish amb-fish a1"></i>
+            <i class="fas fa-fish amb-fish a2"></i>
+            <i class="fas fa-fish amb-fish a3"></i>
+            <i class="fas fa-fish amb-fish a4"></i>
+            <i class="fas fa-fish amb-fish a5"></i>
+            <span class="amb-bubble b1"></span>
+            <span class="amb-bubble b2"></span>
+            <span class="amb-bubble b3"></span>
+            <span class="amb-bubble b4"></span>
+            <span class="amb-bubble b5"></span>
+            <span class="amb-bubble b6"></span>
+            <span class="amb-bubble b7"></span>
+            <span class="amb-bubble b8"></span>
+        </div>
+        <div class="bonus-card">
+            <div class="bonus-head">
+                <div class="bonus-eyebrow"><i class="fas fa-water"></i> FISH BONUS</div>
+                <div class="bonus-title" id="bonus-title">HUGE REDS</div>
+            </div>
+            <div class="bonus-body">
+                <div class="ice-hole">
+                    <div class="water-caustics"></div>
+                    <div class="fishing-line"><span></span></div>
+                    <div class="fish-wrap" id="bonus-fish">
+                        <svg class="fish-svg" viewBox="0 0 320 200" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="bfShine" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0" stop-color="#ffffff" stop-opacity="0.46"/>
+                                    <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
+                                </linearGradient>
+                                <pattern id="bfScales" width="18" height="16" patternUnits="userSpaceOnUse">
+                                    <path d="M0 8 Q9 16 18 8" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.2"/>
+                                </pattern>
+                                <filter id="bfShadow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#001726" flood-opacity="0.55"/>
+                                </filter>
+                            </defs>
+                            <g class="fish-inner" filter="url(#bfShadow)">
+                                <path class="fish-tail" d="M66 100 L12 58 Q34 100 12 142 Z"></path>
+                                <path class="fish-fin" d="M126 57 Q148 14 194 54 Z"></path>
+                                <path class="fish-fin fish-fin-low" d="M139 143 Q164 181 202 137 Z"></path>
+                                <ellipse class="fish-body" cx="165" cy="100" rx="103" ry="52"></ellipse>
+                                <ellipse class="fish-scales" cx="165" cy="100" rx="90" ry="43" fill="url(#bfScales)"></ellipse>
+                                <path class="fish-belly" d="M84 116 Q162 166 244 112 Q222 146 165 151 Q110 149 84 116 Z"></path>
+                                <ellipse cx="141" cy="77" rx="53" ry="18" fill="url(#bfShine)"></ellipse>
+                                <path class="fish-pectoral" d="M172 109 Q196 139 218 112 Q193 107 181 98 Z"></path>
+                                <path class="fish-gill" d="M193 59 Q208 100 193 141" fill="none" stroke="#001c2c" stroke-opacity="0.25" stroke-width="4"></path>
+                                <circle class="fish-eye" cx="235" cy="84" r="10"></circle>
+                                <circle class="fish-eye-dot" cx="238" cy="81" r="3.4"></circle>
+                                <circle cx="232" cy="88" r="1.8" fill="#8ff4ff"></circle>
+                                <path class="fish-mouth" d="M262 105 Q278 113 264 124" fill="none" stroke="#002434" stroke-width="4" stroke-linecap="round"></path>
+                                <path d="M96 92 Q165 72 233 96" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3" stroke-linecap="round"></path>
+                                <circle class="fish-bubble" cx="276" cy="61" r="6"></circle>
+                                <circle class="fish-bubble" cx="291" cy="40" r="3.5"></circle>
+                                <circle class="fish-bubble" cx="302" cy="23" r="2.2"></circle>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="fish-mult" id="bonus-mult">×12.5</div>
+                    <div class="ice-shelf"></div>
+                </div>
+                <div class="bonus-info">
+                    <div class="catch-label"><span></span>CATCH SECURED<span></span></div>
+                    <div class="bonus-sub" id="bonus-sub"></div>
+                    <div class="bonus-breakdown" id="bonus-breakdown"></div>
+                    <button type="button" class="collect-btn" id="collect-btn">COLLECT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="rules-modal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <div class="modal-title">HOW TO PLAY</div>
+                <button type="button" class="modal-close" id="rules-close" aria-label="Close rules">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <ul class="rules-list">
+                <li>Pick a chip, then tap one or more bets. Press <b>SPIN</b> when you are ready.</li>
+                <li>The 12-segment wheel can land on <b>Leaf 1</b>, <b>Leaf 2</b>, or one of three fish bonuses.</li>
+                <li>Leaf wins pay <b>1.2×</b> and <b>1.6×</b> your Leaf bet.</li>
+                <li><b>Lil' Blues</b> pays up to 7×, <b>Big Oranges</b> up to 15×, and <b>Huge Reds</b> up to 50× before boosts.</li>
+                <li><b>All Bonuses</b> covers all three fish bonuses with the same stake.</li>
+                <li>Gold badges on the wheel boost a segment or an entire fish bonus. Payouts are capped at the site's 50× maximum.</li>
+                <li>Leaf bet win chance target: <b id="rules-win-chance">50%</b>. Fish bonus multipliers are fixed.</li>
+            </ul>
+            <div class="rules-foot">18+ only. Bet within your limits. If gambling stops being fun, take a break.</div>
+        </div>
+    </div>
+
+    <div class="notification-area" id="notification-area"></div>
+
+    <script src="../balancer.js?v=6"></script>
+    <script>
+        const balanceEl = document.getElementById('balance-amount');
+        const spinsEl = document.getElementById('spins-count');
+        const wonEl = document.getElementById('won-amount');
+        const totalBetEl = document.getElementById('total-bet');
+        const lastWinEl = document.getElementById('last-win');
+        const spinBtn = document.getElementById('spin-btn');
+        const betPanel = document.getElementById('bet-panel');
+        const betOptions = document.getElementById('bet-options');
+        const boostSummary = document.getElementById('boost-summary');
+        const lastResult = document.getElementById('last-result');
+        const wheelWrap = document.getElementById('wheel-wrap');
+        const wheelCanvas = document.getElementById('wheel-canvas');
+        const soundBtn = document.getElementById('sound-toggle');
+        const notificationArea = document.getElementById('notification-area');
+        const bonusOverlay = document.getElementById('bonus-overlay');
+        const bonusTitle = document.getElementById('bonus-title');
+        const bonusMult = document.getElementById('bonus-mult');
+        const bonusSub = document.getElementById('bonus-sub');
+        const bonusBreakdown = document.getElementById('bonus-breakdown');
+        const bonusFish = document.getElementById('bonus-fish');
+        const collectBtn = document.getElementById('collect-btn');
+        const rulesModal = document.getElementById('rules-modal');
+        const rulesWinChance = document.getElementById('rules-win-chance');
+        const rulesBtn = document.getElementById('rules-btn');
+        const rulesClose = document.getElementById('rules-close');
+        const clearBetsBtn = document.getElementById('clear-bets');
+        const ctx = wheelCanvas.getContext('2d');
+
+        const OPTIONS = {
+            leaf1: { id: 'leaf1', label: 'LEAF 1', short: 'L1', wheel: 'LEAF 1', wheelSub: '1.2×', kind: 'leaf', color: '#e9fbff', color2: '#cdf2fc', payout: 1.2, count: 24, slots: 5 },
+            leaf2: { id: 'leaf2', label: 'LEAF 2', short: 'L2', wheel: 'LEAF 2', wheelSub: '1.6×', kind: 'leaf', color: '#bce9f7', color2: '#9ed9ec', payout: 1.6, count: 20, slots: 4 },
+            lil: { id: 'lil', label: "LIL' BLUES", short: 'LB', wheel: "LIL' BLUES", wheelSub: 'UP TO 7×', kind: 'bonus', color: '#1f7ee0', color2: '#1256b2', count: 5, slots: 1 },
+            big: { id: 'big', label: 'BIG ORANGES', short: 'BO', wheel: 'BIG ORANGES', wheelSub: 'UP TO 15×', kind: 'bonus', color: '#f5a321', color2: '#d97a08', count: 3, slots: 1 },
+            huge: { id: 'huge', label: 'HUGE REDS', short: 'HR', wheel: 'HUGE REDS', wheelSub: 'UP TO 50×', kind: 'bonus', color: '#e74258', color2: '#b31332', count: 1, slots: 1 },
+            all: { id: 'all', label: 'ALL BONUSES', short: 'ALL', wheel: 'ALL', wheelSub: '', kind: 'all', color: '#ffcc00', color2: '#b45309', count: 0, slots: 0 }
+        };
+
+        const SEGMENT_TYPES = ['leaf1', 'leaf2', 'lil', 'big', 'huge'];
+        const BONUS_TYPES = ['lil', 'big', 'huge'];
+
+        const BONUS_TABLES = {
+            lil: [[1.5, 30], [2, 25], [3, 18], [4, 12], [5, 9], [7, 6]],
+            big: [[2, 30], [3, 22], [4, 17], [5, 12], [7, 9], [10, 6], [15, 4]],
+            huge: [[3, 28], [5, 22], [7, 16], [10, 12], [15, 8], [20, 6], [30, 5], [50, 3]]
+        };
+
+        const LEAF_BOOSTS = [[2, 50], [3, 25], [4, 15], [5, 10]];
+        const BONUS_BOOSTS = [[2, 60], [3, 40]];
+
+        let balance = 0;
+        let winChance = 50;
+        let segments = [];
+        let segmentsByType = {};
+        let wheelSegments = [];
+        let wheelSegmentsByType = {};
+        let rotation = 0;
+        let wheelSize = 0;
+        let wheelR = 0;
+        let spinning = false;
+        let bonusOpen = false;
+        let soundEnabled = true;
+        let bets = { leaf1: 0, leaf2: 0, lil: 0, big: 0, huge: 0, all: 0 };
+        let chip = 10;
+        let boosts = { leaf: null, bonus: null };
+        let spins = 0;
+        let totalWon = 0;
+        let lastWin = 0;
+        let syncChain = Promise.resolve();
+        let resultTimer = null;
+        let audioCtx = null;
+        let lastTick = 0;
+        let currentTickSeg = -1;
+        let resizeFrame = 0;
+
+        try {
+            soundEnabled = localStorage.getItem('ice_fishing_sound') !== 'off';
+        } catch (e) { }
+
+        function formatMoney(value) {
+            const num = Number(value) || 0;
+            return num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function formatMult(value) {
+            const num = Number(value) || 0;
+            return Number.isInteger(num) ? String(num) : String(Math.round(num * 100) / 100);
+        }
+
+        function formatBet(value) {
+            if (typeof GameBridge !== 'undefined' && GameBridge && typeof GameBridge.formatBetAmount === 'function') {
+                return GameBridge.formatBetAmount(value);
+            }
+            const amount = parseFloat(value);
+            if (!isFinite(amount)) return '0';
+            return Number.isInteger(amount) ? String(amount) : String(Math.round(amount * 100) / 100);
+        }
+
+        function updateBalanceDisplay() {
+            balanceEl.innerText = `৳${formatMoney(balance)}`;
+        }
+
+        function updateHud() {
+            spinsEl.textContent = spins;
+            wonEl.textContent = `৳${formatMoney(totalWon)}`;
+        }
+
+        function updateLastWin() {
+            lastWinEl.textContent = `৳${formatMoney(lastWin)}`;
+        }
+
+        function notify(text, type = 'info') {
+            const note = document.createElement('div');
+            note.className = `notification ${type === 'info' ? '' : type}`;
+            note.textContent = text;
+            notificationArea.appendChild(note);
+            requestAnimationFrame(() => note.classList.add('show'));
+            setTimeout(() => {
+                note.classList.remove('show');
+                setTimeout(() => note.remove(), 250);
+            }, 2600);
+        }
+
+        function rand(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function pickWeighted(table) {
+            let total = 0;
+            for (const row of table) total += row[1];
+            let roll = Math.random() * total;
+            for (const row of table) {
+                roll -= row[1];
+                if (roll <= 0) return row[0];
+            }
+            return table[table.length - 1][0];
+        }
+
+        function shuffle(list) {
+            for (let i = list.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [list[i], list[j]] = [list[j], list[i]];
+            }
+            return list;
+        }
+
+        function buildSegments() {
+            segments = [];
+            wheelSegments = [];
+            SEGMENT_TYPES.forEach(type => {
+                for (let i = 0; i < OPTIONS[type].count; i++) segments.push(type);
+                for (let i = 0; i < OPTIONS[type].slots; i++) wheelSegments.push(type);
+            });
+            shuffle(segments);
+            shuffle(wheelSegments);
+            segmentsByType = {};
+            segments.forEach((type, index) => {
+                if (!segmentsByType[type]) segmentsByType[type] = [];
+                segmentsByType[type].push(index);
+            });
+            wheelSegmentsByType = {};
+            wheelSegments.forEach((type, index) => {
+                if (!wheelSegmentsByType[type]) wheelSegmentsByType[type] = [];
+                wheelSegmentsByType[type].push(index);
+            });
+        }
+
+        function isBonus(type) {
+            return BONUS_TYPES.indexOf(type) !== -1;
+        }
+
+        function generateBoosts() {
+            boosts = { leaf: null, bonus: null };
+
+            if (Math.random() < 0.35) {
+                const type = Math.random() < 0.5 ? 'leaf1' : 'leaf2';
+                const indices = segmentsByType[type];
+                const wheelIndices = wheelSegmentsByType[type];
+                if (indices && indices.length && wheelIndices && wheelIndices.length) {
+                    const index = indices[Math.floor(Math.random() * indices.length)];
+                    const wheelIndex = wheelIndices[Math.floor(Math.random() * wheelIndices.length)];
+                    boosts.leaf = { type, index, wheelIndex, mult: pickWeighted(LEAF_BOOSTS) };
+                }
+            }
+
+            if (Math.random() < 0.28) {
+                const type = pickWeighted(BONUS_TYPES.map(t => [t, OPTIONS[t].count]));
+                boosts.bonus = { type, mult: pickWeighted(BONUS_BOOSTS) };
+            }
+
+            updateBoostUI();
+            updateBetCards();
+            drawWheel(rotation);
+        }
+
+        function updateBoostUI() {
+            const pills = [];
+            if (boosts.leaf) {
+                pills.push(`<span class="boost-pill"><i class="fas fa-leaf"></i>${OPTIONS[boosts.leaf.type].label} SEGMENT ×${formatMult(boosts.leaf.mult)}</span>`);
+            }
+            if (boosts.bonus) {
+                pills.push(`<span class="boost-pill"><i class="fas fa-fish"></i>${OPTIONS[boosts.bonus.type].label} ×${formatMult(boosts.bonus.mult)}</span>`);
+            }
+            if (!pills.length) {
+                pills.push('<span class="boost-pill muted">NO SEGMENT BOOSTS THIS ROUND</span>');
+            }
+            boostSummary.innerHTML = pills.join('');
+
+            document.querySelectorAll('[data-bet-option]').forEach(card => {
+                const id = card.dataset.betOption;
+                const tag = card.querySelector('[data-boost-tag]');
+                let text = '';
+                if (boosts.leaf && boosts.leaf.type === id) text = `SEG ×${formatMult(boosts.leaf.mult)}`;
+                else if (boosts.bonus && boosts.bonus.type === id) text = `×${formatMult(boosts.bonus.mult)}`;
+                else if (id === 'all' && boosts.bonus) text = 'BOOST ACTIVE';
+                if (tag) {
+                    tag.textContent = text;
+                    tag.style.display = text ? 'inline-flex' : 'none';
+                }
+                card.classList.toggle('boosted', !!text);
+            });
+        }
+
+        function getTotalBet() {
+            return Object.keys(bets).reduce((sum, key) => sum + (Number(bets[key]) || 0), 0);
+        }
+
+        function updateTotals() {
+            const total = getTotalBet();
+            totalBetEl.textContent = `৳${formatMoney(total)}`;
+            const main = spinBtn.querySelector('.spin-main');
+            const sub = spinBtn.querySelector('.spin-sub');
+            if (spinning || bonusOpen) {
+                spinBtn.disabled = true;
+                main.textContent = bonusOpen ? 'BONUS' : 'SPINNING';
+                sub.textContent = bonusOpen ? 'COLLECT YOUR CATCH' : 'GOOD LUCK';
+            } else if (total <= 0) {
+                spinBtn.disabled = true;
+                main.textContent = 'SPIN';
+                sub.textContent = 'PLACE A BET TO SPIN';
+            } else if (total > balance) {
+                spinBtn.disabled = true;
+                main.textContent = 'SPIN';
+                sub.textContent = 'BALANCE TOO LOW';
+            } else {
+                spinBtn.disabled = false;
+                main.textContent = 'SPIN';
+                sub.textContent = `TOTAL ৳${formatMoney(total)}`;
+            }
+        }
+
+        function updateBetCards() {
+            document.querySelectorAll('[data-bet-option]').forEach(card => {
+                const id = card.dataset.betOption;
+                const amount = Number(bets[id]) || 0;
+                card.classList.toggle('active', amount > 0);
+                const amountEl = card.querySelector('[data-amount]');
+                if (amountEl) amountEl.textContent = `৳${formatMoney(amount)}`;
+            });
+            updateTotals();
+        }
+
+        function addBet(id) {
+            if (spinning || bonusOpen) return;
+            const total = getTotalBet();
+            if (total + chip > balance) {
+                notify('Not enough balance for that bet', 'err');
+                return;
+            }
+            bets[id] = (Number(bets[id]) || 0) + chip;
+            updateBetCards();
+            playChipSound();
+        }
+
+        function clearBet(id) {
+            if (spinning || bonusOpen) return;
+            bets[id] = 0;
+            updateBetCards();
+            playChipSound();
+        }
+
+        function clearAllBets() {
+            if (spinning || bonusOpen) return;
+            Object.keys(bets).forEach(key => { bets[key] = 0; });
+            updateBetCards();
+            playChipSound();
+        }
+
+        function setChip(value) {
+            if (spinning || bonusOpen) return;
+            chip = Number(value) || 10;
+            document.querySelectorAll('[data-chip]').forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.chip) === chip);
+            });
+            playChipSound();
+        }
+
+        function getCoveredTypes() {
+            const covered = new Set();
+            SEGMENT_TYPES.forEach(type => {
+                if ((Number(bets[type]) || 0) > 0) covered.add(type);
+            });
+            if ((Number(bets.all) || 0) > 0) BONUS_TYPES.forEach(type => covered.add(type));
+            return covered;
+        }
+
+        function chooseOutcome() {
+            const naturalIndex = Math.floor(Math.random() * segments.length);
+            const naturalType = segments[naturalIndex];
+            const covered = getCoveredTypes();
+            const leafBetTypes = ['leaf1', 'leaf2'].filter(type => (Number(bets[type]) || 0) > 0);
+
+            if (!leafBetTypes.length) return makeOutcome(naturalIndex);
+            if (isBonus(naturalType) && covered.has(naturalType)) return makeOutcome(naturalIndex);
+
+            const pLeaf = leafBetTypes.reduce((sum, type) => sum + segmentsByType[type].length, 0) / segments.length;
+            const target = Math.max(0, Math.min(1, winChance / 100));
+            const isWinningLeaf = leafBetTypes.indexOf(naturalType) !== -1;
+
+            if (isWinningLeaf && target < pLeaf) {
+                const reduceChance = Math.min(1, (pLeaf - target) / pLeaf);
+                if (reduceChance > 0 && Math.random() < reduceChance) {
+                    let lossTypes = ['leaf1', 'leaf2'].filter(type => leafBetTypes.indexOf(type) === -1);
+                    if (!lossTypes.length) {
+                        lossTypes = BONUS_TYPES.filter(type => !covered.has(type));
+                        if (!lossTypes.length) lossTypes = BONUS_TYPES;
+                    }
+                    const lossType = pickWeighted(lossTypes.map(type => [type, OPTIONS[type].count]));
+                    const indices = segmentsByType[lossType];
+                    return makeOutcome(indices[Math.floor(Math.random() * indices.length)]);
+                }
+            } else if (!isWinningLeaf && target > pLeaf) {
+                const pool = Math.max(0, 1 - pLeaf);
+                const convertChance = pool > 0 ? Math.min(1, (target - pLeaf) / pool) : 0;
+                if (convertChance > 0 && Math.random() < convertChance) {
+                    const forcedType = pickWeighted(leafBetTypes.map(type => [type, bets[type]]));
+                    const indices = segmentsByType[forcedType];
+                    return makeOutcome(indices[Math.floor(Math.random() * indices.length)]);
+                }
+            }
+
+            return makeOutcome(naturalIndex);
+        }
+
+        function chooseWheelIndex(type, avoidIndex = -1) {
+            const all = wheelSegmentsByType[type] || [];
+            const pool = all.length > 1 ? all.filter(index => index !== avoidIndex) : all;
+            const list = pool.length ? pool : all;
+            return list.length ? list[Math.floor(Math.random() * list.length)] : 0;
+        }
+
+        function makeOutcome(index) {
+            const type = segments[index];
+            const leafBoost = boosts.leaf && boosts.leaf.type === type && boosts.leaf.index === index
+                ? boosts.leaf.mult
+                : 1;
+            const bonusBoost = boosts.bonus && boosts.bonus.type === type
+                ? boosts.bonus.mult
+                : 1;
+            const boostedWheelIndex = boosts.leaf && boosts.leaf.type === type ? boosts.leaf.wheelIndex : -1;
+            const wheelIndex = leafBoost > 1
+                ? boosts.leaf.wheelIndex
+                : chooseWheelIndex(type, boostedWheelIndex);
+            return { index, wheelIndex, type, leafBoost, bonusBoost };
+        }
+
+        function getBoostForWheelSegment(index, type) {
+            if (boosts.leaf && boosts.leaf.type === type && boosts.leaf.wheelIndex === index) return boosts.leaf.mult;
+            if (boosts.bonus && boosts.bonus.type === type) return boosts.bonus.mult;
+            return null;
+        }
+
+        function spin() {
+            if (spinning || bonusOpen) return;
+
+            const total = getTotalBet();
+            if (total <= 0) {
+                notify('Place at least one bet first', 'err');
+                return;
+            }
+            if (total > balance) {
+                notify('Insufficient balance for these bets', 'err');
+                return;
+            }
+            if (!GameBridge.isLoggedIn()) {
+                notify('Please login to play!', 'err');
+                return;
+            }
+
+            spinning = true;
+            spins += 1;
+            lastWin = 0;
+            updateLastWin();
+            updateHud();
+            balance -= total;
+            updateBalanceDisplay();
+            syncBalance(balance, -total, 'Ice Fishing bet');
+            playSpinSound();
+            betPanel.classList.add('locked');
+            updateTotals();
+            hideResult();
+
+            const outcome = chooseOutcome();
+            animateWheelTo(outcome.wheelIndex, () => resolveOutcome(outcome));
+        }
+
+        function animateWheelTo(index, onDone) {
+            const segAngle = (Math.PI * 2) / wheelSegments.length;
+            const targetLocal = index * segAngle + segAngle / 2;
+            const targetRotation = -Math.PI / 2 - targetLocal;
+            const normalizedCurrent = ((rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            const delta = ((targetRotation - normalizedCurrent) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            const startRotation = rotation;
+            const turns = 5 + Math.floor(Math.random() * 3);
+            const endRotation = startRotation + turns * Math.PI * 2 + delta;
+            const duration = 4200 + Math.random() * 400;
+            const startTime = performance.now();
+            currentTickSeg = -1;
+
+            function frame(now) {
+                const progress = Math.min(1, (now - startTime) / duration);
+                const eased = 1 - Math.pow(1 - progress, 5);
+                rotation = startRotation + (endRotation - startRotation) * eased;
+                drawWheel(rotation);
+                playTickIfNeeded(rotation);
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                } else {
+                    rotation = endRotation % (Math.PI * 2);
+                    drawWheel(rotation);
+                    onDone();
+                }
+            }
+
+            requestAnimationFrame(frame);
+        }
+
+        function playTickIfNeeded(value) {
+            const segAngle = (Math.PI * 2) / wheelSegments.length;
+            const normalized = ((-Math.PI / 2 - value) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            const index = Math.floor(normalized / segAngle);
+            if (index !== currentTickSeg) {
+                currentTickSeg = index;
+                const now = performance.now();
+                if (now - lastTick > 34) {
+                    lastTick = now;
+                    playTickSound();
+                }
+            }
+        }
+
+        function resolveOutcome(outcome) {
+            const option = OPTIONS[outcome.type];
+
+            if (option.kind === 'leaf') {
+                const betAmount = Number(bets[outcome.type]) || 0;
+                if (betAmount > 0) {
+                    const multiplier = option.payout * (outcome.leafBoost || 1);
+                    const win = Math.round(betAmount * multiplier);
+                    creditWin(win, `Ice Fishing ${option.label} win`);
+                    showResult(`${option.label} WIN`, `×${formatMult(multiplier)} · ৳${formatMoney(win)}`, 'win');
+                    playWinSound();
+                } else {
+                    lastWin = 0;
+                    updateLastWin();
+                    showResult('NO WIN', `${option.label} · no bet placed`, 'lose');
+                    playLoseSound();
+                }
+                finishRound(1500);
+                return;
+            }
+
+            if (option.kind === 'bonus') {
+                const specificBet = Number(bets[outcome.type]) || 0;
+                const allBet = Number(bets.all) || 0;
+                if (specificBet <= 0 && allBet <= 0) {
+                    lastWin = 0;
+                    updateLastWin();
+                    showResult('BONUS MISSED', `${option.label} · no bet placed`, 'lose');
+                    playLoseSound();
+                    finishRound(1700);
+                    return;
+                }
+
+                const baseMultiplier = pickWeighted(BONUS_TABLES[outcome.type]);
+                const maxMultiplier = Math.max(1, Number(GameBridge.MAX_WIN_MULTIPLIER) || 50);
+                const finalMultiplier = Math.min(
+                    maxMultiplier,
+                    Math.round(baseMultiplier * (outcome.bonusBoost || 1) * 100) / 100
+                );
+                const winSpecific = Math.round(specificBet * finalMultiplier);
+                const winAll = Math.round(allBet * finalMultiplier);
+                const total = winSpecific + winAll;
+
+                creditWin(total, `Ice Fishing ${option.label} win`);
+                playBonusSound();
+                showBonusOverlay(
+                    outcome.type,
+                    finalMultiplier,
+                    winSpecific,
+                    specificBet,
+                    winAll,
+                    allBet,
+                    total,
+                    outcome.bonusBoost || 1,
+                    baseMultiplier
+                );
+            }
+        }
+
+        function finishRound(delay) {
+            setTimeout(() => {
+                spinning = false;
+                betPanel.classList.remove('locked');
+                updateTotals();
+                updateHud();
+                generateBoosts();
+            }, delay);
+        }
+
+        function creditWin(amount, description) {
+            if (!amount || amount <= 0) return;
+            balance += amount;
+            lastWin = amount;
+            totalWon += amount;
+            updateBalanceDisplay();
+            updateHud();
+            updateLastWin();
+            syncBalance(balance, amount, description);
+        }
+
+        function showResult(title, detail, kind) {
+            lastResult.className = `result-banner show ${kind}`;
+            lastResult.innerHTML = `<strong>${title}</strong><span>${detail}</span>`;
+            clearTimeout(resultTimer);
+            resultTimer = setTimeout(() => {
+                lastResult.classList.remove('show');
+            }, 2800);
+        }
+
+        function hideResult() {
+            clearTimeout(resultTimer);
+            lastResult.classList.remove('show');
+        }
+
+        function showBonusOverlay(type, finalMultiplier, winSpecific, specificBet, winAll, allBet, total, boost, base) {
+            const option = OPTIONS[type];
+            spinning = true;
+            bonusOpen = true;
+            bonusOverlay.className = `bonus-overlay open ${type}`;
+            bonusTitle.textContent = option.label;
+            bonusMult.textContent = `×${formatMult(finalMultiplier)}`;
+
+            const rows = [];
+            if (winSpecific > 0) {
+                rows.push(`<div class="row"><span>${option.label} bet ৳${formatMoney(specificBet)}</span><strong>৳${formatMoney(winSpecific)}</strong></div>`);
+            }
+            if (winAll > 0) {
+                rows.push(`<div class="row"><span>All Bonuses bet ৳${formatMoney(allBet)}</span><strong>৳${formatMoney(winAll)}</strong></div>`);
+            }
+            bonusBreakdown.innerHTML = rows.join('');
+            bonusSub.textContent = boost > 1
+                ? `Bonus boost ×${formatMult(boost)} applied · base ×${formatMult(base)}`
+                : 'Your catch is coming through the ice';
+
+            collectBtn.textContent = `COLLECT ৳${formatMoney(total)}`;
+            bonusFish.style.animation = 'none';
+            void bonusFish.offsetWidth;
+            bonusFish.style.animation = '';
+            bonusMult.style.animation = 'none';
+            void bonusMult.offsetWidth;
+            bonusMult.style.animation = '';
+            updateTotals();
+            setTimeout(() => {
+                if (bonusOpen) playRevealSound();
+            }, 900);
+        }
+
+        function collectBonus() {
+            if (!bonusOpen) return;
+            bonusOpen = false;
+            spinning = false;
+            bonusOverlay.classList.remove('open');
+            betPanel.classList.remove('locked');
+            updateTotals();
+            updateHud();
+            generateBoosts();
+            playChipSound();
+        }
+
+        function syncBalance(newTotal, change, description) {
+            syncChain = syncChain
+                .catch(() => { })
+                .then(() => GameBridge.updateBalance(newTotal, change, description))
+                .then(result => {
+                    if (result && result.error) {
+                        console.warn('[Ice Fishing] Balance sync warning:', result.error);
+                    }
+                });
+            return syncChain;
+        }
+
+        function resizeWheel() {
+            const rect = wheelWrap.getBoundingClientRect();
+            const size = Math.max(220, Math.floor(Math.min(rect.width, rect.height || rect.width)));
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            wheelSize = size;
+            wheelR = size / 2 - 34;
+            wheelCanvas.width = Math.round(size * dpr);
+            wheelCanvas.height = Math.round(size * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            drawWheel(rotation);
+        }
+
+        function scheduleResize() {
+            if (resizeFrame) return;
+            resizeFrame = requestAnimationFrame(() => {
+                resizeFrame = 0;
+                resizeWheel();
+            });
+        }
+
+        function drawWheelLeafMark(size, color) {
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.bezierCurveTo(size * 0.92, -size * 0.26, size * 0.56, size * 0.74, 0, size);
+            ctx.bezierCurveTo(-size * 0.56, size * 0.74, -size * 0.92, -size * 0.26, 0, -size);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 0.68);
+            ctx.lineTo(0, size * 0.68);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.62)';
+            ctx.lineWidth = Math.max(0.7, size * 0.1);
+            ctx.stroke();
+        }
+
+        function drawWheelFishMark(size, color) {
+            ctx.beginPath();
+            ctx.ellipse(size * 0.2, 0, size * 1.15, size * 0.53, -0.12, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-size * 0.78, 0);
+            ctx.lineTo(-size * 1.38, -size * 0.62);
+            ctx.lineTo(-size * 1.2, 0);
+            ctx.lineTo(-size * 1.38, size * 0.62);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(size * 0.88, -size * 0.12, Math.max(0.8, size * 0.13), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(4, 42, 61, 0.55)';
+            ctx.fill();
+        }
+
+        function drawWheel(value) {
+            if (!ctx || !wheelSize) return;
+
+            const size = wheelSize;
+            const cx = size / 2;
+            const cy = size / 2;
+            const R = wheelR;
+            const segAngle = (Math.PI * 2) / wheelSegments.length;
+
+            ctx.clearRect(0, 0, size, size);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy + 4, R + 21, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(3, 38, 58, 0.2)';
+            ctx.fill();
+
+            const rim = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
+            rim.addColorStop(0, '#ffffff');
+            rim.addColorStop(0.24, '#eafaff');
+            rim.addColorStop(0.46, '#abd9e7');
+            rim.addColorStop(0.68, '#548fa6');
+            rim.addColorStop(0.86, '#c8edf6');
+            rim.addColorStop(1, '#f6feff');
+            ctx.beginPath();
+            ctx.arc(cx, cy, R + 18, 0, Math.PI * 2);
+            ctx.fillStyle = rim;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(8, 62, 87, 0.44)';
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, R + 13.5, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, R + 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#1c6580';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, R + 5.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#c5ebf5';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(8, 70, 96, 0.22)';
+            ctx.lineWidth = Math.max(0.7, R * 0.004);
+            for (let i = 0; i < wheelSegments.length; i++) {
+                const angle = i * segAngle;
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(cx + cos * (R + 10), cy + sin * (R + 10));
+                ctx.lineTo(cx + cos * (R + 16), cy + sin * (R + 16));
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < wheelSegments.length; i++) {
+                const angle = i * segAngle;
+                const rx = cx + Math.cos(angle) * (R + 13);
+                const ry = cy + Math.sin(angle) * (R + 13);
+                const rivet = ctx.createRadialGradient(rx - 1, ry - 1, 0, rx, ry, Math.max(2, R * 0.014));
+                rivet.addColorStop(0, '#ffffff');
+                rivet.addColorStop(0.55, '#9dcfdd');
+                rivet.addColorStop(1, '#2b708b');
+                ctx.beginPath();
+                ctx.arc(rx, ry, Math.max(1.6, R * 0.012), 0, Math.PI * 2);
+                ctx.fillStyle = rivet;
+                ctx.fill();
+            }
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(value);
+
+            for (let i = 0; i < wheelSegments.length; i++) {
+                const type = wheelSegments[i];
+                const option = OPTIONS[type];
+                const start = i * segAngle;
+                const end = start + segAngle;
+                const mid = start + segAngle / 2;
+                const boost = getBoostForWheelSegment(i, type);
+                const labelTilt = Math.PI / 2 + (Math.cos(mid + Math.PI / 2) < 0 ? Math.PI : 0);
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, R, start, end);
+                ctx.closePath();
+                ctx.fillStyle = i % 2 === 0 ? option.color : option.color2;
+                ctx.fill();
+                ctx.strokeStyle = option.kind === 'bonus' ? 'rgba(255, 255, 255, 0.34)' : 'rgba(255, 255, 255, 0.72)';
+                ctx.lineWidth = Math.max(0.7, R * 0.004);
+                ctx.stroke();
+
+                ctx.save();
+                ctx.rotate(mid);
+
+                ctx.save();
+                ctx.translate(R * (boost ? 0.585 : 0.56), 0);
+                ctx.rotate(labelTilt);
+                if (option.kind === 'leaf') {
+                    drawWheelLeafMark(Math.max(4.2, R * 0.064), 'rgba(9, 99, 130, 0.26)');
+                } else {
+                    drawWheelFishMark(Math.max(3.4, R * 0.052), 'rgba(255, 255, 255, 0.62)');
+                }
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(R * 0.815, 0);
+                ctx.rotate(labelTilt);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = option.kind === 'leaf' ? '#0a536e' : '#ffffff';
+                if (option.kind === 'bonus') {
+                    ctx.shadowColor = 'rgba(0, 30, 47, 0.45)';
+                    ctx.shadowBlur = 2;
+                }
+                ctx.font = `900 ${Math.max(8.2, Math.min(14, R * 0.06))}px 'Barlow Condensed', sans-serif`;
+                ctx.fillText(option.wheel, 0, 0);
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(R * 0.705, 0);
+                ctx.rotate(labelTilt);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = option.kind === 'leaf' ? 'rgba(10, 83, 110, 0.78)' : 'rgba(255, 255, 255, 0.88)';
+                ctx.font = `800 ${Math.max(6.2, Math.min(10.5, R * 0.046))}px 'Barlow Condensed', sans-serif`;
+                ctx.fillText(option.wheelSub, 0, 0);
+                ctx.restore();
+
+                if (boost) {
+                    const badgeR = Math.max(6, R * 0.052);
+                    ctx.save();
+                    ctx.translate(R * 0.425, 0);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, badgeR, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffd45a';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+                    ctx.lineWidth = Math.max(1, R * 0.006);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(0, 0, badgeR * 0.73, Math.PI * 1.06, Math.PI * 1.94);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.68)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.rotate(Math.cos(mid) < 0 ? Math.PI : 0);
+                    ctx.fillStyle = '#5a3900';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = `900 ${Math.max(4.7, R * 0.029)}px Inter, sans-serif`;
+                    ctx.fillText(`×${formatMult(boost)}`, 0, 0.2);
+                    ctx.restore();
+                }
+
+                ctx.restore();
+            }
+
+            ctx.restore();
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, R, 0, Math.PI * 2);
+            ctx.clip();
+            const sheen = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
+            sheen.addColorStop(0, 'rgba(255, 255, 255, 0.32)');
+            sheen.addColorStop(0.34, 'rgba(255, 255, 255, 0.04)');
+            sheen.addColorStop(0.7, 'rgba(4, 46, 67, 0)');
+            sheen.addColorStop(1, 'rgba(4, 46, 67, 0.13)');
+            ctx.fillStyle = sheen;
+            ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+            ctx.restore();
+
+            const inner = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 0.335);
+            inner.addColorStop(0, '#effdff');
+            inner.addColorStop(0.72, '#d8f5fd');
+            inner.addColorStop(1, 'rgba(164, 218, 234, 0.95)');
+            ctx.beginPath();
+            ctx.arc(cx, cy, R * 0.335, 0, Math.PI * 2);
+            ctx.fillStyle = inner;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.94)';
+            ctx.lineWidth = Math.max(1.2, R * 0.007);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, R * 0.3, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(20, 107, 134, 0.22)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            const hubR = R * 0.265;
+            ctx.save();
+            ctx.shadowColor = 'rgba(2, 35, 54, 0.38)';
+            ctx.shadowBlur = Math.max(8, R * 0.07);
+            ctx.shadowOffsetY = Math.max(2, R * 0.014);
+            ctx.beginPath();
+            ctx.arc(cx, cy, hubR, 0, Math.PI * 2);
+            ctx.fillStyle = '#e9fcff';
+            ctx.fill();
+            ctx.restore();
+
+            const hub = ctx.createRadialGradient(cx - hubR * 0.3, cy - hubR * 0.4, hubR * 0.08, cx, cy, hubR);
+            hub.addColorStop(0, '#ffffff');
+            hub.addColorStop(0.42, '#eefcff');
+            hub.addColorStop(0.76, '#b8e8f5');
+            hub.addColorStop(1, '#5ba7c1');
+            ctx.beginPath();
+            ctx.arc(cx, cy, hubR, 0, Math.PI * 2);
+            ctx.fillStyle = hub;
+            ctx.fill();
+            ctx.strokeStyle = '#f9feff';
+            ctx.lineWidth = Math.max(2, R * 0.014);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, hubR * 0.91, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(14, 98, 126, 0.4)';
+            ctx.lineWidth = Math.max(1, R * 0.006);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, hubR * 0.82, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(cx, cy - hubR * 0.56);
+            ctx.strokeStyle = 'rgba(16, 119, 149, 0.55)';
+            ctx.lineWidth = Math.max(0.8, R * 0.004);
+            const flake = Math.max(3, hubR * 0.16);
+            for (let i = 0; i < 6; i++) {
+                ctx.rotate(Math.PI / 3);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -flake);
+                ctx.moveTo(0, -flake * 0.62);
+                ctx.lineTo(-flake * 0.28, -flake * 0.84);
+                ctx.moveTo(0, -flake * 0.62);
+                ctx.lineTo(flake * 0.28, -flake * 0.84);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.fillStyle = '#0a506c';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = `900 ${Math.max(10, hubR * 0.43)}px 'Barlow Condensed', sans-serif`;
+            ctx.fillText('ICE', cx, cy - hubR * 0.08);
+            ctx.font = `900 ${Math.max(8, hubR * 0.27)}px 'Barlow Condensed', sans-serif`;
+            ctx.fillText('FISHING', cx, cy + hubR * 0.26);
+
+            ctx.beginPath();
+            ctx.ellipse(cx - hubR * 0.3, cy - hubR * 0.55, hubR * 0.33, hubR * 0.13, -0.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.34)';
+            ctx.fill();
+
+            drawPointer(cx, cy - R + 12);
+        }
+
+        function drawPointer(x, tipY) {
+            const baseY = tipY - 40;
+            const half = Math.max(9, wheelR * 0.075);
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 23, 38, 0.48)';
+            ctx.shadowBlur = Math.max(7, wheelR * 0.055);
+            ctx.shadowOffsetY = 3;
+            ctx.beginPath();
+            ctx.moveTo(x - half * 1.42, baseY - 2);
+            ctx.lineTo(x + half * 1.42, baseY - 2);
+            ctx.lineTo(x + half * 0.78, baseY + 13);
+            ctx.lineTo(x, baseY + 19);
+            ctx.lineTo(x - half * 0.78, baseY + 13);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(6, 45, 66, 0.78)';
+            ctx.fill();
+            ctx.restore();
+
+            const gradient = ctx.createLinearGradient(x, baseY, x, tipY);
+            gradient.addColorStop(0, '#fff9d1');
+            gradient.addColorStop(0.42, '#ffd45a');
+            gradient.addColorStop(1, '#bd7004');
+            ctx.beginPath();
+            ctx.moveTo(x - half, baseY + 1);
+            ctx.lineTo(x + half, baseY + 1);
+            ctx.lineTo(x + half * 0.34, tipY - 9);
+            ctx.lineTo(x, tipY);
+            ctx.lineTo(x - half * 0.34, tipY - 9);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = Math.max(1.2, wheelR * 0.007);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x - half * 0.45, baseY + 5);
+            ctx.lineTo(x - half * 0.16, tipY - 8);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.58)';
+            ctx.lineWidth = Math.max(1, wheelR * 0.005);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(x, baseY + 2, Math.max(2.8, half * 0.25), 0, Math.PI * 2);
+            ctx.fillStyle = '#0d94c5';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.94)';
+            ctx.lineWidth = Math.max(0.8, wheelR * 0.004);
+            ctx.stroke();
+        }
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioCtor = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtor) return null;
+                audioCtx = new AudioCtor();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function tone(frequency, duration, type = 'sine', volume = 0.04, slideTo = null) {
+            if (!soundEnabled) return;
+            const audio = ensureAudio();
+            if (!audio) return;
+            const oscillator = audio.createOscillator();
+            const gain = audio.createGain();
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audio.currentTime);
+            if (slideTo) {
+                oscillator.frequency.exponentialRampToValueAtTime(slideTo, audio.currentTime + duration);
+            }
+            gain.gain.setValueAtTime(volume, audio.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration);
+            oscillator.connect(gain);
+            gain.connect(audio.destination);
+            oscillator.start();
+            oscillator.stop(audio.currentTime + duration);
+        }
+
+        function playChipSound() {
+            tone(720, 0.06, 'sine', 0.022);
+        }
+
+        function playTickSound() {
+            tone(1100, 0.025, 'square', 0.01, 850);
+        }
+
+        function playSpinSound() {
+            tone(170, 0.42, 'sawtooth', 0.025, 340);
+        }
+
+        function playWinSound() {
+            tone(660, 0.11, 'sine', 0.04);
+            setTimeout(() => tone(880, 0.16, 'sine', 0.04), 90);
+        }
+
+        function playBonusSound() {
+            tone(330, 0.18, 'triangle', 0.04, 660);
+            setTimeout(() => tone(880, 0.22, 'sine', 0.04), 180);
+        }
+
+        function playRevealSound() {
+            tone(740, 0.12, 'sine', 0.035);
+            setTimeout(() => tone(990, 0.18, 'sine', 0.035), 110);
+        }
+
+        function playLoseSound() {
+            tone(160, 0.16, 'sine', 0.022, 120);
+        }
+
+        function updateSoundButton() {
+            soundBtn.innerHTML = soundEnabled
+                ? '<i class="fas fa-volume-high"></i>'
+                : '<i class="fas fa-volume-xmark"></i>';
+            soundBtn.classList.toggle('muted', !soundEnabled);
+            soundBtn.setAttribute('aria-label', soundEnabled ? 'Turn sound off' : 'Turn sound on');
+        }
+
+        function setWinChance(value) {
+            const parsed = parseFloat(value);
+            winChance = Math.max(0, Math.min(100, isNaN(parsed) ? 50 : parsed));
+            if (rulesWinChance) rulesWinChance.textContent = `${formatMult(winChance)}%`;
+        }
+
+        function openRules() {
+            if (spinning || bonusOpen) return;
+            rulesModal.classList.add('open');
+        }
+
+        function closeRules() {
+            rulesModal.classList.remove('open');
+        }
+
+        function initGame() {
+            balance = Number(GameBridge.getBalance()) || 0;
+            updateBalanceDisplay();
+            updateHud();
+            updateLastWin();
+            updateSoundButton();
+            buildSegments();
+            bindUI();
+            generateBoosts();
+            resizeWheel();
+
+            if (!GameBridge.isLoggedIn()) {
+                notify('Please login to play!', 'err');
+            }
+
+            GameBridge.getGameConfig().then(config => {
+                if (config) setWinChance(config.winChance);
+            });
+
+            GameBridge.onGameConfigUpdate(config => {
+                if (config) setWinChance(config.winChance);
+            });
+
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(() => drawWheel(rotation));
+            }
+        }
+
+        function bindUI() {
+            document.querySelectorAll('[data-chip]').forEach(button => {
+                button.addEventListener('click', () => setChip(button.dataset.chip));
+            });
+
+            betOptions.addEventListener('click', event => {
+                const clearBtn = event.target.closest('[data-clear]');
+                if (clearBtn) {
+                    event.stopPropagation();
+                    clearBet(clearBtn.dataset.clear);
+                    return;
+                }
+                const card = event.target.closest('[data-bet-option]');
+                if (card) addBet(card.dataset.betOption);
+            });
+
+            betOptions.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const card = event.target.closest('[data-bet-option]');
+                if (!card) return;
+                event.preventDefault();
+                addBet(card.dataset.betOption);
+            });
+
+            clearBetsBtn.addEventListener('click', clearAllBets);
+            spinBtn.addEventListener('click', spin);
+            collectBtn.addEventListener('click', collectBonus);
+            rulesBtn.addEventListener('click', openRules);
+            rulesClose.addEventListener('click', closeRules);
+            rulesModal.addEventListener('click', event => {
+                if (event.target === rulesModal) closeRules();
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') closeRules();
+            });
+
+            soundBtn.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                try {
+                    localStorage.setItem('ice_fishing_sound', soundEnabled ? 'on' : 'off');
+                } catch (e) { }
+                updateSoundButton();
+                if (soundEnabled) playChipSound();
+            });
+
+            if (typeof ResizeObserver !== 'undefined') {
+                new ResizeObserver(scheduleResize).observe(wheelWrap);
+            }
+            window.addEventListener('resize', scheduleResize);
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

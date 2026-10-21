@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141a3a"/>
+      <stop offset="0.5" stop-color="#0b0f24"/>
+      <stop offset="1" stop-color="#060814"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6c9"/>
+      <stop offset="0.55" stop-color="#f5c542"/>
+      <stop offset="1" stop-color="#e09b00"/>
+    </linearGradient>
+    <radialGradient id="glowPurple" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowPink" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff2d78" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#ff2d78" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hub" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fff2bd"/>
+      <stop offset="0.58" stop-color="#f5c542"/>
+      <stop offset="1" stop-color="#d99a00"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000512" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="400" fill="url(#bg)"/>
+  <ellipse cx="120" cy="60" rx="220" ry="150" fill="url(#glowPurple)" filter="url(#soft)"/>
+  <ellipse cx="500" cy="330" rx="200" ry="140" fill="url(#glowPink)" filter="url(#soft)"/>
+
+  <g filter="url(#shadow)">
+    <circle cx="300" cy="228" r="158" fill="#0e1230" stroke="#161b3a" stroke-width="16"/>
+    <circle cx="300" cy="228" r="164" fill="none" stroke="#f5c542" stroke-width="2.5" opacity="0.95"/>
+
+    <path d="M300 228 L300 80 A148 148 0 0 1 404.65 123.35 Z" fill="#1e88e5" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L404.65 123.35 A148 148 0 0 1 448 228 Z" fill="#2e9e4f" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L448 228 A148 148 0 0 1 404.65 332.65 Z" fill="#d946ef" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L404.65 332.65 A148 148 0 0 1 300 376 Z" fill="#ff7a00" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L300 376 A148 148 0 0 1 195.35 332.65 Z" fill="#d81f2a" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L195.35 332.65 A148 148 0 0 1 152 228 Z" fill="#ffd21f" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L152 228 A148 148 0 0 1 195.35 123.35 Z" fill="#8b5cf6" stroke="#0b0f22" stroke-width="2"/>
+    <path d="M300 228 L195.35 123.35 A148 148 0 0 1 300 80 Z" fill="#ff2d78" stroke="#0b0f22" stroke-width="2"/>
+
+    <circle cx="300" cy="228" r="34" fill="url(#hub)" stroke="#1b2145" stroke-width="4"/>
+    <text x="300" y="238" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="24" font-weight="900" fill="#1c1330">CT</text>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-weight="900" text-anchor="middle" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.7)">
+    <text x="337.5" y="143" font-size="22">1</text>
+    <text x="390.5" y="196" font-size="22">2</text>
+    <text x="390.5" y="271" font-size="22">5</text>
+    <text x="337.5" y="324" font-size="20">10</text>
+    <text x="262.5" y="324" font-size="10" letter-spacing="1">COIN</text>
+    <text x="209.5" y="271" font-size="10" letter-spacing="1">CASH</text>
+    <text x="209.5" y="196" font-size="10" letter-spacing="1">PACH</text>
+    <text x="262.5" y="143" font-size="9" letter-spacing="0.5">CRAZY</text>
+  </g>
+
+  <g fill="#ffdf7e">
+    <circle cx="340.9" cy="75.4" r="3.4"/>
+    <circle cx="411.7" cy="116.3" r="3.4"/>
+    <circle cx="452.6" cy="187.1" r="3.4"/>
+    <circle cx="452.6" cy="268.9" r="3.4"/>
+    <circle cx="411.7" cy="339.7" r="3.4"/>
+    <circle cx="340.9" cy="380.6" r="3.4"/>
+    <circle cx="259.1" cy="380.6" r="3.4"/>
+    <circle cx="188.3" cy="339.7" r="3.4"/>
+    <circle cx="147.4" cy="268.9" r="3.4"/>
+    <circle cx="147.4" cy="187.1" r="3.4"/>
+    <circle cx="188.3" cy="116.3" r="3.4"/>
+    <circle cx="259.1" cy="75.4" r="3.4"/>
+  </g>
+
+  <g fill="#ffffff" opacity="0.85">
+    <circle cx="340.9" cy="75.4" r="1.4"/>
+    <circle cx="411.7" cy="116.3" r="1.4"/>
+    <circle cx="452.6" cy="187.1" r="1.4"/>
+    <circle cx="452.6" cy="268.9" r="1.4"/>
+    <circle cx="411.7" cy="339.7" r="1.4"/>
+    <circle cx="340.9" cy="380.6" r="1.4"/>
+    <circle cx="259.1" cy="380.6" r="1.4"/>
+    <circle cx="188.3" cy="339.7" r="1.4"/>
+    <circle cx="147.4" cy="268.9" r="1.4"/>
+    <circle cx="147.4" cy="187.1" r="1.4"/>
+    <circle cx="188.3" cy="116.3" r="1.4"/>
+    <circle cx="259.1" cy="75.4" r="1.4"/>
+  </g>
+
+  <g transform="translate(0 0)">
+    <text x="38" y="54" font-family="Arial Black, Arial, sans-serif" font-style="italic" font-size="38" font-weight="900" fill="#c1186b">CRAZY TIME</text>
+    <text x="36" y="52" font-family="Arial Black, Arial, sans-serif" font-style="italic" font-size="38" font-weight="900" fill="url(#gold)">CRAZY TIME</text>
+    <text x="38" y="76" font-family="Arial, sans-serif" font-size="12" font-weight="800" fill="#9de0ff" letter-spacing="6">LIVE GAME SHOW</text>
+  </g>
+
+  <g transform="translate(222 40)">
+    <rect x="-88" y="-6" width="176" height="28" rx="14" fill="#ff2d78" opacity="0.14"/>
+    <circle cx="-66" cy="8" r="4.5" fill="#ff2d78"/>
+    <text x="12" y="13" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="800" fill="#ffd0e0" letter-spacing="3">TOP SLOT · UP TO 50X</text>
+  </g>
+
+  <g transform="translate(545 28)">
+    <rect x="-44" y="0" width="88" height="27" rx="13.5" fill="#ff2d78" opacity="0.18"/>
+    <circle cx="-27" cy="13.5" r="4.5" fill="#ff5470"/>
+    <circle cx="-27" cy="13.5" r="8" fill="#ff5470" opacity="0.2"/>
+    <text x="6" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="800" fill="#ffdbe2" letter-spacing="2">LIVE</text>
+  </g>
+</svg>

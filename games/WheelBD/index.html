@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Wheel - Spin & Win</title>
+    <style>
+:root {
+    --bg-dark: #0a0b10;
+    --card-bg: #141621;
+    --accent-gold: #ffcc00;
+    --accent-green: #2ecc71;
+    --accent-red: #ff2d55;
+    --text-main: #ffffff;
+    --text-muted: #8a8e9e;
+    --font-primary: 'Inter', sans-serif;
+    --font-display: 'Outfit', sans-serif;
+    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-primary);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 900px;
+    height: 92vh;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-image:
+        radial-gradient(circle at 50% -10%, rgba(255, 204, 0, 0.12), transparent 45%),
+        radial-gradient(circle at center, rgba(155, 89, 255, 0.06), transparent 80%);
+}
+
+/* Header */
+.game-header {
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.home-btn {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-right: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.home-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.accent {
+    color: var(--accent-gold);
+}
+
+.balance-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.balance-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.balance-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent-gold);
+}
+
+/* Main Area */
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 28px;
+    overflow: hidden;
+}
+
+.wheel-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.wheel-wrap {
+    position: relative;
+    width: 320px;
+    height: 320px;
+}
+
+.pointer {
+    font-size: 2.6rem;
+    color: var(--accent-gold);
+    line-height: 1;
+    margin-bottom: -18px;
+    z-index: 5;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.wheel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #23273a;
+    box-shadow: 0 0 0 4px var(--accent-gold), 0 18px 40px rgba(0, 0, 0, 0.6);
+    transition: transform 5s cubic-bezier(0.16, 0.85, 0.2, 1);
+    transform: rotate(0deg);
+}
+
+.wheel-labels {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+}
+
+.wheel-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    transform-origin: center;
+    white-space: nowrap;
+}
+
+.wheel-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 68px;
+    height: 68px;
+    margin: -34px 0 0 -34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffe680, #ffcc00 55%, #e6a800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #141621;
+    font-size: 1.6rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
+
+.result-text {
+    margin-top: 22px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 22px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: var(--transition);
+}
+
+.result-text.win-anim {
+    animation: pop 0.5s ease;
+    color: var(--accent-green);
+}
+
+.result-text.lose-anim {
+    animation: pop 0.5s ease;
+    color: var(--accent-red);
+}
+
+@keyframes pop {
+    0% { transform: scale(0.85); }
+    60% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+}
+
+/* Controls */
+.controls-container {
+    padding: 14px 28px 22px;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+}
+
+.bet-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.bet-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.adjust-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+    font-weight: 900;
+    width: 38px;
+    height: 42px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.adjust-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#bet-amount {
+    width: 92px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-weight: 900;
+    font-size: 1rem;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+#bet-amount::-webkit-outer-spin-button,
+#bet-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quick-bets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    flex: 1;
+}
+
+.quick-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    border-radius: 10px;
+    padding: 8px 0;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quick-btn:hover {
+    background: rgba(255, 204, 0, 0.2);
+    border-color: var(--accent-gold);
+}
+
+.spin-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent-gold), #ff8c00);
+    color: #141621;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: var(--transition);
+    box-shadow: 0 10px 24px rgba(255, 204, 0, 0.35);
+}
+
+.spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary-text {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-secondary-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+/* Notifications */
+#notification-area {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    body {
+        overflow: auto;
+        height: auto;
+        align-items: flex-start;
+    }
+
+    .app-container {
+        height: 100dvh;
+        border-radius: 0;
+    }
+
+    .game-main {
+        padding: 12px 14px;
+    }
+
+    .wheel-wrap {
+        width: 250px;
+        height: 250px;
+    }
+
+    .pointer {
+        font-size: 2rem;
+        margin-bottom: -14px;
+    }
+
+    .wheel-label {
+        font-size: 0.7rem;
+    }
+
+    .wheel-hub {
+        width: 54px;
+        height: 54px;
+        margin: -27px 0 0 -27px;
+        font-size: 1.25rem;
+    }
+
+    .controls-container {
+        padding: 12px 14px 18px;
+    }
+
+    .logo-text {
+        font-size: 1rem;
+    }
+
+    .balance-value {
+        font-size: 1.15rem;
+    }
+}
+
+    /* AUTO BET */
+.auto-toggle{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);cursor:pointer;user-select:none;margin-top:8px;}
+.auto-toggle input{accent-color:#ffcc00;width:15px;height:15px;cursor:pointer;}
+.auto-label{font-weight:800;font-size:.75rem;letter-spacing:1px;color:#cfd3dc;}
+@media (max-width: 640px), (max-height: 620px) {
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        align-items: flex-start;
+    }
+
+    .app-container {
+        height: auto;
+        min-height: 100dvh;
+        max-width: 100%;
+        border-radius: 0;
+    }
+
+    .game-main {
+        flex: none;
+        overflow: visible;
+        padding: 12px 14px;
+    }
+
+    .wheel-zone {
+        flex: none;
+        padding: 8px 0;
+    }
+
+    .wheel-wrap {
+        width: min(250px, calc(100vw - 72px));
+        height: min(250px, calc(100vw - 72px));
+    }
+
+    .result-text {
+        margin-top: 14px;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    .controls-container {
+        padding: 12px 14px 18px;
+    }
+
+    .bet-input-group {
+        flex-wrap: wrap;
+    }
+
+    .input-wrapper {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    #bet-amount {
+        flex: 1;
+        width: auto;
+    }
+
+    .quick-bets {
+        flex: 1 1 100%;
+        margin-top: 8px;
+    }
+
+    .quick-btn {
+        padding: 8px 2px;
+        font-size: 0.72rem;
+    }
+}
+        .quick-bets {
+            gap: 7px;
+        }
+
+        .quick-bets .quick-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.72);
+            font: 800 0.62rem 'Inter', sans-serif;
+            letter-spacing: 1.4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .quick-bets .quick-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .quick-bets .quick-btn,
+        .quick-bets .q-btn {
+            min-height: 38px;
+            padding: 9px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font: 800 0.8rem 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .quick-bets .quick-btn:hover,
+        .quick-bets .q-btn:hover {
+            border-color: rgba(255, 204, 0, 0.65);
+            background: rgba(255, 204, 0, 0.2);
+        }
+
+        .quick-bets .quick-btn:active,
+        .quick-bets .q-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 204, 0, 0.3);
+        }
+
+        @media (max-width: 640px) {
+            .quick-bets {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                width: 100%;
+                min-width: 0;
+                margin-top: 8px;
+            }
+
+            .quick-bets .quick-btn,
+            .quick-bets .q-btn {
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                padding: 9px 4px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="logo">
+                <div class="home-btn" onclick="GameBridge.goHome()">
+                    <i class="fas fa-home"></i> <span>HOME</span>
+                </div>
+                <span class="logo-text">LUCKY <span class="accent">WHEEL-BD</span></span>
+            </div>
+            <div class="balance-container">
+                <span class="balance-label">YOUR BALANCE</span>
+                <span class="balance-value" id="balance-amount">৳5000.00</span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <!-- Wheel Area -->
+            <div class="wheel-zone">
+                <div class="pointer"><i class="fas fa-caret-down"></i></div>
+                <div class="wheel-wrap">
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-labels" id="wheel-labels"></div>
+                        <div class="wheel-hub"><i class="fas fa-star"></i></div>
+                    </div>
+                </div>
+                <div class="result-text" id="result-display">PLACE YOUR BET & SPIN</div>
+            </div>
+
+            <!-- Interaction Area -->
+            <div class="controls-container">
+                <div class="bet-panel">
+                    <div class="bet-input-group">
+                        <div class="input-wrapper">
+                            <button class="adjust-btn" id="minus-bet">-</button>
+                            <input type="number" id="bet-amount" value="10" step="1" min="1">
+                            <button class="adjust-btn" id="plus-bet">+</button>
+                        </div>
+                        <div class="quick-bets" role="group" aria-label="Quick bet amounts">
+                            <span class="quick-label">QUICK BET</span>
+                            <button class="quick-btn" data-val="10">10</button>
+                            <button class="quick-btn" data-val="50">50</button>
+                            <button class="quick-btn" data-val="100">100</button>
+                            <button class="quick-btn" data-val="500">500</button>
+                        </div>
+                        <div class="auto-toggle"><input type="checkbox" id="auto-spin-switch"><span class="auto-label"><i class="fas fa-rotate"></i> AUTO BET</span></div>
+                    </div>
+                    <button class="spin-btn" id="spin-action-btn">
+                        <span class="btn-primary-text">SPIN WHEEL</span>
+                        <span class="btn-secondary-text" id="btn-bet-info">10 ৳</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <div id="notification-area"></div>
+    </div>
+    <script src="../balancer.js?v=5"></script>
+    <script>
+/**
+ * LUCKY WHEEL-BD
+ * Spin the wheel and collect the multiplier segment under the pointer.
+ * Segments: 0x, 1.5x, 2x, 5x, 10x, 50x.
+ * Win chance is controlled from the admin panel via GameBridge.getGameConfig().
+ */
+
+// Wheel segments (clockwise, starting at the top pointer)
+const SEGMENTS = [
+    { mult: 0, label: '0x', color: '#2a2d3e' },
+    { mult: 1.5, label: '1.5x', color: '#f39c12' },
+    { mult: 0, label: '0x', color: '#22253a' },
+    { mult: 2, label: '2x', color: '#e74c3c' },
+    { mult: 0, label: '0x', color: '#2a2d3e' },
+    { mult: 5, label: '5x', color: '#9b59b6' },
+    { mult: 0, label: '0x', color: '#22253a' },
+    { mult: 1.5, label: '1.5x', color: '#f39c12' },
+    { mult: 0, label: '0x', color: '#2a2d3e' },
+    { mult: 10, label: '10x', color: '#00d2ff' },
+    { mult: 0, label: '0x', color: '#22253a' },
+    { mult: 50, label: '50x', color: '#ffcc00' }
+];
+
+const SEG = 360 / SEGMENTS.length;
+
+// Weighted pool for winning spins (rarer = higher multiplier).
+// 1.5x-2x land ~93% of wins; 5x ~6%; 50x is very rare (~0.1%).
+const WIN_WEIGHTS = [
+    { mult: 1.5, weight: 62 },
+    { mult: 2, weight: 31 },
+    { mult: 5, weight: 6 },
+    { mult: 10, weight: 0.9 },
+    { mult: 50, weight: 0.1 }
+];
+
+// State
+let balance = GameBridge.getBalance();
+let isSpinning = false;
+let rotation = 0;
+let winChance = 50; // Admin-configurable win chance (%)
+
+// Load admin-configured win chance
+GameBridge.getGameConfig().then(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+GameBridge.onGameConfigUpdate(cfg => {
+    if (cfg && typeof cfg.winChance === 'number') winChance = cfg.winChance;
+});
+
+// DOM Elements
+const balanceDisplay = document.getElementById('balance-amount');
+const betInput = document.getElementById('bet-amount');
+const btnBetInfo = document.getElementById('btn-bet-info');
+const wheel = document.getElementById('wheel');
+const wheelLabels = document.getElementById('wheel-labels');
+const resultDisplay = document.getElementById('result-display');
+const spinBtn = document.getElementById('spin-action-btn');
+
+function init() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login to play!', 'err');
+    }
+    updateBalanceDisplay();
+    updateBetDisplay();
+    buildWheel();
+    addEventListeners();
+    window.addEventListener('resize', positionLabels);
+}
+
+function updateBalanceDisplay() {
+    balanceDisplay.innerText = `৳${balance.toFixed(2)}`;
+}
+
+function updateBetDisplay() {
+    const val = parseFloat(betInput.value) || 0;
+    btnBetInfo.innerText = `${GameBridge.formatBetAmount(val)} ৳`;
+}
+
+// Paint the wheel background with a conic gradient matching the segments
+function buildWheel() {
+    const stops = SEGMENTS.map((s, i) => `${s.color} ${i * SEG}deg ${(i + 1) * SEG}deg`).join(', ');
+    wheel.style.background = `conic-gradient(${stops})`;
+
+    wheelLabels.innerHTML = '';
+    SEGMENTS.forEach((s, i) => {
+        const label = document.createElement('div');
+        label.className = 'wheel-label';
+        label.innerText = s.label;
+        label.dataset.index = i;
+        wheelLabels.appendChild(label);
+    });
+
+    positionLabels();
+}
+
+// Place each label along its segment radius
+function positionLabels() {
+    const radius = wheel.clientWidth * 0.33;
+    document.querySelectorAll('.wheel-label').forEach(el => {
+        const i = parseInt(el.dataset.index);
+        const angle = i * SEG + SEG / 2;
+        el.style.transform = `translate(-50%, -50%) rotate(${angle}deg) translateY(-${radius}px)`;
+    });
+}
+
+function addEventListeners() {
+    document.getElementById('plus-bet').addEventListener('click', () => {
+        if (isSpinning) return;
+        betInput.value = GameBridge.formatBetAmount(parseFloat(betInput.value) + 10);
+        updateBetDisplay();
+    });
+
+    document.getElementById('minus-bet').addEventListener('click', () => {
+        if (isSpinning) return;
+        let val = parseFloat(betInput.value);
+        if (val > 10) {
+            betInput.value = GameBridge.formatBetAmount(val - 10);
+            updateBetDisplay();
+        }
+    });
+
+    betInput.addEventListener('input', updateBetDisplay);
+
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isSpinning) return;
+            betInput.value = btn.dataset.val;
+            updateBetDisplay();
+        });
+    });
+
+    spinBtn.addEventListener('click', handleSpin);
+}
+
+// Random segment index for a winning spin (weighted by multiplier)
+function pickWinningIndex() {
+    const total = WIN_WEIGHTS.reduce((sum, w) => sum + w.weight, 0);
+    let roll = Math.random() * total;
+    let chosen = WIN_WEIGHTS[0].mult;
+    for (const w of WIN_WEIGHTS) {
+        roll -= w.weight;
+        if (roll <= 0) { chosen = w.mult; break; }
+    }
+    // Find the first segment with this multiplier
+    const idx = SEGMENTS.findIndex(s => s.mult === chosen);
+    return idx >= 0 ? idx : SEGMENTS.length - 1;
+}
+
+// Random segment index for a losing spin (0x)
+function pickLosingIndex() {
+    const zeroIndexes = SEGMENTS
+        .map((s, i) => (s.mult === 0 ? i : -1))
+        .filter(i => i >= 0);
+    return zeroIndexes[Math.floor(Math.random() * zeroIndexes.length)];
+}
+
+// Rotate the wheel so the given segment lands under the top pointer
+function spinToIndex(index) {
+    const center = index * SEG + SEG / 2;
+    const jitterLimit = SEG / 2 - 5;
+    const jitter = (Math.random() * 2 - 1) * jitterLimit;
+
+    const target = ((360 - center + jitter) % 360 + 360) % 360;
+    const current = ((rotation % 360) + 360) % 360;
+    const delta = ((target - current) % 360 + 360) % 360;
+
+    rotation += 5 * 360 + delta;
+    wheel.style.transform = `rotate(${rotation}deg)`;
+}
+
+async function handleSpin() {
+    if (!GameBridge.isLoggedIn()) {
+        notify('Please login first!', 'err');
+        return;
+    }
+
+    const amount = parseFloat(betInput.value);
+    if (isNaN(amount) || amount <= 0) {
+        notify('Enter a valid bet!', 'err');
+        return;
+    }
+    if (amount > balance) {
+        notify('Insufficient funds!', 'err');
+        return;
+    }
+
+    if (isSpinning) return;
+
+    // 1. Prepare for sync
+    const newBalance = balance - amount;
+
+    // 2. Sync deduction to database FIRST
+    const sync = await GameBridge.updateBalance(newBalance, -amount, `Bet on Lucky Wheel`);
+
+    if (sync && sync.error) {
+        notify('Sync Error: Bet failed. Try again.', 'err');
+        return;
+    }
+
+    // 3. Start spinning
+    isSpinning = true;
+    balance = newBalance;
+    updateBalanceDisplay();
+
+    spinBtn.disabled = true;
+    resultDisplay.innerText = "SPINNING...";
+    resultDisplay.classList.remove('win-anim', 'lose-anim');
+
+    // Outcome biased by admin-configured win chance
+    const shouldWin = Math.random() * 100 < winChance;
+    const targetIndex = shouldWin ? pickWinningIndex() : pickLosingIndex();
+    const segment = SEGMENTS[targetIndex];
+
+    spinToIndex(targetIndex);
+
+    setTimeout(async () => {
+        const winAmount = GameBridge.calculatePayout(amount, segment.mult);
+
+        if (segment.mult > 0) {
+            const winBalance = balance + winAmount;
+            const winSync = await GameBridge.updateBalance(winBalance, winAmount, `Win on Lucky Wheel`);
+
+            if (winSync && winSync.error) {
+                notify('Sync Error: Winnings not saved! Try again.', 'err');
+            } else {
+                balance = winBalance;
+                updateBalanceDisplay();
+            }
+
+            resultDisplay.innerText = `YOU WON ${segment.label} (৳${winAmount.toFixed(2)})`;
+            resultDisplay.classList.add('win-anim');
+            notify(`WON ৳${winAmount.toFixed(2)} (${segment.label})`, 'win');
+        } else {
+            resultDisplay.innerText = `0x - YOU LOST!`;
+            resultDisplay.classList.add('lose-anim');
+            notify(`LOST ৳${amount.toFixed(2)}`, 'err');
+        }
+
+        isSpinning = false;
+        spinBtn.disabled = false;
+
+        if (document.getElementById('auto-spin-switch').checked && !isSpinning) {
+            setTimeout(handleSpin, 400);
+        }
+    }, 5100);
+}
+
+function notify(text, type) {
+    const area = document.getElementById('notification-area');
+    if (!area) return;
+    const note = document.createElement('div');
+    note.style.cssText = `
+        background: ${type === 'win' ? '#2ecc71' : '#ff2d55'};
+        color: white; padding: 12px 25px; border-radius: 12px;
+        margin-bottom: 10px; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        transform: translateY(-20px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    `;
+    note.innerText = text;
+    area.appendChild(note);
+
+    setTimeout(() => {
+        note.style.transform = 'translateY(0)';
+        note.style.opacity = '1';
+    }, 10);
+    setTimeout(() => {
+        note.style.transform = 'translateY(-20px)';
+        note.style.opacity = '0';
+        setTimeout(() => note.remove(), 300);
+    }, 4000);
+}
+
+init();
+
+    </script>
+</body>
+
+</html>

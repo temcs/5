@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a3b58"/>
+      <stop offset="0.48" stop-color="#041a2b"/>
+      <stop offset="1" stop-color="#010810"/>
+    </linearGradient>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#35e0ff" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#35e0ff" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#6dffd1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d7fbff"/>
+      <stop offset="0.4" stop-color="#82dcf2"/>
+      <stop offset="1" stop-color="#2b88aa"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4b8"/>
+      <stop offset="0.48" stop-color="#ffd45e"/>
+      <stop offset="1" stop-color="#f49b26"/>
+    </linearGradient>
+    <linearGradient id="fin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe89a"/>
+      <stop offset="1" stop-color="#ffb02e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd45e" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#ffd45e" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#ffd45e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hole" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#020a12"/>
+      <stop offset="0.7" stop-color="#05283c"/>
+      <stop offset="1" stop-color="#0c4a66"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <filter id="glowSoft" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000814" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="400" fill="url(#bg)"/>
+
+  <path d="M-30 8 Q140 78 302 18 T640 42 L640 -20 L-30 -20 Z" fill="url(#aurora)" filter="url(#soft)"/>
+  <path d="M60 0 Q220 120 360 44 T630 66 L630 0 Z" fill="#6dffd1" opacity="0.07" filter="url(#soft)"/>
+  <path d="M-20 34 Q130 96 245 56 T470 64" fill="none" stroke="#8cefff" stroke-width="2" opacity="0.22" filter="url(#soft)"/>
+
+  <g fill="#dffbff">
+    <circle cx="48" cy="30" r="2" opacity="0.55"/>
+    <circle cx="88" cy="74" r="1.4" opacity="0.38"/>
+    <circle cx="233" cy="26" r="1.8" opacity="0.5"/>
+    <circle cx="348" cy="68" r="1.3" opacity="0.4"/>
+    <circle cx="438" cy="28" r="2.2" opacity="0.45"/>
+    <circle cx="540" cy="78" r="1.6" opacity="0.42"/>
+    <circle cx="578" cy="36" r="1.2" opacity="0.35"/>
+    <circle cx="288" cy="86" r="1.1" opacity="0.3"/>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.5">
+    <path d="M260 128 L330 382 L205 382 Z" fill="#6ce6ff" opacity="0.12"/>
+    <path d="M300 122 L430 390 L296 390 Z" fill="#8cefff" opacity="0.08"/>
+  </g>
+
+  <path d="M0 92 L76 84 L146 96 L214 82 L292 94 L364 78 L438 90 L508 80 L600 94 L600 128 L538 138 L456 126 L386 142 L310 128 L236 146 L166 132 L94 148 L0 136 Z" fill="url(#ice)"/>
+  <path d="M0 92 L76 84 L146 96 L214 82 L292 94 L364 78 L438 90 L508 80 L600 94 L600 108 L512 98 L438 106 L364 94 L290 110 L214 98 L144 112 L74 100 L0 108 Z" fill="#ffffff" opacity="0.34"/>
+
+  <g stroke="#d9fbff" stroke-linecap="round" fill="none" opacity="0.6">
+    <path d="M116 114 L88 130 L54 124" stroke-width="2"/>
+    <path d="M190 112 L222 126 L254 118" stroke-width="2"/>
+    <path d="M198 136 L238 148 L272 140" stroke-width="1.5" opacity="0.65"/>
+    <path d="M98 99 L72 88" stroke-width="1.5"/>
+    <path d="M470 100 L508 112 L548 106" stroke-width="1.5" opacity="0.45"/>
+  </g>
+
+  <g transform="translate(166 139)">
+    <ellipse cx="0" cy="0" rx="62" ry="18" fill="#baf6ff" opacity="0.26" filter="url(#soft)"/>
+    <ellipse cx="0" cy="0" rx="51" ry="14" fill="url(#hole)"/>
+    <ellipse cx="0" cy="-2" rx="38" ry="8" fill="#03121e" opacity="0.85"/>
+    <path d="M-48 3 Q0 23 48 3" fill="none" stroke="#bdf7ff" stroke-width="2" opacity="0.55"/>
+  </g>
+
+  <g transform="translate(347 248) rotate(-7)">
+    <ellipse cx="0" cy="2" rx="142" ry="78" fill="url(#glow)" filter="url(#glowSoft)"/>
+    <path d="M62 -22 Q90 -48 122 -38 Q102 -18 104 2 Q103 20 122 38 Q88 47 62 24 Z" fill="url(#fin)" filter="url(#shadow)"/>
+    <path d="M-14 -38 Q8 -78 48 -48 Z" fill="url(#fin)"/>
+    <path d="M-8 38 Q16 70 50 40 Z" fill="#ffb02e" opacity="0.9"/>
+    <ellipse cx="0" cy="0" rx="108" ry="46" fill="url(#gold)" filter="url(#shadow)"/>
+    <path d="M-104 0 Q-142 -34 -152 -2 Q-141 35 -104 0 Z" fill="url(#fin)"/>
+    <path d="M-78 -34 Q-20 -62 52 -24" fill="none" stroke="#fff3b0" stroke-width="5" opacity="0.55" stroke-linecap="round"/>
+    <path d="M-74 6 Q-18 34 50 10" fill="none" stroke="#d67d15" stroke-width="4" opacity="0.38" stroke-linecap="round"/>
+    <g fill="none" stroke="#fff3ba" stroke-width="2" opacity="0.42">
+      <path d="M-52 -18 q16 18 0 36"/>
+      <path d="M-28 -27 q18 26 0 54"/>
+      <path d="M-2 -31 q18 30 0 62"/>
+      <path d="M24 -27 q16 27 0 54"/>
+    </g>
+    <circle cx="72" cy="-10" r="9" fill="#031420"/>
+    <circle cx="75" cy="-13" r="3.2" fill="#ffffff"/>
+    <circle cx="69" cy="-7" r="1.7" fill="#8cefff"/>
+    <path d="M55 14 Q72 20 86 8" fill="none" stroke="#8d5510" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <circle cx="-38" cy="-6" r="4" fill="#fff7c8" opacity="0.8"/>
+    <circle cx="18" cy="-18" r="3" fill="#fff7c8" opacity="0.7"/>
+    <circle cx="36" cy="21" r="2.4" fill="#fff7c8" opacity="0.65"/>
+  </g>
+
+  <g transform="translate(238 330) scale(0.55)" opacity="0.5">
+    <path d="M38 -18 Q58 -38 82 -28 Q64 -12 68 1 Q65 16 82 29 Q56 37 38 19 Z" fill="#7fdcff"/>
+    <ellipse cx="0" cy="0" rx="62" ry="25" fill="#59c9ea"/>
+    <circle cx="42" cy="-6" r="5" fill="#03111d"/>
+    <circle cx="44" cy="-8" r="1.7" fill="#e8fcff"/>
+  </g>
+
+  <g stroke-linecap="round">
+    <path d="M174 141 L334 232" stroke="#06121c" stroke-width="12" opacity="0.55" filter="url(#soft)"/>
+    <path d="M169 136 L329 227" stroke="#d7f7ff" stroke-width="5"/>
+    <path d="M169 136 L329 227" stroke="#ffffff" stroke-width="2" opacity="0.75"/>
+    <path d="M329 227 L354 241" stroke="#e9fbff" stroke-width="3"/>
+    <path d="M348 234 L365 244 L351 250 Z" fill="#c9f8ff" stroke="#eafeff" stroke-width="1.5"/>
+    <circle cx="170" cy="137" r="5" fill="#8ff1ff"/>
+    <circle cx="170" cy="137" r="11" fill="none" stroke="#8ff1ff" stroke-width="1.5" opacity="0.45"/>
+  </g>
+
+  <g fill="#bdf7ff" opacity="0.72">
+    <circle cx="209" cy="190" r="2.5"/>
+    <circle cx="224" cy="207" r="1.5"/>
+    <circle cx="254" cy="172" r="1.8"/>
+    <circle cx="466" cy="318" r="2.2"/>
+    <circle cx="488" cy="344" r="1.4"/>
+    <circle cx="502" cy="298" r="1.7"/>
+    <circle cx="146" cy="260" r="1.8"/>
+  </g>
+
+  <g>
+    <text x="300" y="53" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="43" font-weight="900" fill="#ecfdff" letter-spacing="1.5" filter="url(#shadow)">ICE FISHING</text>
+    <text x="300" y="76" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#9deaff" letter-spacing="7">SPEAR . CATCH . WIN</text>
+  </g>
+
+  <g transform="translate(545 28)">
+    <rect x="-44" y="0" width="88" height="27" rx="13.5" fill="#ff3f63" opacity="0.16"/>
+    <circle cx="-27" cy="13.5" r="4.5" fill="#ff5c7a"/>
+    <circle cx="-27" cy="13.5" r="8" fill="#ff5c7a" opacity="0.18"/>
+    <text x="6" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="800" fill="#ffdbe2" letter-spacing="2">LIVE</text>
+  </g>
+
+  <g transform="translate(300 365)">
+    <rect x="-132" y="-16" width="264" height="32" rx="16" fill="#ffd45e" opacity="0.12" stroke="#ffd45e" stroke-opacity="0.3"/>
+    <text x="-44" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#ffe89a" letter-spacing="1">LIVE CATCH</text>
+    <circle cx="0" cy="0" r="2.5" fill="#8cefff"/>
+    <text x="66" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#8cefff" letter-spacing="1">UP TO 50X</text>
+  </g>
+</svg>

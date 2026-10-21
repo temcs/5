@@ -1,0 +1,150 @@
+/* ============================================================
+   Modern Pagination Component (shared by admin + user site)
+   ============================================================ */
+
+.pg-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.pg-container .pg-info {
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.pg-container .pg-info b {
+    color: #f8fafc;
+    font-weight: 700;
+}
+
+.pg-right {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+}
+
+.pg-size {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.pg-size label {
+    color: #94a3b8;
+}
+
+.pg-size-select,
+.pg-size-custom {
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pg-size-select:focus,
+.pg-size-custom:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.18);
+}
+
+.pg-size-select option {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+.pg-size-custom {
+    width: 72px;
+    -moz-appearance: textfield;
+}
+
+.pg-size-custom::-webkit-outer-spin-button,
+.pg-size-custom::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.pg-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.pg-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+}
+
+.pg-btn:hover:not(:disabled):not(.active) {
+    background: rgba(255, 204, 0, 0.15);
+    border-color: rgba(255, 204, 0, 0.4);
+    color: #ffcc00;
+    transform: translateY(-1px);
+}
+
+.pg-btn.active {
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+    border-color: transparent;
+    color: #111827;
+    box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+}
+
+.pg-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pg-ellipsis {
+    min-width: 24px;
+    text-align: center;
+    color: #64748b;
+    user-select: none;
+}
+
+.pg-empty {
+    color: #64748b;
+}
+
+@media (max-width: 560px) {
+    .pg-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pg-right {
+        margin-left: 0;
+        justify-content: space-between;
+        width: 100%;
+    }
+}
